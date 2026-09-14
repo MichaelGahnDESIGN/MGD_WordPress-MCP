@@ -20,6 +20,7 @@ final class MGD_WordPress_MCP {
     private function __construct() {
         MGD_WordPress_MCP_Audit::instance();
         MGD_WordPress_MCP_Abilities::instance();
+        MGD_WordPress_MCP_Wizard::instance();
         MGD_WordPress_MCP_Admin::instance();
         MGD_WordPress_MCP_Updater::instance();
 
@@ -68,10 +69,11 @@ final class MGD_WordPress_MCP {
         }
 
         MGD_WordPress_MCP_Audit::install_table();
+        MGD_WordPress_MCP_Wizard::activate();
     }
 
     public static function deactivate() {
-        // Einstellungen und Audit-Log bleiben absichtlich erhalten.
+        // Einstellungen, Assistent-Auswahl und Audit-Log bleiben absichtlich erhalten.
     }
 
     public function dependency_notice() {
