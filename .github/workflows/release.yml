@@ -1,0 +1,34 @@
+name: Build WordPress release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build plugin ZIP
+        run: |
+          rm -rf build mgd-wordpress-mcp.zip
+          mkdir -p build/mgd-wordpress-mcp
+          rsync -a --delete mgd-wordpress-mcp/ build/mgd-wordpress-mcp/
+          cd build
+          zip -r ../mgd-wordpress-mcp.zip mgd-wordpress-mcp
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" mgd-wordpress-mcp.zip --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" mgd-wordpress-mcp.zip --generate-notes --title "MGD WordPress MCP ${GITHUB_REF_NAME}"
+          fi
