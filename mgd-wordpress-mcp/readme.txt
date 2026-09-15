@@ -4,7 +4,7 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.1
+Stable tag: 0.5.2
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
@@ -12,23 +12,27 @@ Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
 
+= 0.5.2 - 2026-09-16 =
+* 0.5.1 Sicherheits- und Verbindungsfunktionen vollständig in die Admin-Oberfläche integriert.
+* Einrichtungs-Assistent als verständlichen 5-Schritte-Workflow neu aufgebaut.
+* Bereits installierter MCP Adapter wird erkannt und nicht mehr unnötig zur Installation angeboten.
+* Connection Doctor als eigene, sichtbare Verbindungsseite mit Einzelprüfungen und Gesamtstatus integriert.
+* Sicherheitsprofile „Nur lesen“, „Inhalte bearbeiten“ und „Administration“ direkt bedienbar gemacht.
+* Feingranulare Berechtigungen bleiben zusätzlich verfügbar.
+* Client Setup Generator für Claude Code, Codex, Cursor/VS Code und generische MCP-Clients integriert.
+* Application-Password-Erstellung verständlich als separater Agentenzugang erklärt.
+* Endpoint, Profil, Builder und Frontend-Schutz verständlicher dargestellt.
+* Rate-Limit-Einstellung in die Sicherheitsoberfläche integriert.
+* Responsive, lokale Admin-UI für Profile, Connection Doctor, Setup-Schritte und Client-Konfiguration ergänzt.
+* Keine externen Fonts, Icon-CDNs oder JavaScript-CDNs hinzugefügt.
+
 = 0.5.1 - 2026-09-16 =
-* Connection-Doctor-Kern für WordPress, PHP, HTTPS, REST, Permalinks, Abilities API, MCP Adapter, Frontend-Schutz und Endpoint ergänzt.
-* Berechtigungsprofile `read_only`, `content_editor` und `admin` als zentrale Sicherheitsgrundlage ergänzt; bestehende Installationen starten konservativ in Read-only.
-* Read-only-Profil entfernt schreibende und administrative Abilities bereits aus der MCP-Tool-Liste.
-* Transport-Rate-Limit mit HTTP 429 ergänzt.
-* Kurzlebige, aktions- und objektgebundene Single-Use Approval Tokens als Infrastruktur ergänzt.
-* Zentrale Secret-Redaction-Hilfe für Audit-/Diagnosedaten ergänzt.
-* Client-Konfigurationsgenerator als Infrastruktur für Claude Code, Codex und generische HTTP-MCP-Clients ergänzt.
-* Vorhandene Fail-closed-Sperre für unsicheren Base64-Direktupload beibehalten.
-* Laufzeit-Erkennung des offiziellen MCP Adapters bleibt bestehen, keine fehleranfällige harte WordPress-Plugin-Abhängigkeit.
-* 0.5.1 ist ein Integrations-/Härtungsrelease. Drittanbieter-Workflows wie Divi, WPForms, SEO und UpdraftPlus müssen weiterhin auf der realen Testsite End-to-End validiert werden.
+* Connection Doctor, Sicherheitsprofile, Rate Limit, Approval Tokens, Secret Redaction und Client Setup Infrastruktur ergänzt.
+* Read-only entfernt schreibende Abilities aus der MCP-Tool-Liste.
+* Unsicherer Base64-Direktupload bleibt fail-closed deaktiviert.
 
 = 0.3.1 - 2026-09-15 =
 * Falsche harte WordPress-Abhängigkeit zum MCP Adapter entfernt.
-
-= 0.3.0 - 2026-09-15 =
-* MCP-Authentifizierungsmodell gehärtet und Read/Write-Validierungsphase gestartet.
 
 = 0.2.8 - 2026-09-15 =
 * Self-Updater erfolgreich End-to-End verifiziert.
