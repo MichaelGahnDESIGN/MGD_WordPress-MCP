@@ -20,6 +20,7 @@ final class MGD_WordPress_MCP {
         MGD_WordPress_MCP_Audit::instance();
         MGD_WordPress_MCP_Abilities::instance();
         MGD_WordPress_MCP_Environment_Ability::instance();
+        MGD_WordPress_MCP_Security::instance();
         MGD_WordPress_MCP_Wizard::instance();
         MGD_WordPress_MCP_Admin::instance();
         MGD_WordPress_MCP_Updater::instance();
@@ -75,6 +76,7 @@ final class MGD_WordPress_MCP {
     public function register_custom_mcp_server( $adapter ) {
         if ( ! is_object( $adapter ) || ! method_exists( $adapter, 'create_server' ) ) { return; }
         $tools = array_merge( MGD_WordPress_MCP_Abilities::ability_names(), array( 'mgd-wordpress-mcp/environment-status' ) );
+        $tools = MGD_WordPress_MCP_Security::filter_mcp_tools( $tools );
         try {
             $result = $adapter->create_server(
                 'mgd-wordpress-mcp', 'mgd-wordpress-mcp/v1', 'mcp', 'MGD WordPress MCP',
