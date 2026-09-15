@@ -4,160 +4,23 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class MGD_WordPress_MCP_Updater {
     private static $instance = null;
     private $repo = MGD_WPMCP_GITHUB_REPO;
-
-    public static function instance() {
-        if ( null === self::$instance ) { self::$instance = new self(); }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        // Keep the proven transient integration used by MGD AI Kennzeichnung.
-        add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'inject_update' ) );
-        // Also support WordPress' Update URI provider hook. Both paths use the same validated release data.
-        add_filter( 'update_plugins_github.com', array( $this, 'update_uri_response' ), 10, 4 );
-        add_filter( 'plugins_api', array( $this, 'plugin_info' ), 20, 3 );
-        add_action( 'upgrader_process_complete', array( $this, 'clear_cache' ), 10, 2 );
-    }
-
-    private function cache_key() { return 'mgd_wpmcp_release_' . md5( $this->repo ); }
-
-    private function normalize_version( $tag ) {
-        if ( ! is_string( $tag ) ) { return ''; }
-        $version = ltrim( trim( $tag ), 'vV' );
-        return preg_match( '/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/', $version ) ? $version : '';
-    }
-
-    private function should_refresh_cached_release( $cached ) {
-        if ( ! is_array( $cached ) || empty( $cached['tag_name'] ) ) { return true; }
-        $cached_version = $this->normalize_version( $cached['tag_name'] );
-        // Critical: a cache containing the currently installed or an older release
-        // must never hide a release that was published after the cache was created.
-        return '' === $cached_version || ! version_compare( $cached_version, MGD_WPMCP_VERSION, '>' );
-    }
-
-    private function release() {
-        if ( ! MGD_WordPress_MCP::setting( 'github_updates', true ) ) { return array(); }
-
-        $cached = get_site_transient( $this->cache_key() );
-        if ( is_array( $cached ) && ! $this->should_refresh_cached_release( $cached ) ) {
-            return $cached;
-        }
-
-        $response = wp_safe_remote_get(
-            'https://api.github.com/repos/' . $this->repo . '/releases/latest',
-            array(
-                'timeout' => 10,
-                'headers' => array(
-                    'Accept' => 'application/vnd.github+json',
-                    'User-Agent' => 'MGD-WordPress-MCP/' . MGD_WPMCP_VERSION,
-                ),
-            )
-        );
-
-        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-            return array();
-        }
-
-        $data = json_decode( wp_remote_retrieve_body( $response ), true );
-        if ( ! is_array( $data ) || empty( $data['tag_name'] ) ) { return array(); }
-
-        $version = $this->normalize_version( $data['tag_name'] );
-        $package = $this->package_url( $data );
-        if ( '' === $version || '' === $package ) { return array(); }
-
-        set_site_transient( $this->cache_key(), $data, 6 * HOUR_IN_SECONDS );
-        return $data;
-    }
-
-    private function package_url( $release ) {
-        if ( empty( $release['assets'] ) || ! is_array( $release['assets'] ) ) { return ''; }
-        foreach ( $release['assets'] as $asset ) {
-            if ( ! isset( $asset['name'], $asset['browser_download_url'] ) || 'mgd-wordpress-mcp.zip' !== $asset['name'] ) { continue; }
-            $url = esc_url_raw( $asset['browser_download_url'] );
-            $parts = wp_parse_url( $url );
-            if ( ! is_array( $parts ) || 'https' !== ( $parts['scheme'] ?? '' ) || 'github.com' !== ( $parts['host'] ?? '' ) ) { return ''; }
-            $expected = '/MichaelGahnDESIGN/MGD_WordPress-MCP/releases/download/';
-            if ( 0 !== strpos( $parts['path'] ?? '', $expected ) ) { return ''; }
-            return $url;
-        }
-        return '';
-    }
-
-    private function build_update( $release ) {
-        if ( empty( $release['tag_name'] ) ) { return null; }
-        $version = $this->normalize_version( $release['tag_name'] );
-        $package = $this->package_url( $release );
-        if ( '' === $version || '' === $package || ! version_compare( $version, MGD_WPMCP_VERSION, '>' ) ) { return null; }
-
-        return (object) array(
-            'id' => 'https://github.com/' . $this->repo,
-            'slug' => 'mgd-wordpress-mcp',
-            'plugin' => MGD_WPMCP_BASENAME,
-            'new_version' => $version,
-            'version' => $version,
-            'url' => 'https://github.com/' . $this->repo,
-            'package' => $package,
-            'tested' => '7.1',
-            'requires' => '6.9',
-            'requires_php' => '7.4',
-            'icons' => array(
-                '1x' => MGD_WPMCP_URL . 'assets/branding/plugin-icon.svg',
-                '2x' => MGD_WPMCP_URL . 'assets/branding/plugin-icon.svg',
-            ),
-        );
-    }
-
-    public function inject_update( $transient ) {
-        if ( ! is_object( $transient ) || empty( $transient->checked ) ) { return $transient; }
-        $update = $this->build_update( $this->release() );
-        if ( null === $update ) { return $transient; }
-        if ( ! isset( $transient->response ) || ! is_array( $transient->response ) ) { $transient->response = array(); }
-        $transient->response[ MGD_WPMCP_BASENAME ] = $update;
-        return $transient;
-    }
-
-    public function update_uri_response( $update, $plugin_data, $plugin_file, $locales ) {
-        if ( MGD_WPMCP_BASENAME !== $plugin_file ) { return $update; }
-        $candidate = $this->build_update( $this->release() );
-        if ( null === $candidate ) { return false; }
+    public static function instance(){ if(null===self::$instance){self::$instance=new self();} return self::$instance; }
+    private function __construct(){ add_filter('pre_set_site_transient_update_plugins',array($this,'inject_update')); add_filter('update_plugins_github.com',array($this,'update_uri_response'),10,4); add_filter('plugins_api',array($this,'plugin_info'),20,3); add_action('upgrader_process_complete',array($this,'clear_cache'),10,2); }
+    private function cache_key(){return 'mgd_wpmcp_release_'.md5($this->repo);}
+    private function normalize_version($tag){if(!is_string($tag)){return '';} $v=ltrim(trim($tag),'vV'); return preg_match('/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/',$v)?$v:'';}
+    private function should_refresh_cached_release($cached){if(!is_array($cached)||empty($cached['tag_name'])){return true;} $v=$this->normalize_version($cached['tag_name']); return ''===$v||!version_compare($v,MGD_WPMCP_VERSION,'>');}
+    private function release(){if(!MGD_WordPress_MCP::setting('github_updates',true)){return array();} $cached=get_site_transient($this->cache_key()); if(is_array($cached)&&!$this->should_refresh_cached_release($cached)){return $cached;} $r=wp_safe_remote_get('https://api.github.com/repos/'.$this->repo.'/releases/latest',array('timeout'=>10,'headers'=>array('Accept'=>'application/vnd.github+json','User-Agent'=>'MGD-WordPress-MCP/'.MGD_WPMCP_VERSION))); if(is_wp_error($r)||200!==wp_remote_retrieve_response_code($r)){return array();} $d=json_decode(wp_remote_retrieve_body($r),true); if(!is_array($d)||empty($d['tag_name'])||''===$this->normalize_version($d['tag_name'])||''===$this->package_url($d)){return array();} set_site_transient($this->cache_key(),$d,6*HOUR_IN_SECONDS); return $d;}
+    private function package_url($release){if(empty($release['assets'])||!is_array($release['assets'])){return '';} foreach($release['assets'] as $a){if(!isset($a['name'],$a['browser_download_url'])||'mgd-wordpress-mcp.zip'!==$a['name']){continue;} $url=esc_url_raw($a['browser_download_url']); $p=wp_parse_url($url); if(!is_array($p)||'https'!==($p['scheme']??'')||'github.com'!==($p['host']??'')){return '';} if(0!==strpos($p['path']??'','/MichaelGahnDESIGN/MGD_WordPress-MCP/releases/download/')){return '';} return $url;} return '';}
+    private function branding(){return array('icons'=>array('1x'=>MGD_WPMCP_URL.'assets/branding/robot-icon.svg','2x'=>MGD_WPMCP_URL.'assets/branding/robot-icon.svg'),'banners'=>array('low'=>MGD_WPMCP_URL.'assets/branding/plugin-banner.svg','high'=>MGD_WPMCP_URL.'assets/branding/plugin-banner.svg'));}
+    private function build_update($release){if(empty($release['tag_name'])){return null;} $v=$this->normalize_version($release['tag_name']); $pkg=$this->package_url($release); if(''===$v||''===$pkg||!version_compare($v,MGD_WPMCP_VERSION,'>')){return null;} $b=$this->branding(); return(object)array('id'=>'https://github.com/'.$this->repo,'slug'=>'mgd-wordpress-mcp','plugin'=>MGD_WPMCP_BASENAME,'new_version'=>$v,'version'=>$v,'url'=>'https://github.com/'.$this->repo,'package'=>$pkg,'tested'=>'7.1','requires'=>'6.9','requires_php'=>'7.4','icons'=>$b['icons'],'banners'=>$b['banners']);}
+    public function inject_update($t){if(!is_object($t)||empty($t->checked)){return $t;} $u=$this->build_update($this->release()); if(null===$u){return $t;} if(!isset($t->response)||!is_array($t->response)){$t->response=array();} $t->response[MGD_WPMCP_BASENAME]=$u; return $t;}
+    public function update_uri_response($update,$plugin_data,$plugin_file,$locales){if(MGD_WPMCP_BASENAME!==$plugin_file){return $update;} $u=$this->build_update($this->release()); if(null===$u){return false;} return array('id'=>$u->id,'slug'=>$u->slug,'version'=>$u->new_version,'new_version'=>$u->new_version,'url'=>$u->url,'package'=>$u->package,'tested'=>$u->tested,'requires'=>$u->requires,'requires_php'=>$u->requires_php,'icons'=>$u->icons,'banners'=>$u->banners);}
+    private function sections($release){$legal='<h3>Impressum gemäß § 5 DDG</h3><p><strong>Michael Gahn DESIGN</strong><br>Inhaber: Michael Gahn<br>Dr.-Theodor-Brugsch-Str. 12<br>08529 Plauen<br>Deutschland</p><p>Telefon: +49 (0) 151 59156639<br>E-Mail: Anfrage@Michael-Gahn.de<br>Website: <a href="https://Michael-Gahn.de" target="_blank" rel="noopener noreferrer">Michael-Gahn.de</a></p><p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: <strong>DE288143343</strong><br>Steuernummer: <strong>223/222/02451</strong></p><p>Lizenz: GPL-2.0-or-later.</p>';
         return array(
-            'id' => $candidate->id,
-            'slug' => $candidate->slug,
-            'version' => $candidate->new_version,
-            'new_version' => $candidate->new_version,
-            'url' => $candidate->url,
-            'package' => $candidate->package,
-            'tested' => $candidate->tested,
-            'requires' => $candidate->requires,
-            'requires_php' => $candidate->requires_php,
-            'icons' => $candidate->icons,
-        );
-    }
-
-    public function plugin_info( $result, $action, $args ) {
-        if ( 'plugin_information' !== $action || ! is_object( $args ) || 'mgd-wordpress-mcp' !== ( $args->slug ?? '' ) ) { return $result; }
-        $release = $this->release();
-        $version = ! empty( $release['tag_name'] ) ? $this->normalize_version( $release['tag_name'] ) : MGD_WPMCP_VERSION;
-        return (object) array(
-            'name' => 'MGD WordPress MCP',
-            'slug' => 'mgd-wordpress-mcp',
-            'version' => $version ?: MGD_WPMCP_VERSION,
-            'author' => '<a href="https://Michael-Gahn.de">Michael Gahn DESIGN</a>',
-            'homepage' => 'https://Michael-Gahn.de',
-            'requires' => '6.9',
-            'tested' => '7.1',
-            'requires_php' => '7.4',
-            'download_link' => $this->package_url( $release ),
-            'icons' => array( '1x' => MGD_WPMCP_URL . 'assets/branding/plugin-icon.svg', '2x' => MGD_WPMCP_URL . 'assets/branding/plugin-icon.svg' ),
-            'sections' => array(
-                'description' => '<h2>WordPress trifft KI</h2><p>MGD WordPress MCP verbindet WordPress kontrolliert mit MCP-kompatiblen KI-Agenten.</p><h3>Privacy by Default</h3><p>Die Admin-Oberfläche lädt keine externen Fonts, Icon-CDNs oder JavaScript-CDNs.</p>',
-                'installation' => '<p>Plugin installieren, Einrichtungs-Assistent starten, MCP Adapter prüfen und nur benötigte Rechte aktivieren.</p>',
-                'changelog' => ! empty( $release['body'] ) ? wp_kses_post( nl2br( $release['body'] ) ) : '<p>Siehe GitHub Releases.</p>',
-            ),
-        );
-    }
-
-    public function clear_cache( $upgrader, $options ) {
-        if ( isset( $options['type'] ) && 'plugin' === $options['type'] ) { delete_site_transient( $this->cache_key() ); }
-    }
+        'description'=>'<h2>WordPress trifft KI – sicher, kontrolliert und verständlich.</h2><p>MGD WordPress MCP verbindet deine WordPress-Website über das Model Context Protocol mit kompatiblen KI-Agenten. Der Fokus liegt nicht auf unbeschränktem Fernzugriff, sondern auf klaren Werkzeugen, WordPress-Benutzerrechten und zusätzlichen Freigaben.</p><h3>Was das Plugin bietet</h3><ul><li><strong>Inhalte:</strong> Beiträge und Seiten lesen, als Entwurf erstellen und kontrolliert bearbeiten.</li><li><strong>Divi 5:</strong> Builder erkennen und freigegebene Layoutänderungen mit Revisionen vorbereiten.</li><li><strong>SEO:</strong> Integrationen für Rank Math und Yoast.</li><li><strong>WPForms:</strong> kontrollierte Anbindung an Formularfunktionen.</li><li><strong>Backups:</strong> UpdraftPlus-Backups über explizite Freigaben anstoßen.</li><li><strong>Wartung:</strong> einzelne Plugin- und Theme-Updates kontrolliert ausführen.</li><li><strong>Audit-Log:</strong> Agentenaktionen lokal nachvollziehen.</li></ul><h3>Sicher & kontrollierbar</h3><p>Schreibzugriff, Divi-Schreibzugriff, externe Medienimporte und Wartungsaktionen sind getrennt freigebbar. WordPress-Capabilities bleiben maßgeblich. Riskante Aktionen erhalten zusätzliche Schutzschichten.</p><h3>Privacy by Default</h3><p>Die Admin-Oberfläche verwendet lokale Assets und System-/WordPress-Schriften. Keine Google Fonts, keine Icon-CDNs, keine JavaScript-CDNs, keine Telemetrie und kein Tracking.</p><h3>Open Source</h3><p><a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP" target="_blank" rel="noopener noreferrer">GitHub Repository</a> · <a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki" target="_blank" rel="noopener noreferrer">Dokumentation & Wiki</a> · <a href="https://Michael-Gahn.de" target="_blank" rel="noopener noreferrer">Michael Gahn DESIGN</a></p>'.$legal,
+        'installation'=>'<h2>Installation</h2><ol><li>Die Release-Datei <code>mgd-wordpress-mcp.zip</code> installieren und aktivieren.</li><li>Den Einrichtungs-Assistenten öffnen.</li><li>Builder und offiziellen WordPress MCP Adapter prüfen.</li><li>Ein separates WordPress Application Password für den MCP-Client anlegen.</li><li>Nur die tatsächlich benötigten Schreib- und Wartungsrechte freigeben.</li></ol><h3>MCP-Endpunkt</h3><p><code>https://DEINE-DOMAIN.TLD/wp-json/mgd-wordpress-mcp/v1/mcp</code></p><p>Zugangsdaten gehören in den Secret-Speicher des MCP-Clients und nicht in Dokumentationen oder Repositorys.</p>',
+        'faq'=>'<h2>Häufige Fragen</h2><h3>Kann ein Agent danach alles in WordPress machen?</h3><p>Nein. Das ist bewusst nicht das Sicherheitsmodell. WordPress-Rechte und die zusätzlichen Plugin-Freigaben bestimmen, welche Funktionen verfügbar sind.</p><h3>Funktioniert es mit Divi 5?</h3><p>Divi 5 wird erkannt und besitzt eine eigene kontrollierte Integration. Für Agenten wird zusätzlich der MGD Divi 5 Dev Skill empfohlen.</p><h3>Kann WordPress das Plugin selbst aktualisieren?</h3><p>Ja. Der GitHub-Self-Updater wurde mit dem Versionssprung 0.2.7 auf 0.2.8 real End-to-End getestet.</p><h3>Werden externe Fonts oder Tracker geladen?</h3><p>Nein. Die Plugin-Oberfläche arbeitet Privacy by Default mit lokalen Assets.</p>',
+        'changelog'=>!empty($release['body'])?wp_kses_post(nl2br($release['body'])):'<p>Siehe GitHub Releases.</p>');}
+    public function plugin_info($result,$action,$args){if('plugin_information'!==$action||!is_object($args)||'mgd-wordpress-mcp'!==($args->slug??'')){return $result;} $r=$this->release(); $v=!empty($r['tag_name'])?$this->normalize_version($r['tag_name']):MGD_WPMCP_VERSION; $b=$this->branding(); return(object)array('name'=>'MGD WordPress MCP','slug'=>'mgd-wordpress-mcp','version'=>$v?:MGD_WPMCP_VERSION,'author'=>'<a href="https://Michael-Gahn.de">Michael Gahn DESIGN</a>','author_profile'=>'https://Michael-Gahn.de','homepage'=>'https://github.com/'.$this->repo,'requires'=>'6.9','tested'=>'7.1','requires_php'=>'7.4','download_link'=>$this->package_url($r),'icons'=>$b['icons'],'banners'=>$b['banners'],'sections'=>$this->sections($r));}
+    public function clear_cache($upgrader,$options){if(isset($options['type'])&&'plugin'===$options['type']){delete_site_transient($this->cache_key());}}
 }
