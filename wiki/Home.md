@@ -2,79 +2,126 @@
 
 Willkommen im Wiki von **MGD WordPress MCP**.
 
-MGD WordPress MCP verbindet WordPress über die **WordPress Abilities API** und den offiziellen **WordPress MCP Adapter** mit MCP-kompatiblen Agenten wie Claude Code, Codex und anderen Clients. Ziel ist eine nachvollziehbare, granular freigegebene Werkzeugschicht statt eines unkontrollierten Administratorzugriffs.
+MGD WordPress MCP verbindet WordPress über die WordPress Abilities API und den offiziellen WordPress MCP Adapter mit MCP-kompatiblen Agenten wie Claude Code, Codex und anderen Clients. Ziel ist eine nachvollziehbare, granular freigegebene Werkzeugschicht statt eines unkontrollierten Administratorzugriffs.
 
-## Aktueller Entwicklungsstand: 0.2.2
+## Aktueller Entwicklungsstand: 0.2.8
 
-Der Plugin-Kern ist implementiert und wurde bereits auf einer realen WordPress-7.1-/PHP-8.5-Installation aktiviert. Dort wurden Abilities API, MCP Adapter, HTTPS und Divi 5 erfolgreich erkannt.
+Der Plugin-Kern läuft auf einer realen WordPress-7.1-/PHP-8.5.x-Testinstallation. Abilities API, MCP Adapter, HTTPS und Divi 5 werden dort erkannt.
 
-Version 0.2.1 brachte die modernisierte, lokal ausgelieferte Admin-Oberfläche. Version **0.2.2** korrigiert die WordPress-Updateerkennung, nachdem der erste reale Update-Test gezeigt hatte, dass WordPress den vorhandenen GitHub-Release noch nicht als Update angeboten hat.
+Besonders wichtig: Die komplette **GitHub → WordPress Self-Update-Kette ist erfolgreich End-to-End getestet**. Eine installierte Version 0.2.7 erkannte den nachträglich veröffentlichten Release 0.2.8 automatisch über WordPress.
 
-Die aktuelle Implementierung umfasst WordPress-Inhalte und Medien, Rank Math/Yoast, eine konservative Divi-5-Integration, WPForms-Bridge, UpdraftPlus-Backup-Trigger, kontrollierte Plugin- und Theme-Updates, Builder-Erkennung, Frontend-Schutz-Erkennung, Audit-Log und GitHub-basierte Self-Updates.
+WordPress zeigte dabei Plugin-Icon, installierte Version, neue Version, Versionsdetails und Kompatibilitätsinformation korrekt an.
 
-Schreibzugriffe sind standardmäßig deaktiviert. Divi-Schreibzugriff, externe Medienimporte und Wartungsaktionen besitzen zusätzliche Freigaben.
+## Bereits real verifiziert
 
-Der Base64-Direktupload bleibt **fail-closed deaktiviert**, bis die Dateitypvalidierung vollständig gehärtet ist.
+- [x] Installation und Aktivierung.
+- [x] WordPress 7.1.
+- [x] PHP 8.5.x auf der Testinstallation.
+- [x] Abilities API erkannt.
+- [x] offizieller MCP Adapter erkannt.
+- [x] HTTPS erkannt.
+- [x] Divi 5 erkannt.
+- [x] möglicher Frontend-Schutz erkannt.
+- [x] automatischer GitHub Release-Build.
+- [x] Release-Asset `mgd-wordpress-mcp.zip`.
+- [x] WordPress erkennt einen nachträglich veröffentlichten neuen Release.
+- [x] Self-Update Discovery 0.2.7 → 0.2.8.
 
-## Was ist bereits real geprüft?
+## Nächste reale Tests
 
-- Plugin-Installation und Aktivierung auf WordPress 7.1.
-- PHP 8.5.x auf der Testinstallation.
-- Abilities API erkannt.
-- offizieller MCP Adapter erkannt.
-- HTTPS erkannt.
-- Divi 5 erkannt.
-- möglicher Frontend-Schutz erkannt.
-- GitHub Release 0.2.0 gebaut.
-- GitHub Release 0.2.1 inklusive `mgd-wordpress-mcp.zip` gebaut.
-- CI für mehrere PHP-Versionen eingerichtet.
+- [ ] MCP-Handshake mit Claude Code.
+- [ ] MCP-Handshake mit Codex.
+- [ ] Read-only Website-/Content-Abfrage.
+- [ ] kontrollierter Content-Schreibtest.
+- [ ] Audit-Log des Schreibtests kontrollieren.
+- [ ] Divi-5-Lese-/Schreibworkflow inklusive Revision.
+- [ ] WPForms.
+- [ ] Rank Math/Yoast.
+- [ ] UpdraftPlus-Backup und Abschlusskontrolle.
+- [ ] kontrolliertes Plugin-Update über MCP.
+- [ ] Netzwerkprüfung der Admin-UI auf externe UI-Ressourcen.
 
-## Was muss noch real getestet werden?
-
-- korrigierte WordPress-Updateerkennung aus Version 0.2.2.
-- MCP-Handshake mit Claude Code.
-- MCP-Handshake mit Codex.
-- Content-Lese-/Schreibworkflow.
-- Divi-5-Lese-/Schreibworkflow inklusive Revision.
-- WPForms.
-- Rank Math/Yoast.
-- UpdraftPlus-Backup und Abschlusskontrolle.
-- kontrolliertes Plugin-Update über MCP.
-- Netzwerkprüfung der Admin-UI auf externe Ressourcen.
-
-Die vollständige, sehr detaillierte Checkliste steht in [`../agent-readme.md`](../agent-readme.md).
+Die vollständige technische Checkliste steht in [`../agent-readme.md`](../agent-readme.md).
 
 ## Privacy by Default
 
 Die Admin-Oberfläche lädt keine Google Fonts, Font-CDNs, Icon-CDNs, JavaScript-CDNs oder extern eingebetteten UI-Bilder. Schrift wird über lokale System-/WordPress-Fonts dargestellt. Branding-Assets liegen im Plugin.
 
-Die optionale GitHub-Release-Prüfung ist eine getrennte Server-zu-Server-Funktion und kann deaktiviert werden.
+Es gibt keine Telemetrie, keine Werbung und kein Tracking.
+
+Die optionale GitHub-Release-Prüfung ist eine funktionale Server-zu-Server-Verbindung und kann deaktiviert werden.
+
+## Sicherheitsprinzip
+
+Schreibzugriffe sind standardmäßig deaktiviert. Divi-Schreibzugriff, externe Medienimporte und Wartungsaktionen besitzen zusätzliche Freigaben. WordPress-Capabilities bleiben maßgeblich.
+
+Riskante Aktionen werden nicht allein deshalb erlaubt, weil ein MCP-Client verbunden ist. Das Plugin kombiniert WordPress-Rechte, eigene Freigaben, Bestätigungstoken und Auditierung.
+
+Der Base64-Direktupload bleibt fail-closed deaktiviert, bis die Dateitypvalidierung vollständig gehärtet ist.
 
 ## Technischer Unterbau
 
-MGD WordPress MCP setzt WordPress 6.9 oder neuer voraus. Der Endpoint lautet:
+MGD WordPress MCP setzt WordPress 6.9 oder neuer und PHP 7.4 oder neuer voraus.
+
+Der Endpoint lautet:
 
 ```text
 https://DEINE-DOMAIN.TLD/wp-json/mgd-wordpress-mcp/v1/mcp
 ```
 
-Für Remote-Zugriffe werden HTTPS, ein eigener WordPress-Benutzer mit minimal erforderlichen Rechten und ein ausschließlich für MCP verwendetes Application Password empfohlen.
+Für Remote-Zugriffe werden HTTPS, ein separater WordPress-Benutzer mit minimal erforderlichen Rechten und ein ausschließlich für den jeweiligen MCP-Client verwendetes Application Password empfohlen.
 
-## Releases und WordPress-Updates
+Secrets dürfen nicht in GitHub, Dokumentationen, Screenshots oder Chats gespeichert werden.
 
-Ein veröffentlichter GitHub Release muss das Asset `mgd-wordpress-mcp.zip` enthalten. Der Release-Workflow prüft Git-Tag, Plugin-Version, `Stable tag` und PHP-Syntax.
+## Builder
 
-Der Updater von 0.2.2 erzeugt vollständige WordPress-Update- und `no_update`-Metadaten unabhängig davon, ob WordPress seine interne `checked`-Liste beim Filteraufruf bereits vollständig aufgebaut hat.
+Der Einrichtungs-Assistent berücksichtigt Divi 5, Elementor, Gutenberg, Bricks, Beaver Builder und ein manuell definierbares anderes System.
+
+Für Divi 5 empfiehlt MGD WordPress MCP zusätzlich den MGD Divi 5 Dev Skill. Das Plugin installiert lokale Agent-Skills nicht ungefragt auf einem Benutzerrechner.
+
+## Frontend-Schutz
+
+Typische Shield-, Passwort-, Restricted-Access-, Maintenance- und Coming-Soon-Lösungen können heuristisch erkannt werden. Wird ein Agent bei einer visuellen Prüfung tatsächlich blockiert, soll er den autorisierten Nutzer nach dem legitimen Entsperrweg fragen.
+
+MGD WordPress MCP umgeht keine Schutzmechanismen und speichert keine PINs oder Passwörter im Audit-Log.
+
+## Self-Updater: erfolgreich verifiziert
+
+Ein veröffentlichter GitHub Release muss das Asset
+
+```text
+mgd-wordpress-mcp.zip
+```
+
+enthalten.
+
+Der Release-Workflow prüft Versionsmetadaten und PHP-Syntax und baut anschließend die installierbare ZIP mit stabilem Plugin-Ordner.
+
+### Der erfolgreiche Live-Test
+
+Am 15. September 2026 lief Version 0.2.7 auf der WordPress-Testinstallation. Anschließend wurde v0.2.8 auf GitHub veröffentlicht und das Release-Asset automatisch erzeugt. Nach **Dashboard → Aktualisierungen → Erneut überprüfen** erkannte WordPress 0.2.8 automatisch als verfügbares Plugin-Update.
+
+Damit ist die Discovery-Kette real bestätigt.
+
+### Die Fehler der frühen Versionen
+
+Die ersten Implementierungen verließen sich zu stark auf bestimmte Zustände des WordPress-Update-Transients. Danach zeigte ein weiterer Test, dass ein Release-Cache eine gerade neu veröffentlichte Version verdecken konnte.
+
+0.2.7 wurde deshalb am bereits funktionierenden Updater von MGD AI Kennzeichnung WordPress ausgerichtet. Der klassische WordPress-Update-Transient wird unterstützt, die Update-URI-Integration bleibt ergänzend bestehen und ein Cache wird neu abgefragt, wenn er keine Version enthält, die neuer als die installierte Version ist.
 
 Details: [Updates und Wartung](Updates-und-Wartung.md).
 
-## Einstieg
+## Dokumentationsstruktur
 
-Neue Nutzer beginnen mit [Installation und Voraussetzungen](Installation-und-Voraussetzungen.md), danach [Einrichtungs-Assistent](Einrichtungs-Assistent.md) und [Sicherheit und Berechtigungen](Sicherheit-und-Berechtigungen.md).
+Neue Nutzer beginnen mit:
 
-Weitere Dokumentation:
+1. [Installation und Voraussetzungen](Installation-und-Voraussetzungen.md)
+2. [Einrichtungs-Assistent](Einrichtungs-Assistent.md)
+3. [Sicherheit und Berechtigungen](Sicherheit-und-Berechtigungen.md)
+4. [MCP und Architektur](MCP-und-Architektur.md)
 
-* [MCP und Architektur](MCP-und-Architektur.md)
+Danach stehen folgende Themen bereit:
+
 * [Divi 5 Integration](Divi-5-Integration.md)
 * [Builder und Agent Skills](Builder-und-Agent-Skills.md)
 * [Frontend-Sperren und Zugang](Frontend-Sperren-und-Zugang.md)
@@ -89,7 +136,7 @@ Weitere Dokumentation:
 
 ## Lizenz
 
-**GPL-2.0-or-later**.
+GPL-2.0-or-later.
 
 ## Impressum gemäß § 5 DDG
 
