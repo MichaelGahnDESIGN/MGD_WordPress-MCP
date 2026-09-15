@@ -30,6 +30,7 @@ require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-audit.php';
 require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-environment.php';
 require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-abilities.php';
 require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-environment-ability.php';
+require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-security.php';
 require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-wizard.php';
 require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-admin.php';
 require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp-updater.php';
