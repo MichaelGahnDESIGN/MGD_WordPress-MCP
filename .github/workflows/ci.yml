@@ -1,0 +1,42 @@
+name: Validate WordPress plugin
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.1', '8.3', '8.4']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: PHP syntax check
+        shell: bash
+        run: |
+          set -euo pipefail
+          find mgd-wordpress-mcp -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Validate version metadata
+        if: matrix.php == '8.3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          PLUGIN_VERSION="$(sed -n 's/^ \* Version: //p' mgd-wordpress-mcp/mgd-wordpress-mcp.php | head -n1 | tr -d '\r')"
+          STABLE_TAG="$(sed -n 's/^Stable tag: //p' mgd-wordpress-mcp/readme.txt | head -n1 | tr -d '\r')"
+          test -n "${PLUGIN_VERSION}"
+          test "${PLUGIN_VERSION}" = "${STABLE_TAG}"
