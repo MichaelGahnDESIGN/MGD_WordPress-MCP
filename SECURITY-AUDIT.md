@@ -4,40 +4,31 @@ Stand: 15. September 2026
 
 ## Ergebnis
 
-MGD WordPress MCP besitzt bereits ein solides Sicherheitsgrundgerüst, ist in Version 0.2.0 aber **noch nicht als produktionsreifes Release freigegeben**. Vor dem ersten öffentlichen Release müssen die unten als Blocker markierten Punkte abgeschlossen und auf einer echten WordPress-Testinstallation geprüft werden.
+MGD WordPress MCP 0.2.0 ist auf Code-Ebene als **Release Candidate** vorbereitet. Der zuvor beanstandete Base64-Medienupload ist fail-closed deaktiviert und wird weder als WordPress Ability noch als MCP-Tool angeboten. Die GitHub-CI prüft die PHP-Syntax auf PHP 7.4, 8.1, 8.3 und 8.4 sowie die Konsistenz von Plugin-Version und `Stable tag`.
 
-## Geprüfte Bereiche
+Ein realer End-to-End-Test auf einer WordPress-Testinstallation bleibt zusätzlich empfohlen, weil Hosting, WordPress MCP Adapter, Security-Plugins und Builder-Plugins nicht vollständig durch statische Codeprüfung simuliert werden können.
 
-### Berechtigungen
+## Sicherheitsstatus
 
-Positiv:
+Schreibzugriff ist standardmäßig deaktiviert. Divi-Schreibzugriff und Wartungsaktionen besitzen eigene Freigaben. WordPress-Capabilities werden zusätzlich geprüft. Inhaltslöschung verwendet nur den Papierkorb. Plugin- und Theme-Updates verlangen explizite Bestätigungswerte. Divi-Schreibvorgänge verwenden Revisionen und unterstützen Konfliktprüfung.
 
-- Schreibzugriff ist standardmäßig deaktiviert.
-- Divi-Schreibzugriff und Wartungsaktionen besitzen eigene Freigaben.
-- WordPress-Capabilities werden zusätzlich geprüft.
-- Inhaltslöschung nutzt nur den Papierkorb.
-- Plugin- und Theme-Updates verlangen explizite Bestätigungswerte.
-- Divi-Schreibvorgänge verwenden Revisionen und unterstützen Konfliktprüfung.
+MGD WordPress MCP speichert keine Application Passwords. Die Authentifizierung wird an WordPress und den offiziellen WordPress MCP Adapter delegiert. Für produktive Websites gelten HTTPS, ein eigener MCP-Benutzer, minimale Rollenrechte und ein widerrufbares Application Password als empfohlener Mindeststandard.
 
-### Authentifizierung
+Die Erkennung typischer Shield-, Passwort-, Restricted-Access-, Maintenance- und Coming-Soon-Plugins ist rein diagnostisch. PINs und Passwörter werden nicht ausgelesen oder protokolliert.
 
-MGD WordPress MCP speichert keine Application Passwords. Die Authentifizierung wird an WordPress beziehungsweise den offiziellen WordPress MCP Adapter delegiert.
+Das Audit-Log ist lokal und größenbegrenzt. Das Plugin enthält keine Telemetrie, Werbung oder Tracker. GitHub wird nur für die optionale Updateprüfung kontaktiert. Eine vollständige Datenlöschung bei Deinstallation ist über `MGD_WPMCP_PURGE_ON_UNINSTALL` möglich.
 
-Für produktive Websites gelten als Mindeststandard HTTPS, ein eigener MCP-Benutzer, minimale Rollenrechte und ein eigenes widerrufbares Application Password.
+## Base64-Medienupload
 
-### Frontend-Sperren
+Die Ability `mgd-wordpress-mcp/upload-media-base64` ist in Version 0.2.0 aus Sicherheitsgründen vollständig deaktiviert. Die zentrale Security-Klasse deregistriert sie nach der Ability-Registrierung und entfernt sie zusätzlich aus der MCP-Tool-Liste. Damit ist der bekannte MIME-/Dateityp-Risikopfad fail-closed und extern nicht erreichbar.
 
-Die Erkennung typischer Shield-, Passwort-, Restricted-Access-, Maintenance- und Coming-Soon-Plugins ist rein diagnostisch. PINs und Passwörter werden nicht ausgelesen. Agenten sollen bei einer tatsächlichen Blockade nach dem legitimen Entsperrweg fragen.
+Eine spätere Version darf diese Ability erst wieder aktivieren, wenn tatsächlicher Dateityp, Dateiendung und erlaubter MIME-Typ über die WordPress-Upload-Pipeline verifiziert werden.
 
-### Audit-Log
+## CI
 
-Das Audit-Log ist lokal und größenbegrenzt. Es protokolliert technische Aktionsdaten. Geheimnisse dürfen nicht in Zusammenfassungen geschrieben werden.
+Der Workflow `.github/workflows/ci.yml` läuft bei Änderungen an `main` und bei Pull Requests. Er prüft PHP 7.4, 8.1, 8.3 und 8.4. Zusätzlich werden Plugin-Version und `Stable tag` abgeglichen.
 
-### Datenschutz
-
-Das Plugin enthält keine Telemetrie, Werbung oder Tracker. GitHub wird nur für die optionale Updateprüfung kontaktiert. Welche Website-Daten an einen KI-Anbieter übertragen werden, hängt vom verbundenen MCP-Client und dessen Auftrag ab.
-
-Eine optionale vollständige Datenlöschung bei Deinstallation ist über `MGD_WPMCP_PURGE_ON_UNINSTALL` vorgesehen.
+Der erste vollständige CI-Lauf für 0.2.0 wurde erfolgreich abgeschlossen.
 
 ## Release- und Update-System
 
@@ -45,59 +36,19 @@ Der WordPress-Updater prüft `releases/latest` im öffentlichen GitHub-Repositor
 
 Der Release-Workflow prüft vor dem Bau:
 
-- Git-Tag entspricht Plugin-Version,
-- Git-Tag entspricht `Stable tag`,
-- alle PHP-Dateien bestehen `php -l`,
-- die installierbare ZIP enthält den stabilen Ordner `mgd-wordpress-mcp`.
+* Git-Tag entspricht Plugin-Version
+* Git-Tag entspricht `Stable tag`
+* alle PHP-Dateien bestehen `php -l`
+* die installierbare ZIP enthält den stabilen Ordner `mgd-wordpress-mcp`
 
-**Wichtig:** Ohne veröffentlichtes GitHub Release kann WordPress kein neues Update finden. Zum Zeitpunkt dieses Audits existiert noch kein Release. Der erste produktive Release muss deshalb als Tag/Release `v0.2.0` mit dem Asset `mgd-wordpress-mcp.zip` veröffentlicht werden.
+Für Version 0.2.0 muss der Release-Tag `v0.2.0` heißen. Der Workflow erzeugt daraus das Asset `mgd-wordpress-mcp.zip`. Erst ein veröffentlichtes GitHub Release ermöglicht dem integrierten Updater, diese Version über WordPress zu verteilen.
 
-## BLOCKER 1: Base64-Medienupload härten
+## Empfohlener End-to-End-Test
 
-Die Ability `upload-media-base64` prüft aktuell den vom Client angegebenen MIME-Typ gegen die WordPress-Liste erlaubter MIME-Typen. Vor einer produktiven Freigabe muss zusätzlich der tatsächliche Dateityp anhand der Dateidaten beziehungsweise der erzeugten temporären Datei geprüft und gegen Dateiendung und erlaubten MIME-Typ abgeglichen werden.
+Vor dem Einsatz auf vielen Kundenwebsites sollte mindestens eine echte WordPress-6.9+-Installation folgende Punkte prüfen: Aktivierung, Setup-Assistent, MCP Adapter 0.6.1 oder neuer, Application Password, Read-only-Zugriff, Schreibfreigabe, Entwurf erstellen, Medienimport per URL, SEO, Divi-Lesen und revisionsgesichertes Schreiben, WPForms, UpdraftPlus, Updateprüfung, Frontend-Sperren und Audit-Log.
 
-Bis diese Prüfung implementiert und getestet ist, sollte `upload-media-base64` auf produktiven Kundenwebsites **nicht verwendet werden**.
+Der offizielle WordPress MCP Adapter 0.6.1 ist zum Zeitpunkt dieses Audits die aktuelle stabile Version und setzt WordPress 6.9 oder neuer voraus.
 
-Empfohlene technische Lösung:
+## Einordnung
 
-1. Base64 dekodieren.
-2. Daten in eine temporäre Datei schreiben.
-3. `wp_check_filetype_and_ext()` beziehungsweise die WordPress-Upload-Pipeline verwenden.
-4. erkannte Endung und MIME-Typ gegen `get_allowed_mime_types()` prüfen.
-5. bei Abweichung oder unbekanntem Typ abbrechen.
-6. erst danach in die Mediathek übernehmen.
-
-## BLOCKER 2: Realer Integrationstest
-
-Vor dem ersten produktiven Release muss eine frische Testinstallation mindestens folgende Matrix durchlaufen:
-
-- Aktivierung WordPress 6.9+
-- Deaktivierung und Reaktivierung
-- Setup-Assistent
-- MCP Adapter vorhanden / nicht vorhanden
-- Read-only MCP-Benutzer
-- Editor mit Schreibfreigabe
-- Administrator mit Wartungsfreigabe
-- falsches und widerrufenes Application Password
-- HTTP statt HTTPS Warnfall
-- Beitrag lesen, Entwurf erstellen und ändern
-- Papierkorb-Aktion
-- Medienimport per URL
-- Base64-Upload nach dessen Härtung
-- Rank Math und Yoast getrennt
-- Divi lesen und revisionsgesichert ändern
-- WPForms read/write abhängig von dessen Freigabe
-- UpdraftPlus Backup-Trigger
-- Plugin-Update mit und ohne Bestätigung
-- Theme-Update mit und ohne Bestätigung
-- Frontend-Sperre
-- Audit-Log
-- Update von einer älteren Testversion auf 0.2.0
-
-## BLOCKER 3: Updateanzeige praktisch testen
-
-Nach Veröffentlichung von `v0.2.0` muss mit einer installierten älteren Testversion geprüft werden, dass WordPress unter **Dashboard → Aktualisierungen** und **Plugins** die neue Version meldet und die ZIP korrekt über den integrierten WordPress-Upgrader installiert.
-
-## Nicht als Sicherheitsgarantie verstehen
-
-Dieses Audit ist ein Code- und Architekturreview des aktuellen Repository-Stands. Es ersetzt keinen Penetrationstest und keinen realen WordPress-Integrationstest. Insbesondere die Kombination aus WordPress-Version, MCP Adapter, Hosting, Security-Plugins und externem MCP-Client muss vor dem Einsatz auf Kundenwebsites praktisch getestet werden.
+Dieses Audit ist ein Code-, Architektur- und CI-Review. Es ist keine Garantie gegen jede Sicherheitslücke und ersetzt keinen Penetrationstest. Sicherheitsrelevante Änderungen sollten weiterhin über `SECURITY.md` gemeldet werden.
