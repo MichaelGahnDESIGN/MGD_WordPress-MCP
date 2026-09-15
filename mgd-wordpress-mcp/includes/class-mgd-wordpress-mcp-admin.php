@@ -9,7 +9,18 @@ final class MGD_WordPress_MCP_Admin {
     public function sanitize($input){$defaults=MGD_WordPress_MCP::defaults();$clean=array();foreach(array('writes_enabled','maintenance_enabled','divi_writes_enabled','media_imports_enabled','github_updates','audit_enabled') as $key){$clean[$key]=!empty($input[$key]);}$clean['max_upload_mb']=max(1,min(64,absint(isset($input['max_upload_mb'])?$input['max_upload_mb']:$defaults['max_upload_mb'])));return $clean;}
     public function assets($hook){if('tools_page_mgd-wordpress-mcp'!==$hook&&'plugins.php'!==$hook){return;}wp_enqueue_style('mgd-wordpress-mcp-admin',MGD_WPMCP_URL.'assets/admin.css',array(),MGD_WPMCP_VERSION);}
     public function action_links($links){array_unshift($links,'<a href="'.esc_url(admin_url('tools.php?page=mgd-wordpress-mcp&tab=wizard')).'">'.esc_html__('Einrichten','mgd-wordpress-mcp').'</a>');return $links;}
-    public function row_meta($links,$file){if(MGD_WPMCP_BASENAME!==$file){return $links;}$links[]='<a href="'.esc_url(admin_url('tools.php?page=mgd-wordpress-mcp&tab=about')).'">'.esc_html__('Details anzeigen','mgd-wordpress-mcp').'</a>';$links[]='<a href="https://Michael-Gahn.de" target="_blank" rel="noopener">Michael-Gahn.de</a>';$links[]='<a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP" target="_blank" rel="noopener">GitHub</a>';$links[]='<a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki" target="_blank" rel="noopener">'.esc_html__('Wiki & Dokumentation','mgd-wordpress-mcp').'</a>';return $links;}
+    public function row_meta($links,$file){
+        if(MGD_WPMCP_BASENAME!==$file){return $links;}
+        // Use WordPress' native plugin-information ThickBox. This is intentionally
+        // separate from the plugin's own About/Imprint page.
+        $details=add_query_arg(array('tab'=>'plugin-information','plugin'=>'mgd-wordpress-mcp','TB_iframe'=>'true','width'=>'772','height'=>'650'),self_admin_url('plugin-install.php'));
+        $links[]='<a href="'.esc_url($details).'" class="thickbox open-plugin-details-modal" aria-label="'.esc_attr__('Weitere Informationen über MGD WordPress MCP','mgd-wordpress-mcp').'">'.esc_html__('Details ansehen','mgd-wordpress-mcp').'</a>';
+        $links[]='<a href="'.esc_url(admin_url('tools.php?page=mgd-wordpress-mcp&tab=about')).'">'.esc_html__('Über & Impressum','mgd-wordpress-mcp').'</a>';
+        $links[]='<a href="https://Michael-Gahn.de" target="_blank" rel="noopener noreferrer">Michael-Gahn.de</a>';
+        $links[]='<a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP" target="_blank" rel="noopener noreferrer">GitHub</a>';
+        $links[]='<a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki" target="_blank" rel="noopener noreferrer">'.esc_html__('Wiki & Dokumentation','mgd-wordpress-mcp').'</a>';
+        return $links;
+    }
     private function adapter_version(){require_once ABSPATH.'wp-admin/includes/plugin.php';foreach(get_plugins() as $data){if('MCP Adapter'===$data['Name']){return $data['Version'];}}return '';}
     private function nav($tab,$base){$tabs=array('status'=>'Übersicht','wizard'=>'Einrichtungs-Assistent','settings'=>'Sicherheit & Freigaben','help'=>'Verbindung','audit'=>'Audit-Log','about'=>'Über das Plugin');echo '<nav class="nav-tab-wrapper">';foreach($tabs as $key=>$label){echo '<a class="nav-tab '.($key===$tab?'nav-tab-active':'').'" href="'.esc_url(add_query_arg('tab',$key,$base)).'">'.esc_html($label).'</a>';}echo '</nav>';}
     public function render(){if(!current_user_can('manage_options')){return;}$settings=MGD_WordPress_MCP::get_settings();$tab=isset($_GET['tab'])?sanitize_key(wp_unslash($_GET['tab'])):'status';$base=admin_url('tools.php?page=mgd-wordpress-mcp');$env=MGD_WordPress_MCP_Environment::summary();?>
