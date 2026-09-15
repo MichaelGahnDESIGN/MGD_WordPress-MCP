@@ -1,136 +1,31 @@
 <?php
-
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class MGD_WordPress_MCP_Admin {
-    private static $instance = null;
-
-    public static function instance() {
-        if ( null === self::$instance ) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        add_action( 'admin_menu', array( $this, 'menu' ) );
-        add_action( 'admin_init', array( $this, 'settings' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
-        add_filter( 'plugin_action_links_' . MGD_WPMCP_BASENAME, array( $this, 'action_links' ) );
-    }
-
-    public function menu() {
-        add_management_page(
-            __( 'MGD WordPress MCP', 'mgd-wordpress-mcp' ),
-            __( 'MGD WordPress MCP', 'mgd-wordpress-mcp' ),
-            'manage_options',
-            'mgd-wordpress-mcp',
-            array( $this, 'render' )
-        );
-    }
-
-    public function settings() {
-        register_setting(
-            'mgd_wordpress_mcp',
-            MGD_WordPress_MCP::OPTION_SETTINGS,
-            array(
-                'type'              => 'array',
-                'sanitize_callback' => array( $this, 'sanitize' ),
-                'default'           => MGD_WordPress_MCP::defaults(),
-            )
-        );
-    }
-
-    public function sanitize( $input ) {
-        $defaults = MGD_WordPress_MCP::defaults();
-        $clean = array();
-        foreach ( array( 'writes_enabled', 'maintenance_enabled', 'divi_writes_enabled', 'media_imports_enabled', 'github_updates', 'audit_enabled' ) as $key ) {
-            $clean[ $key ] = ! empty( $input[ $key ] );
-        }
-        $clean['max_upload_mb'] = max( 1, min( 64, absint( isset( $input['max_upload_mb'] ) ? $input['max_upload_mb'] : $defaults['max_upload_mb'] ) ) );
-        return $clean;
-    }
-
-    public function assets( $hook ) {
-        if ( 'tools_page_mgd-wordpress-mcp' !== $hook ) {
-            return;
-        }
-        wp_enqueue_style( 'mgd-wordpress-mcp-admin', MGD_WPMCP_URL . 'assets/admin.css', array(), MGD_WPMCP_VERSION );
-    }
-
-    public function action_links( $links ) {
-        array_unshift( $links, '<a href="' . esc_url( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=wizard' ) ) . '">' . esc_html__( 'Einrichten', 'mgd-wordpress-mcp' ) . '</a>' );
-        return $links;
-    }
-
-    private function adapter_version() {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        foreach ( get_plugins() as $data ) {
-            if ( 'MCP Adapter' === $data['Name'] ) {
-                return $data['Version'];
-            }
-        }
-        return '';
-    }
-
-    public function render() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
-        }
-        $settings = MGD_WordPress_MCP::get_settings();
-        $tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'status';
-        $base = admin_url( 'tools.php?page=mgd-wordpress-mcp' );
-        $environment = MGD_WordPress_MCP_Environment::summary();
-        ?>
-        <div class="wrap mgd-wpmcp-wrap">
-            <h1><?php esc_html_e( 'MGD WordPress MCP', 'mgd-wordpress-mcp' ); ?></h1>
-            <p class="description"><?php esc_html_e( 'Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.', 'mgd-wordpress-mcp' ); ?></p>
-
-            <nav class="nav-tab-wrapper">
-                <a class="nav-tab <?php echo 'status' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', 'status', $base ) ); ?>"><?php esc_html_e( 'Status', 'mgd-wordpress-mcp' ); ?></a>
-                <a class="nav-tab <?php echo 'wizard' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', 'wizard', $base ) ); ?>"><?php esc_html_e( 'Einrichtungs-Assistent', 'mgd-wordpress-mcp' ); ?></a>
-                <a class="nav-tab <?php echo 'settings' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', 'settings', $base ) ); ?>"><?php esc_html_e( 'Sicherheit & Freigaben', 'mgd-wordpress-mcp' ); ?></a>
-                <a class="nav-tab <?php echo 'audit' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', 'audit', $base ) ); ?>"><?php esc_html_e( 'Audit-Log', 'mgd-wordpress-mcp' ); ?></a>
-                <a class="nav-tab <?php echo 'help' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', 'help', $base ) ); ?>"><?php esc_html_e( 'Verbindung', 'mgd-wordpress-mcp' ); ?></a>
-                <a class="nav-tab <?php echo 'about' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', 'about', $base ) ); ?>"><?php esc_html_e( 'Über das Plugin', 'mgd-wordpress-mcp' ); ?></a>
-            </nav>
-
-            <?php if ( 'wizard' === $tab ) : ?>
-                <?php MGD_WordPress_MCP_Wizard::render(); ?>
-            <?php elseif ( 'settings' === $tab ) : ?>
-                <form method="post" action="options.php" class="mgd-wpmcp-card">
-                    <?php settings_fields( 'mgd_wordpress_mcp' ); ?>
-                    <h2><?php esc_html_e( 'Freigaben', 'mgd-wordpress-mcp' ); ?></h2>
-                    <?php $this->checkbox( 'writes_enabled', __( 'Schreibzugriff erlauben', 'mgd-wordpress-mcp' ), __( 'Erlaubt das Erstellen und Ändern von Inhalten, Medien und SEO-Daten.', 'mgd-wordpress-mcp' ), $settings ); ?>
-                    <?php $this->checkbox( 'divi_writes_enabled', __( 'Experimentelle Divi-5-Schreibwerkzeuge erlauben', 'mgd-wordpress-mcp' ), __( 'Erlaubt das Speichern von Divi-kompatiblem post_content. Vor jeder Änderung wird eine WordPress-Revision angelegt.', 'mgd-wordpress-mcp' ), $settings ); ?>
-                    <?php $this->checkbox( 'media_imports_enabled', __( 'Medienimport von externen URLs erlauben', 'mgd-wordpress-mcp' ), __( 'Erlaubt Downloads über die WordPress-HTTP-API. Standardmäßig deaktiviert.', 'mgd-wordpress-mcp' ), $settings ); ?>
-                    <?php $this->checkbox( 'maintenance_enabled', __( 'Wartungsaktionen erlauben', 'mgd-wordpress-mcp' ), __( 'Erlaubt einzelne Plugin- und Theme-Updates. Die Tools verlangen zusätzlich eine explizite Bestätigung.', 'mgd-wordpress-mcp' ), $settings ); ?>
-                    <?php $this->checkbox( 'audit_enabled', __( 'Audit-Log aktivieren', 'mgd-wordpress-mcp' ), __( 'Protokolliert MGD-MCP-Aktionen lokal in der WordPress-Datenbank.', 'mgd-wordpress-mcp' ), $settings ); ?>
-                    <?php $this->checkbox( 'github_updates', __( 'Updates über GitHub Releases prüfen', 'mgd-wordpress-mcp' ), __( 'Prüft die öffentliche GitHub-Release-API auf neue Plugin-Versionen.', 'mgd-wordpress-mcp' ), $settings ); ?>
-                    <p><label><strong><?php esc_html_e( 'Maximale MCP-Mediendatei', 'mgd-wordpress-mcp' ); ?></strong><br><input type="number" min="1" max="64" name="<?php echo esc_attr( MGD_WordPress_MCP::OPTION_SETTINGS ); ?>[max_upload_mb]" value="<?php echo esc_attr( $settings['max_upload_mb'] ); ?>"> MB</label></p>
-                    <?php submit_button(); ?>
-                </form>
-            <?php elseif ( 'audit' === $tab ) : ?>
-                <div class="mgd-wpmcp-card"><h2><?php esc_html_e( 'Letzte Aktionen', 'mgd-wordpress-mcp' ); ?></h2><?php $entries = MGD_WordPress_MCP_Audit::latest( 100 ); ?><div class="mgd-wpmcp-table-wrap"><table class="widefat striped"><thead><tr><th>Zeit (UTC)</th><th>Benutzer</th><th>Ability</th><th>Risiko</th><th>Status</th><th>Zusammenfassung</th></tr></thead><tbody><?php if ( empty( $entries ) ) : ?><tr><td colspan="6"><?php esc_html_e( 'Noch keine Audit-Einträge.', 'mgd-wordpress-mcp' ); ?></td></tr><?php endif; ?><?php foreach ( $entries as $entry ) : ?><tr><td><?php echo esc_html( $entry['created_at'] ); ?></td><td><?php echo esc_html( $entry['user_id'] ); ?></td><td><code><?php echo esc_html( $entry['ability'] ); ?></code></td><td><?php echo esc_html( $entry['risk'] ); ?></td><td><?php echo $entry['success'] ? '✓' : '✕'; ?></td><td><?php echo esc_html( $entry['summary'] ); ?></td></tr><?php endforeach; ?></tbody></table></div></div>
-            <?php elseif ( 'help' === $tab ) : ?>
-                <div class="mgd-wpmcp-card"><h2><?php esc_html_e( 'MCP-Endpunkt', 'mgd-wordpress-mcp' ); ?></h2><p><code><?php echo esc_html( MGD_WordPress_MCP::adapter_endpoint_url() ); ?></code></p><p><?php esc_html_e( 'Für Claude Code und Codex kann der offizielle Remote-Proxy mit einem WordPress Application Password verwendet werden.', 'mgd-wordpress-mcp' ); ?></p><p><a class="button" href="<?php echo esc_url( admin_url( 'profile.php#application-passwords-section' ) ); ?>"><?php esc_html_e( 'Application Passwords öffnen', 'mgd-wordpress-mcp' ); ?></a> <a class="button" target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki"><?php esc_html_e( 'Dokumentation', 'mgd-wordpress-mcp' ); ?></a></p></div>
-            <?php elseif ( 'about' === $tab ) : ?>
-                <div class="mgd-wpmcp-card"><h2>Michael Gahn DESIGN</h2><p><?php esc_html_e( 'MGD WordPress MCP ist freie Software unter GPL-2.0-or-later.', 'mgd-wordpress-mcp' ); ?></p><p><a target="_blank" rel="noopener" href="https://Michael-Gahn.de">Michael-Gahn.de</a><br><a target="_blank" rel="noopener" href="https://Michael-Gahn.de/impressum">Impressum</a><br><a target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP">GitHub Repository</a></p></div>
-            <?php else : ?>
-                <div class="mgd-wpmcp-grid">
-                    <section class="mgd-wpmcp-card"><h2><?php esc_html_e( 'Verbindungsstatus', 'mgd-wordpress-mcp' ); ?></h2><ul><li><strong>WordPress:</strong> <?php echo esc_html( get_bloginfo( 'version' ) ); ?></li><li><strong>PHP:</strong> <?php echo esc_html( PHP_VERSION ); ?></li><li><strong>Abilities API:</strong> <?php echo function_exists( 'wp_register_ability' ) ? '✓' : '✕'; ?></li><li><strong>MCP Adapter:</strong> <?php echo class_exists( '\\WP\\MCP\\Core\\McpAdapter' ) ? '✓ ' . esc_html( $this->adapter_version() ) : '✕'; ?></li><li><strong>HTTPS:</strong> <?php echo is_ssl() ? '✓' : '⚠'; ?></li><li><strong>Builder:</strong> <?php echo esc_html( $environment['builder']['label'] ); ?></li><li><strong>Frontend-Schutz:</strong> <?php echo $environment['frontend_locks']['potentially_locked'] ? '⚠ erkannt' : '○ nicht erkannt'; ?></li></ul></section>
-                    <section class="mgd-wpmcp-card"><h2><?php esc_html_e( 'Aktive Freigaben', 'mgd-wordpress-mcp' ); ?></h2><ul><li><?php echo $settings['writes_enabled'] ? '✓' : '○'; ?> <?php esc_html_e( 'Schreibzugriff', 'mgd-wordpress-mcp' ); ?></li><li><?php echo $settings['divi_writes_enabled'] ? '✓' : '○'; ?> <?php esc_html_e( 'Divi-Schreibzugriff', 'mgd-wordpress-mcp' ); ?></li><li><?php echo $settings['maintenance_enabled'] ? '✓' : '○'; ?> <?php esc_html_e( 'Wartung', 'mgd-wordpress-mcp' ); ?></li><li><?php echo $settings['media_imports_enabled'] ? '✓' : '○'; ?> <?php esc_html_e( 'Externe Medienimporte', 'mgd-wordpress-mcp' ); ?></li></ul></section>
-                </div>
-                <?php if ( $environment['frontend_locks']['potentially_locked'] ) : ?><div class="notice notice-warning inline"><p><?php echo esc_html( $environment['frontend_locks']['agent_instruction'] ); ?></p></div><?php endif; ?>
-                <div class="mgd-wpmcp-card"><h2><?php esc_html_e( 'Direkter MCP-Endpunkt', 'mgd-wordpress-mcp' ); ?></h2><p><code><?php echo esc_html( MGD_WordPress_MCP::adapter_endpoint_url() ); ?></code></p><p><?php esc_html_e( 'Im sicheren Standardzustand sind Schreib- und Wartungsfunktionen deaktiviert.', 'mgd-wordpress-mcp' ); ?></p></div>
-            <?php endif; ?>
-        </div>
-        <?php
-    }
-
-    private function checkbox( $key, $label, $description, $settings ) {
-        ?><label class="mgd-wpmcp-toggle"><input type="checkbox" name="<?php echo esc_attr( MGD_WordPress_MCP::OPTION_SETTINGS ); ?>[<?php echo esc_attr( $key ); ?>]" value="1" <?php checked( ! empty( $settings[ $key ] ) ); ?>><span><strong><?php echo esc_html( $label ); ?></strong><small><?php echo esc_html( $description ); ?></small></span></label><?php
-    }
+    private static $instance=null;
+    public static function instance(){if(null===self::$instance){self::$instance=new self();}return self::$instance;}
+    private function __construct(){add_action('admin_menu',array($this,'menu'));add_action('admin_init',array($this,'settings'));add_action('admin_enqueue_scripts',array($this,'assets'));add_filter('plugin_action_links_'.MGD_WPMCP_BASENAME,array($this,'action_links'));add_filter('plugin_row_meta',array($this,'row_meta'),10,2);}
+    public function menu(){add_management_page(__('MGD WordPress MCP','mgd-wordpress-mcp'),__('MGD WordPress MCP','mgd-wordpress-mcp'),'manage_options','mgd-wordpress-mcp',array($this,'render'));}
+    public function settings(){register_setting('mgd_wordpress_mcp',MGD_WordPress_MCP::OPTION_SETTINGS,array('type'=>'array','sanitize_callback'=>array($this,'sanitize'),'default'=>MGD_WordPress_MCP::defaults()));}
+    public function sanitize($input){$defaults=MGD_WordPress_MCP::defaults();$clean=array();foreach(array('writes_enabled','maintenance_enabled','divi_writes_enabled','media_imports_enabled','github_updates','audit_enabled') as $key){$clean[$key]=!empty($input[$key]);}$clean['max_upload_mb']=max(1,min(64,absint(isset($input['max_upload_mb'])?$input['max_upload_mb']:$defaults['max_upload_mb'])));return $clean;}
+    public function assets($hook){if('tools_page_mgd-wordpress-mcp'!==$hook&&'plugins.php'!==$hook){return;}wp_enqueue_style('mgd-wordpress-mcp-admin',MGD_WPMCP_URL.'assets/admin.css',array(),MGD_WPMCP_VERSION);}
+    public function action_links($links){array_unshift($links,'<a href="'.esc_url(admin_url('tools.php?page=mgd-wordpress-mcp&tab=wizard')).'">'.esc_html__('Einrichten','mgd-wordpress-mcp').'</a>');return $links;}
+    public function row_meta($links,$file){if(MGD_WPMCP_BASENAME!==$file){return $links;}$links[]='<a href="'.esc_url(admin_url('tools.php?page=mgd-wordpress-mcp&tab=about')).'">'.esc_html__('Details anzeigen','mgd-wordpress-mcp').'</a>';$links[]='<a href="https://Michael-Gahn.de" target="_blank" rel="noopener">Michael-Gahn.de</a>';$links[]='<a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP" target="_blank" rel="noopener">GitHub</a>';$links[]='<a href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki" target="_blank" rel="noopener">'.esc_html__('Wiki & Dokumentation','mgd-wordpress-mcp').'</a>';return $links;}
+    private function adapter_version(){require_once ABSPATH.'wp-admin/includes/plugin.php';foreach(get_plugins() as $data){if('MCP Adapter'===$data['Name']){return $data['Version'];}}return '';}
+    private function nav($tab,$base){$tabs=array('status'=>'Übersicht','wizard'=>'Einrichtungs-Assistent','settings'=>'Sicherheit & Freigaben','help'=>'Verbindung','audit'=>'Audit-Log','about'=>'Über das Plugin');echo '<nav class="nav-tab-wrapper">';foreach($tabs as $key=>$label){echo '<a class="nav-tab '.($key===$tab?'nav-tab-active':'').'" href="'.esc_url(add_query_arg('tab',$key,$base)).'">'.esc_html($label).'</a>';}echo '</nav>';}
+    public function render(){if(!current_user_can('manage_options')){return;}$settings=MGD_WordPress_MCP::get_settings();$tab=isset($_GET['tab'])?sanitize_key(wp_unslash($_GET['tab'])):'status';$base=admin_url('tools.php?page=mgd-wordpress-mcp');$env=MGD_WordPress_MCP_Environment::summary();?>
+    <div class="wrap mgd-wpmcp-wrap">
+      <header class="mgd-wpmcp-hero"><div class="mgd-wpmcp-kicker">WORDPRESS MEETS AI · MICHAEL GAHN DESIGN</div><h1>MGD WordPress MCP</h1><p><?php esc_html_e('Die sichere Verbindung zwischen deiner WordPress-Website und KI-Agenten wie Claude Code, Codex und anderen MCP-Clients.','mgd-wordpress-mcp');?></p><div class="mgd-wpmcp-badges"><span class="mgd-wpmcp-badge is-red">v<?php echo esc_html(MGD_WPMCP_VERSION);?></span><span class="mgd-wpmcp-badge is-ok"><?php esc_html_e('Aktiv','mgd-wordpress-mcp');?></span><span class="mgd-wpmcp-badge">WordPress 6.9+</span></div></header>
+      <?php $this->nav($tab,$base); ?>
+      <?php if('wizard'===$tab){MGD_WordPress_MCP_Wizard::render();}elseif('settings'===$tab){?>
+      <form method="post" action="options.php" class="mgd-wpmcp-card"><?php settings_fields('mgd_wordpress_mcp');?><h2><?php esc_html_e('Was darf dein KI-Agent?','mgd-wordpress-mcp');?></h2><p><?php esc_html_e('Aktiviere nur die Funktionen, die du wirklich brauchst. Lesen funktioniert unabhängig davon über die WordPress-Benutzerrechte.','mgd-wordpress-mcp');?></p><?php $this->checkbox('writes_enabled','Schreibzugriff erlauben','Beiträge, Seiten, Medien und SEO-Daten erstellen oder ändern.',$settings);$this->checkbox('divi_writes_enabled','Divi-5-Schreibzugriff erlauben','Divi-Inhalte ändern. Vor Änderungen werden Revisionen verwendet.',$settings);$this->checkbox('media_imports_enabled','Externe Medienimporte erlauben','Dateien von ausdrücklich angegebenen externen URLs importieren.',$settings);$this->checkbox('maintenance_enabled','Wartung und Updates erlauben','Einzelne Plugin- und Theme-Updates nach zusätzlicher Bestätigung.',$settings);$this->checkbox('audit_enabled','Audit-Log aktivieren','Technische MCP-Aktionen lokal in WordPress protokollieren.',$settings);$this->checkbox('github_updates','Plugin-Updates über GitHub prüfen','Kontaktiert die öffentliche GitHub Releases API ausschließlich zur Versionsprüfung.',$settings);submit_button();?></form>
+      <?php }elseif('audit'===$tab){$entries=MGD_WordPress_MCP_Audit::latest(100);?><div class="mgd-wpmcp-card"><h2><?php esc_html_e('Was wurde gemacht?','mgd-wordpress-mcp');?></h2><p><?php esc_html_e('Hier siehst du die letzten vom Plugin protokollierten Agenten-Aktionen. Passwörter und PINs gehören nicht in dieses Protokoll.','mgd-wordpress-mcp');?></p><div class="mgd-wpmcp-table-wrap"><table class="widefat striped"><thead><tr><th>Zeit (UTC)</th><th>Benutzer</th><th>Ability</th><th>Risiko</th><th>Status</th><th>Zusammenfassung</th></tr></thead><tbody><?php if(empty($entries)){echo '<tr><td colspan="6">Noch keine Audit-Einträge.</td></tr>';}foreach($entries as $e){echo '<tr><td>'.esc_html($e['created_at']).'</td><td>'.esc_html($e['user_id']).'</td><td><code>'.esc_html($e['ability']).'</code></td><td>'.esc_html($e['risk']).'</td><td>'.($e['success']?'✓':'✕').'</td><td>'.esc_html($e['summary']).'</td></tr>';}?></tbody></table></div></div>
+      <?php }elseif('help'===$tab){?><div class="mgd-wpmcp-card"><h2><?php esc_html_e('KI-Agent verbinden','mgd-wordpress-mcp');?></h2><p><?php esc_html_e('1. Prüfe, ob der WordPress MCP Adapter aktiv ist. 2. Erstelle im Benutzerprofil ein eigenes Application Password. 3. Hinterlege Endpoint, Benutzername und Application Password ausschließlich im Secret-Speicher deines MCP-Clients.','mgd-wordpress-mcp');?></p><div class="mgd-wpmcp-endpoint"><code><?php echo esc_html(MGD_WordPress_MCP::adapter_endpoint_url());?></code></div><p><a class="button button-primary" href="<?php echo esc_url(admin_url('profile.php#application-passwords-section'));?>">Application Password erstellen</a> <a class="button" target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki">Anleitung öffnen</a></p></div>
+      <?php }elseif('about'===$tab){?><div class="mgd-wpmcp-card"><h2><?php esc_html_e('Über MGD WordPress MCP','mgd-wordpress-mcp');?></h2><p><?php esc_html_e('MGD WordPress MCP ist ein kostenloses Open-Source-Projekt von Michael Gahn DESIGN. Es soll WordPress für moderne KI- und Vibecoding-Workflows öffnen, ohne Kontrolle und Sicherheit aus der Hand zu geben.','mgd-wordpress-mcp');?></p><h3>Privacy by Default</h3><p><?php esc_html_e('Die Plugin-Oberfläche lädt keine externen Fonts, Icon-CDNs, JavaScript-CDNs oder eingebetteten Drittanbieter-Inhalte. Darstellung, Logo, Icons und Headergrafik liegen lokal im Plugin. Externe Websites werden nur nach einem bewussten Klick geöffnet.','mgd-wordpress-mcp');?></p><p><a class="button" target="_blank" rel="noopener" href="https://Michael-Gahn.de">Michael-Gahn.de</a> <a class="button" target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP">GitHub</a> <a class="button" target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki">Wiki</a></p><h3>Impressum gemäß § 5 DDG</h3><p><strong>Michael Gahn DESIGN</strong><br>Inhaber: Michael Gahn<br>Dr.-Theodor-Brugsch-Str. 12<br>08529 Plauen<br>Deutschland</p><p>Telefon: +49 (0) 151 59156639<br>E-Mail: Anfrage@Michael-Gahn.de<br>USt-IdNr.: DE288143343<br>Steuernummer: 223/222/02451</p><p>Lizenz: GPL-2.0-or-later</p></div>
+      <?php }else{?>
+      <div class="mgd-wpmcp-features"><article class="mgd-wpmcp-feature"><div class="mgd-wpmcp-icon">↗</div><h3>KI-Agenten verbinden</h3><p>Claude Code, Codex und andere MCP-Clients greifen kontrolliert auf WordPress zu.</p><a href="<?php echo esc_url(add_query_arg('tab','help',$base));?>">So funktioniert's →</a></article><article class="mgd-wpmcp-feature"><div class="mgd-wpmcp-icon">▱</div><h3>Builder & Plugins</h3><p>Divi 5, Elementor, Gutenberg, WPForms, SEO, UpdraftPlus und weitere Integrationen.</p><a href="<?php echo esc_url(add_query_arg('tab','wizard',$base));?>">Einrichtung prüfen →</a></article><article class="mgd-wpmcp-feature"><div class="mgd-wpmcp-icon">◇</div><h3>Sicher & kontrollierbar</h3><p>Feingranulare Freigaben, Audit-Log und standardmäßig deaktivierte Schreibrechte.</p><a href="<?php echo esc_url(add_query_arg('tab','settings',$base));?>">Freigaben ansehen →</a></article><article class="mgd-wpmcp-feature"><div class="mgd-wpmcp-icon">✦</div><h3>Einfach eingerichtet</h3><p>Der Assistent führt Schritt für Schritt durch Builder, MCP Adapter und Verbindung.</p><a href="<?php echo esc_url(add_query_arg('tab','wizard',$base));?>">Assistent starten →</a></article></div>
+      <div class="mgd-wpmcp-grid"><section class="mgd-wpmcp-card"><h2>Dein MCP-Endpunkt</h2><div class="mgd-wpmcp-endpoint"><code><?php echo esc_html(MGD_WordPress_MCP::adapter_endpoint_url());?></code></div><p class="description">Im sicheren Standardzustand sind Schreib- und Wartungsfunktionen deaktiviert.</p></section><section class="mgd-wpmcp-card"><h2>Systemstatus</h2><ul class="mgd-wpmcp-status-list"><li><span>WordPress</span><strong><?php echo esc_html(get_bloginfo('version'));?></strong></li><li><span>PHP</span><strong><?php echo esc_html(PHP_VERSION);?></strong></li><li><span>MCP Adapter</span><strong><?php echo class_exists('\\WP\\MCP\\Core\\McpAdapter')?'✓ '.$this->adapter_version():'✕';?></strong></li><li><span>HTTPS</span><strong><?php echo is_ssl()?'✓':'⚠';?></strong></li><li><span>Builder</span><strong><?php echo esc_html($env['builder']['label']);?></strong></li><li><span>Frontend-Schutz</span><strong><?php echo $env['frontend_locks']['potentially_locked']?'⚠ erkannt':'✓ nicht erkannt';?></strong></li></ul></section></div>
+      <section class="mgd-wpmcp-card mgd-wpmcp-links"><div class="mgd-wpmcp-link"><a target="_blank" rel="noopener" href="https://Michael-Gahn.de">Website</a><small>Michael-Gahn.de</small></div><div class="mgd-wpmcp-link"><a target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP">GitHub</a><small>Quellcode & Releases</small></div><div class="mgd-wpmcp-link"><a target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP/tree/main/wiki">Wiki</a><small>Anleitungen & Beispiele</small></div><div class="mgd-wpmcp-link"><a href="mailto:Anfrage@Michael-Gahn.de">Support</a><small>Hilfe & Kontakt</small></div></section>
+      <?php }?><footer class="mgd-wpmcp-footer"><span>MGD WordPress MCP v<?php echo esc_html(MGD_WPMCP_VERSION);?> · Michael Gahn DESIGN</span><span>Privacy by Default · UI-Ressourcen lokal</span></footer>
+    </div><?php }
+    private function checkbox($key,$label,$description,$settings){?><label class="mgd-wpmcp-toggle"><input type="checkbox" name="<?php echo esc_attr(MGD_WordPress_MCP::OPTION_SETTINGS);?>[<?php echo esc_attr($key);?>]" value="1" <?php checked(!empty($settings[$key]));?>><span><strong><?php echo esc_html($label);?></strong><small><?php echo esc_html($description);?></small></span></label><?php }
 }
