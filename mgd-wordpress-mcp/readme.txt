@@ -4,13 +4,19 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.9
+Stable tag: 0.2.10
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.2.10 - 2026-09-15 =
+* „Details ansehen“ in der WordPress-Pluginliste öffnet jetzt ausdrücklich das native WordPress Plugin-Information-Modal.
+* Eigene Über-/Impressumsseite klar als separater Link „Über & Impressum“ gekennzeichnet.
+* Details-Modal und externe Links semantisch getrennt.
+* ThickBox-/WordPress-Klassen und barrierefreundliches aria-label für den nativen Details-Link ergänzt.
 
 = 0.2.9 - 2026-09-15 =
 * Neues lokales Plugin-Icon mit freundlichem roten MCP-Roboter auf schwarzem Grund.
