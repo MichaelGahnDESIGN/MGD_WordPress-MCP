@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - 'release/v*'
 
 permissions:
   contents: write
@@ -15,14 +17,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate release version
+      - name: Resolve release tag
+        id: release
         shell: bash
         run: |
           set -euo pipefail
-          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            RELEASE_TAG="${GITHUB_REF_NAME}"
+            REQUEST_BRANCH=""
+          else
+            RELEASE_TAG="${GITHUB_REF_NAME#release/}"
+            REQUEST_BRANCH="${GITHUB_REF_NAME}"
+          fi
+          [[ "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]
+          echo "tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "request_branch=${REQUEST_BRANCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release version
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          TAG_VERSION="${RELEASE_TAG#v}"
           PLUGIN_VERSION="$(sed -n 's/^ \* Version: //p' mgd-wordpress-mcp/mgd-wordpress-mcp.php | head -n1 | tr -d '\r')"
           STABLE_TAG="$(sed -n 's/^Stable tag: //p' mgd-wordpress-mcp/readme.txt | head -n1 | tr -d '\r')"
-          echo "Git tag:        ${TAG_VERSION}"
+          echo "Release tag:    ${RELEASE_TAG}"
           echo "Plugin version: ${PLUGIN_VERSION}"
           echo "Stable tag:     ${STABLE_TAG}"
           test "${TAG_VERSION}" = "${PLUGIN_VERSION}"
@@ -47,11 +67,22 @@ jobs:
       - name: Create or update GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
-          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
-            gh release upload "${GITHUB_REF_NAME}" mgd-wordpress-mcp.zip --clobber
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" mgd-wordpress-mcp.zip --clobber
           else
-            gh release create "${GITHUB_REF_NAME}" mgd-wordpress-mcp.zip --generate-notes --title "MGD WordPress MCP ${GITHUB_REF_NAME}"
+            gh release create "${RELEASE_TAG}" mgd-wordpress-mcp.zip --target "${GITHUB_SHA}" --generate-notes --title "MGD WordPress MCP ${RELEASE_TAG}"
           fi
+
+      - name: Remove temporary release request branch
+        if: ${{ steps.release.outputs.request_branch != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUEST_BRANCH: ${{ steps.release.outputs.request_branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin --delete "${REQUEST_BRANCH}" || true
