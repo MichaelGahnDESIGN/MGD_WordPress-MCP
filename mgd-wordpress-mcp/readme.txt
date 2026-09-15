@@ -4,7 +4,7 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.1
+Stable tag: 0.5.1
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
@@ -12,28 +12,23 @@ Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
 
+= 0.5.1 - 2026-09-16 =
+* Connection-Doctor-Kern für WordPress, PHP, HTTPS, REST, Permalinks, Abilities API, MCP Adapter, Frontend-Schutz und Endpoint ergänzt.
+* Berechtigungsprofile `read_only`, `content_editor` und `admin` als zentrale Sicherheitsgrundlage ergänzt; bestehende Installationen starten konservativ in Read-only.
+* Read-only-Profil entfernt schreibende und administrative Abilities bereits aus der MCP-Tool-Liste.
+* Transport-Rate-Limit mit HTTP 429 ergänzt.
+* Kurzlebige, aktions- und objektgebundene Single-Use Approval Tokens als Infrastruktur ergänzt.
+* Zentrale Secret-Redaction-Hilfe für Audit-/Diagnosedaten ergänzt.
+* Client-Konfigurationsgenerator als Infrastruktur für Claude Code, Codex und generische HTTP-MCP-Clients ergänzt.
+* Vorhandene Fail-closed-Sperre für unsicheren Base64-Direktupload beibehalten.
+* Laufzeit-Erkennung des offiziellen MCP Adapters bleibt bestehen, keine fehleranfällige harte WordPress-Plugin-Abhängigkeit.
+* 0.5.1 ist ein Integrations-/Härtungsrelease. Drittanbieter-Workflows wie Divi, WPForms, SEO und UpdraftPlus müssen weiterhin auf der realen Testsite End-to-End validiert werden.
+
 = 0.3.1 - 2026-09-15 =
-* WordPress-Header `Requires Plugins: mcp-adapter` wieder entfernt, da WordPress die vorhandene MCP-Adapter-Installation auf der Testsite nicht zuverlässig diesem Dependency-Slug zuordnete.
-* Falsche rote WordPress-Warnung „erforderliche Plugins fehlen“ damit beseitigt.
-* Bewährte Laufzeit-Erkennung des offiziellen MCP Adapters bleibt bestehen.
-* Fehlt der Adapter tatsächlich, zeigt MGD WordPress MCP weiterhin einen verständlichen Admin-Hinweis mit Installationslink.
-* MCP-Server und Abilities werden nur verwendet, wenn die Adapter-API tatsächlich verfügbar ist.
-* Keine Änderung am gehärteten 0.3.x Authentifizierungsmodell.
+* Falsche harte WordPress-Abhängigkeit zum MCP Adapter entfernt.
 
 = 0.3.0 - 2026-09-15 =
-* Start der realen MCP Read/Write-Validierungsphase.
-* MCP-Transport-Permission mit expliziten Authentifizierungs-/Berechtigungsfehlern gehärtet.
-* Vorbereitung für echten Read-only Smoke-Test und kontrollierten Draft-Write-Test.
-* 0.2.x abgeschlossen: Admin-UI, Branding, native Details, Release-Automation und GitHub-Self-Updater stehen.
-
-= 0.2.12 - 2026-09-15 =
-* Native WordPress-Detailansicht verdichtet und informativer aufgebaut.
-
-= 0.2.11 - 2026-09-15 =
-* Premium-Tech-Banner und Roboter-Icon in der Pluginliste.
-
-= 0.2.10 - 2026-09-15 =
-* „Details ansehen“ öffnet das native WordPress Plugin-Information-Modal.
+* MCP-Authentifizierungsmodell gehärtet und Read/Write-Validierungsphase gestartet.
 
 = 0.2.8 - 2026-09-15 =
 * Self-Updater erfolgreich End-to-End verifiziert.
