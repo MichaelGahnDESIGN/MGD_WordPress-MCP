@@ -3,7 +3,7 @@
  * Plugin Name: MGD WordPress MCP
  * Plugin URI: https://Michael-Gahn.de
  * Description: Sichere MCP- und Abilities-Bridge für WordPress. Verbindet KI-Agenten kontrolliert mit WordPress-Inhalten und Integrationen.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: Michael Gahn DESIGN
  * Author URI: https://Michael-Gahn.de
  * License: GPL-2.0-or-later
@@ -11,11 +11,10 @@
  * Text Domain: mgd-wordpress-mcp
  * Requires at least: 6.9
  * Requires PHP: 7.4
- * Requires Plugins: mcp-adapter
  * Update URI: https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-define( 'MGD_WPMCP_VERSION', '0.3.0' );
+define( 'MGD_WPMCP_VERSION', '0.3.1' );
 define( 'MGD_WPMCP_FILE', __FILE__ );
 define( 'MGD_WPMCP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MGD_WPMCP_URL', plugin_dir_url( __FILE__ ) );
