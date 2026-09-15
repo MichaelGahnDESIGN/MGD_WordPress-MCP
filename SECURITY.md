@@ -12,29 +12,29 @@ Bitte **kein öffentliches GitHub Issue** für eine noch nicht behobene Sicherhe
 
 Kontakt:
 
-- Website: https://Michael-Gahn.de
-- E-Mail: Anfrage@Michael-Gahn.de
-- Impressum: https://Michael-Gahn.de/impressum
+E-Mail: Anfrage@Michael-Gahn.de  
+Website: https://Michael-Gahn.de
 
-Bitte beschreibe nach Möglichkeit:
-
-- betroffene Plugin-Version
-- WordPress- und PHP-Version
-- erforderliche Benutzerrolle/Berechtigung
-- reproduzierbare Schritte
-- erwartetes und tatsächliches Verhalten
-- mögliche Auswirkung
-
-Keine echten Kundenzugangsdaten, Application Passwords oder personenbezogenen Daten mitsenden.
+Bitte beschreibe nach Möglichkeit die betroffene Plugin-Version, WordPress- und PHP-Version, erforderliche Benutzerrolle, reproduzierbare Schritte und die mögliche Auswirkung. Sende keine echten Kundenzugangsdaten, Application Passwords, API-Keys oder personenbezogenen Daten mit.
 
 ## Sicherheitsprinzipien
 
-- Schreibzugriff standardmäßig deaktiviert
-- Maintenance-/Update-Zugriff separat deaktiviert
-- Divi-Schreibzugriff separat deaktiviert
-- WordPress Capability Checks bleiben maßgeblich
-- Application Passwords werden nicht durch dieses Plugin gespeichert
-- keine permanente Lösch-Ability in Version 0.1.x
-- riskante Update-Tools verlangen explizite Bestätigungswerte
-- Audit-Log lokal in WordPress
-- vor Divi-Schreibzugriffen werden Revisionen angelegt
+Schreibzugriff ist standardmäßig deaktiviert. Maintenance-/Update-Zugriff und Divi-Schreibzugriff sind zusätzlich separat deaktiviert. WordPress Capability Checks bleiben maßgeblich.
+
+Application Passwords werden nicht durch MGD WordPress MCP gespeichert. Für produktive Installationen wird HTTPS und ein separater WordPress-Benutzer mit minimal erforderlichen Rechten empfohlen.
+
+Destruktive Inhaltsaktionen verschieben Inhalte nur in den Papierkorb. Riskante Wartungsaktionen benötigen explizite Bestätigungswerte. Vor Divi-Schreibzugriffen werden WordPress-Revisionen angelegt und Konfliktprüfungen können über den Änderungszeitpunkt erfolgen.
+
+Das Audit-Log speichert technische Aktionsinformationen lokal. PINs, Passwörter und API-Schlüssel dürfen nicht protokolliert werden.
+
+## Frontend-Sperren
+
+Die Erkennung von Shield-, Passwort-, Maintenance- und ähnlichen Plugins ist ausschließlich eine Diagnosefunktion. Sie versucht nicht, Zugangsschutz zu umgehen oder Zugangsdaten auszulesen. Ein Agent soll bei einer tatsächlichen Blockade den autorisierten Nutzer nach dem legitimen Entsperrweg fragen.
+
+## Updates
+
+Der integrierte GitHub-Updater akzeptiert ausschließlich ein Release-Asset mit dem exakten Namen `mgd-wordpress-mcp.zip`. Releases sollten über den versionierten GitHub-Actions-Workflow gebaut werden. Vor Veröffentlichung eines Releases müssen Plugin-Version, `Stable tag` und Git-Tag übereinstimmen.
+
+## Datenschutz
+
+Weitere Hinweise stehen in `wiki/Datenschutz-und-Rechtliches.md`.
