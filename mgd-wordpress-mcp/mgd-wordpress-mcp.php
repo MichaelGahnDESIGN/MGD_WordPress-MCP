@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: MGD WordPress MCP
- * Plugin URI: https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP
+ * Plugin URI: https://Michael-Gahn.de
  * Description: Sichere MCP- und Abilities-Bridge für WordPress. Verbindet KI-Agenten mit Inhalten, Medien, Updates, Divi 5, WPForms, SEO, UpdraftPlus und der Website-Umgebung.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: Michael Gahn DESIGN
  * Author URI: https://Michael-Gahn.de
  * License: GPL-2.0-or-later
@@ -14,11 +14,9 @@
  * Update URI: https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'MGD_WPMCP_VERSION', '0.2.0' );
+define( 'MGD_WPMCP_VERSION', '0.2.1' );
 define( 'MGD_WPMCP_FILE', __FILE__ );
 define( 'MGD_WPMCP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MGD_WPMCP_URL', plugin_dir_url( __FILE__ ) );
@@ -38,10 +36,4 @@ require_once MGD_WPMCP_DIR . 'includes/class-mgd-wordpress-mcp.php';
 
 register_activation_hook( __FILE__, array( 'MGD_WordPress_MCP', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'MGD_WordPress_MCP', 'deactivate' ) );
-
-add_action(
-    'plugins_loaded',
-    static function () {
-        MGD_WordPress_MCP::instance();
-    }
-);
+add_action( 'plugins_loaded', static function () { MGD_WordPress_MCP::instance(); } );
