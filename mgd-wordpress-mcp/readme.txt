@@ -4,7 +4,7 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.2
+Stable tag: 0.2.3
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
@@ -21,16 +21,20 @@ MGD WordPress MCP verbindet WordPress kontrolliert mit MCP-kompatiblen KI-Agente
 
 == Changelog ==
 
+= 0.2.3 - 2026-09-15 =
+* Release-Metadaten nach dem 0.2.2-Live-Test synchronisiert.
+* Enthält die korrigierte WordPress-Self-Update-Discovery aus 0.2.2.
+* README, Wiki und Agentencheckliste auf den realen Teststand gebracht.
+* Vorbereitung des vollständigen Read-/Write-MCP-End-to-End-Tests.
+
 = 0.2.2 - 2026-09-15 =
 * WordPress-Updateerkennung korrigiert.
-* Update-Metadaten werden auch dann injiziert, wenn WordPress die checked-Liste beim Filteraufruf noch nicht vollständig aufgebaut hat.
-* no_update-Metadaten für die Plugin-Detailansicht ergänzt.
-* Updateobjekt um ID, getestete WordPress-Version und PHP-Anforderung ergänzt.
+* Update-Metadaten unabhängig von einer bereits vollständigen checked-Liste.
+* no_update-Metadaten und Kompatibilitätsinformationen ergänzt.
 
 = 0.2.1 - 2026-09-15 =
 * Modernisierte Admin-Oberfläche und lokale Branding-Assets.
 * Privacy-by-default für UI-Ressourcen.
-* Plugin-Metadaten und Ressourcenlinks verbessert.
 
 = 0.2.0 - 2026-09-15 =
 * Einrichtungs-Assistent, Builder-Erkennung und Frontend-Sperren-Erkennung.
