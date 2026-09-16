@@ -4,7 +4,7 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.2
+Stable tag: 0.5.3
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
@@ -12,19 +12,17 @@ Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
 
+= 0.5.3 - 2026-09-16 =
+* Kritischen Laufzeitfehler im neuen 0.5.2 Einrichtungs-Assistenten behoben.
+* Wizard verwendet jetzt die tatsächlich vorhandene Connection-Doctor-API `summary()` statt einer nicht existierenden `run()`-Methode.
+* Wizard nutzt den vorhandenen Client-Konfigurationsgenerator `MGD_WordPress_MCP_Client_Config` statt einer nicht existierenden Klasse.
+* Sicherheitsprofil-Bezeichnungen werden kompatibel zur bestehenden Security-API dargestellt.
+* Release bleibt fail-safe über PHP-Syntaxprüfung geschützt.
+
 = 0.5.2 - 2026-09-16 =
-* 0.5.1 Sicherheits- und Verbindungsfunktionen vollständig in die Admin-Oberfläche integriert.
+* 0.5.1 Sicherheits- und Verbindungsfunktionen in die Admin-Oberfläche integriert.
 * Einrichtungs-Assistent als verständlichen 5-Schritte-Workflow neu aufgebaut.
-* Bereits installierter MCP Adapter wird erkannt und nicht mehr unnötig zur Installation angeboten.
-* Connection Doctor als eigene, sichtbare Verbindungsseite mit Einzelprüfungen und Gesamtstatus integriert.
-* Sicherheitsprofile „Nur lesen“, „Inhalte bearbeiten“ und „Administration“ direkt bedienbar gemacht.
-* Feingranulare Berechtigungen bleiben zusätzlich verfügbar.
-* Client Setup Generator für Claude Code, Codex, Cursor/VS Code und generische MCP-Clients integriert.
-* Application-Password-Erstellung verständlich als separater Agentenzugang erklärt.
-* Endpoint, Profil, Builder und Frontend-Schutz verständlicher dargestellt.
-* Rate-Limit-Einstellung in die Sicherheitsoberfläche integriert.
-* Responsive, lokale Admin-UI für Profile, Connection Doctor, Setup-Schritte und Client-Konfiguration ergänzt.
-* Keine externen Fonts, Icon-CDNs oder JavaScript-CDNs hinzugefügt.
+* Connection Doctor, Sicherheitsprofile und Client Setup UX ergänzt.
 
 = 0.5.1 - 2026-09-16 =
 * Connection Doctor, Sicherheitsprofile, Rate Limit, Approval Tokens, Secret Redaction und Client Setup Infrastruktur ergänzt.
