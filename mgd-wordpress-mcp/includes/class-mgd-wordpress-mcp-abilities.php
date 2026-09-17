@@ -44,7 +44,27 @@ final class MGD_WordPress_MCP_Abilities {
             'mgd-wordpress-mcp/check-updates',
             'mgd-wordpress-mcp/update-plugin',
             'mgd-wordpress-mcp/update-theme',
+            'mgd-wordpress-mcp/request-approval',
             'mgd-wordpress-mcp/audit-log',
+        );
+    }
+
+    public static function write_ability_names() {
+        return array(
+            'mgd-wordpress-mcp/create-content',
+            'mgd-wordpress-mcp/update-content',
+            'mgd-wordpress-mcp/trash-content',
+            'mgd-wordpress-mcp/import-media',
+            'mgd-wordpress-mcp/upload-media-base64',
+            'mgd-wordpress-mcp/set-featured-image',
+            'mgd-wordpress-mcp/seo-set',
+            'mgd-wordpress-mcp/divi-save-layout',
+            'mgd-wordpress-mcp/divi-replace-text',
+            'mgd-wordpress-mcp/wpforms-run',
+            'mgd-wordpress-mcp/updraft-backup',
+            'mgd-wordpress-mcp/update-plugin',
+            'mgd-wordpress-mcp/update-theme',
+            'mgd-wordpress-mcp/request-approval',
         );
     }
 
@@ -101,9 +121,10 @@ final class MGD_WordPress_MCP_Abilities {
             'expected_modified_gmt' => array( 'type' => 'string' ),
         ), array( $this, 'update_content' ), array( $this, 'can_edit_post' ), false, false, false, array( 'post_id' ) );
 
-        $this->register( 'trash-content', 'Trash content', 'Move a post/page to the WordPress trash. Never permanently deletes.', array(
-            'post_id'      => array( 'type' => 'integer', 'minimum' => 1 ),
-            'confirmation' => array( 'type' => 'string', 'enum' => array( 'TRASH_CONTENT' ) ),
+        $this->register( 'trash-content', 'Trash content', 'Move a post/page to the WordPress trash. Never permanently deletes. Requires a valid approval_token unless the full_access profile is active.', array(
+            'post_id'        => array( 'type' => 'integer', 'minimum' => 1 ),
+            'confirmation'   => array( 'type' => 'string', 'enum' => array( 'TRASH_CONTENT' ) ),
+            'approval_token' => array( 'type' => 'string' ),
         ), array( $this, 'trash_content' ), array( $this, 'can_delete_post' ), false, true, false, array( 'post_id', 'confirmation' ) );
 
         $this->register( 'list-media', 'List media', 'List WordPress media attachments with URLs, titles, alt text and MIME types.', array(
@@ -168,23 +189,31 @@ final class MGD_WordPress_MCP_Abilities {
             'parameters' => array( 'type' => 'object', 'default' => array(), 'additionalProperties' => true ),
         ), array( $this, 'wpforms_run' ), array( $this, 'can_read' ), false, false, false, array( 'action' ) );
 
-        $this->register( 'updraft-backup', 'Start UpdraftPlus backup', 'Start a full UpdraftPlus backup using the documented backup hook. Does not wait for completion.', array(
-            'confirmation' => array( 'type' => 'string', 'enum' => array( 'BACKUP_NOW' ) ),
-            'include_cloud' => array( 'type' => 'boolean', 'default' => true ),
+        $this->register( 'updraft-backup', 'Start UpdraftPlus backup', 'Start a full UpdraftPlus backup using the documented backup hook. Does not wait for completion. Requires a valid approval_token unless the full_access profile is active.', array(
+            'confirmation'   => array( 'type' => 'string', 'enum' => array( 'BACKUP_NOW' ) ),
+            'include_cloud'  => array( 'type' => 'boolean', 'default' => true ),
+            'approval_token' => array( 'type' => 'string' ),
         ), array( $this, 'updraft_backup' ), array( $this, 'can_manage' ), false, false, false, array( 'confirmation' ) );
 
         $this->register( 'list-plugins', 'List plugins', 'List installed plugins, versions, activation state and available updates.', array(), array( $this, 'list_plugins' ), array( $this, 'can_manage' ), true, false, true );
         $this->register( 'check-updates', 'Check updates', 'Refresh and report WordPress plugin/theme update information without installing anything.', array(), array( $this, 'check_updates' ), array( $this, 'can_manage' ), true, false, true );
 
-        $this->register( 'update-plugin', 'Update one plugin', 'Update exactly one installed plugin. Maintenance writes must be enabled and an explicit confirmation string is required.', array(
-            'plugin'       => array( 'type' => 'string', 'description' => 'Plugin basename, e.g. akismet/akismet.php' ),
-            'confirmation' => array( 'type' => 'string', 'enum' => array( 'UPDATE_PLUGIN' ) ),
+        $this->register( 'update-plugin', 'Update one plugin', 'Update exactly one installed plugin. Maintenance writes must be enabled and an explicit confirmation string is required. Requires a valid approval_token unless the full_access profile is active.', array(
+            'plugin'         => array( 'type' => 'string', 'description' => 'Plugin basename, e.g. akismet/akismet.php' ),
+            'confirmation'   => array( 'type' => 'string', 'enum' => array( 'UPDATE_PLUGIN' ) ),
+            'approval_token' => array( 'type' => 'string' ),
         ), array( $this, 'update_plugin' ), array( $this, 'can_maintain_plugin' ), false, true, false, array( 'plugin', 'confirmation' ) );
 
-        $this->register( 'update-theme', 'Update one theme', 'Update exactly one installed theme. Maintenance writes must be enabled and an explicit confirmation string is required.', array(
-            'theme'        => array( 'type' => 'string', 'description' => 'Theme stylesheet directory, e.g. Divi' ),
-            'confirmation' => array( 'type' => 'string', 'enum' => array( 'UPDATE_THEME' ) ),
+        $this->register( 'update-theme', 'Update one theme', 'Update exactly one installed theme. Maintenance writes must be enabled and an explicit confirmation string is required. Requires a valid approval_token unless the full_access profile is active.', array(
+            'theme'          => array( 'type' => 'string', 'description' => 'Theme stylesheet directory, e.g. Divi' ),
+            'confirmation'   => array( 'type' => 'string', 'enum' => array( 'UPDATE_THEME' ) ),
+            'approval_token' => array( 'type' => 'string' ),
         ), array( $this, 'update_theme' ), array( $this, 'can_maintain_theme' ), false, true, false, array( 'theme', 'confirmation' ) );
+
+        $this->register( 'request-approval', 'Request approval token', 'Issue a short-lived, single-use approval token for a risky action (trash-content, update-plugin, update-theme, updraft-backup). The token must then be passed as approval_token to the target ability.', array(
+            'action' => array( 'type' => 'string', 'enum' => array( 'trash-content', 'update-plugin', 'update-theme', 'updraft-backup' ) ),
+            'object' => array( 'type' => 'string', 'default' => '' ),
+        ), array( $this, 'request_approval' ), array( $this, 'can_manage' ), false, false, false, array( 'action' ) );
 
         $this->register( 'audit-log', 'Read MCP audit log', 'Read recent MGD WordPress MCP audit entries.', array(
             'limit' => array( 'type' => 'integer', 'default' => 50, 'minimum' => 1, 'maximum' => 200 ),
@@ -290,6 +319,24 @@ final class MGD_WordPress_MCP_Abilities {
         $post_type = isset( $input['post_type'] ) ? sanitize_key( $input['post_type'] ) : 'post';
         $obj = get_post_type_object( $post_type );
         return $obj && current_user_can( $obj->cap->create_posts );
+    }
+
+    public function request_approval( $input ) {
+        $action = sanitize_key( $input['action'] );
+        $object = isset( $input['object'] ) ? (string) $input['object'] : '';
+        return MGD_WordPress_MCP_Approvals::issue( $action, $object );
+    }
+
+    private function approval_error( $action ) {
+        return new WP_Error(
+            'mgd_mcp_approval_required',
+            sprintf(
+                /* translators: %s: action key */
+                __( 'Für diese Aktion wird ein gültiges Bestätigungstoken benötigt. Rufe zuerst mgd-wordpress-mcp/request-approval mit action="%s" auf.', 'mgd-wordpress-mcp' ),
+                $action
+            ),
+            array( 'status' => 403 )
+        );
     }
 
     private function write_error() {
@@ -487,6 +534,9 @@ final class MGD_WordPress_MCP_Abilities {
             return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-wordpress-mcp' ) );
         }
         $post_id = absint( $input['post_id'] );
+        if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'trash-content', (string) $post_id ) ) {
+            return $this->approval_error( 'trash-content' );
+        }
         $post = get_post( $post_id );
         if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
         $result = wp_trash_post( $post_id );
@@ -720,6 +770,9 @@ final class MGD_WordPress_MCP_Abilities {
 
     public function updraft_backup( $input ) {
         if ( 'BACKUP_NOW' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-wordpress-mcp' ) ); }
+        if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'updraft-backup', '' ) ) {
+            return $this->approval_error( 'updraft-backup' );
+        }
         if ( ! has_action( 'updraft_backupnow_backup_all' ) ) { return new WP_Error( 'mgd_mcp_updraft_missing', __( 'UpdraftPlus oder der Backup-Hook wurde nicht erkannt.', 'mgd-wordpress-mcp' ) ); }
         $nocloud = ( isset( $input['include_cloud'] ) && ! $input['include_cloud'] ) ? 1 : 0;
         do_action( 'updraft_backupnow_backup_all', array( 'nocloud' => $nocloud ) );
@@ -765,6 +818,9 @@ final class MGD_WordPress_MCP_Abilities {
         if ( ! $this->can_maintain_plugin() ) { return $this->maintenance_error(); }
         if ( 'UPDATE_PLUGIN' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-wordpress-mcp' ) ); }
         $plugin = sanitize_text_field( $input['plugin'] );
+        if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'update-plugin', $plugin ) ) {
+            return $this->approval_error( 'update-plugin' );
+        }
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
         if ( ! array_key_exists( $plugin, get_plugins() ) ) { return new WP_Error( 'mgd_mcp_plugin_missing', __( 'Plugin nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -787,6 +843,9 @@ final class MGD_WordPress_MCP_Abilities {
         $theme = isset( $input['theme'] ) ? sanitize_text_field( wp_unslash( $input['theme'] ) ) : '';
         if ( '' === $theme || basename( $theme ) !== $theme || false !== strpos( $theme, '..' ) ) {
             return new WP_Error( 'mgd_mcp_theme_invalid', __( 'Ungültiger Theme-Slug.', 'mgd-wordpress-mcp' ) );
+        }
+        if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'update-theme', $theme ) ) {
+            return $this->approval_error( 'update-theme' );
         }
         if ( ! wp_get_theme( $theme )->exists() ) { return new WP_Error( 'mgd_mcp_theme_missing', __( 'Theme nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';

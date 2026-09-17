@@ -4,13 +4,18 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.5
+Stable tag: 0.5.7
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.5.7 - 2026-09-17 =
+* Echte, zeitlich befristete Bestätigungstoken (Ability „request-approval") für trash-content, update-plugin, update-theme und updraft-backup verdrahtet; erforderlich, sofern nicht das Profil „Vollzugriff" aktiv ist.
+* Tool-Filterung im Profil „Nur lesen" nutzt jetzt eine explizite, autoritative Liste aller Schreib-Abilities statt einer lückenhaften Regex-Erkennung.
+* Neuer Plugin-Info-Banner (Higgsfield) im WordPress „Details ansehen“-Modal.
 
 = 0.5.5 - 2026-09-16 =
 * Neuer Tab „Start-Prompt“ direkt an zweiter Position der Plugin-Navigation.
