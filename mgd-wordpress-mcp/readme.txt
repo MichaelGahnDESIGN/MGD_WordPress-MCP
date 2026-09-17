@@ -4,13 +4,16 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.8
+Stable tag: 0.5.9
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.5.9 - 2026-09-17 =
+* Plugin-Info-Modal ("Details ansehen") robuster gebaut: die Feature-Übersicht in der Beschreibung nutzt jetzt eine einfache Liste statt einer `table.widefat`-Tabelle. Auf Websites mit vielen aktiven Plugins/Themes kollidierte diese Klasse teils mit fremdem, global geladenem CSS (z. B. responsive Tabellen-Hacks) und ließ die Seitenleiste/den Beschreibungsbereich im "Details ansehen"-Dialog auf über 100.000px Höhe aufblähen. Real auf einer Live-Installation mit vielen aktiven Plugins reproduziert und verifiziert.
 
 = 0.5.8 - 2026-09-17 =
 * Kritischen Bug im Einrichtungs-Assistenten behoben: Der über register_setting() registrierte Sanitize-Callback der Sicherheitsfreigaben überschrieb das Feld „permission_profile“ bei jedem update_option()-Aufruf wieder mit dem alten Wert. Dadurch änderten sich beim Klick auf „Auswählen“ zwar die zugrunde liegenden Schreib-/Divi-/Medien-/Wartungsrechte, die Profilauswahl („Nur lesen“/„Inhalte bearbeiten“/„Administration“/„Vollzugriff“) blieb aber sichtbar unverändert. Real auf einer Live-Installation reproduziert und verifiziert.
