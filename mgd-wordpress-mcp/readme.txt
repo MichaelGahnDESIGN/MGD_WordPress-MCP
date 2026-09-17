@@ -4,13 +4,16 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.7
+Stable tag: 0.5.8
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.5.8 - 2026-09-17 =
+* Kritischen Bug im Einrichtungs-Assistenten behoben: Der über register_setting() registrierte Sanitize-Callback der Sicherheitsfreigaben überschrieb das Feld „permission_profile“ bei jedem update_option()-Aufruf wieder mit dem alten Wert. Dadurch änderten sich beim Klick auf „Auswählen“ zwar die zugrunde liegenden Schreib-/Divi-/Medien-/Wartungsrechte, die Profilauswahl („Nur lesen“/„Inhalte bearbeiten“/„Administration“/„Vollzugriff“) blieb aber sichtbar unverändert. Real auf einer Live-Installation reproduziert und verifiziert.
 
 = 0.5.7 - 2026-09-17 =
 * Echte, zeitlich befristete Bestätigungstoken (Ability „request-approval") für trash-content, update-plugin, update-theme und updraft-backup verdrahtet; erforderlich, sofern nicht das Profil „Vollzugriff" aktiv ist.
