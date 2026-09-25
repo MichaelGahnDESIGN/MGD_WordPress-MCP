@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="MGD WordPress MCP">
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#2f6fed"/><stop offset="1" stop-color="#0e9aa7"/></linearGradient>
+    <radialGradient id="glow" cx=".85" cy=".1" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <clipPath id="c"><rect width="1280" height="320" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <rect width="1280" height="320" fill="url(#g)"/>
+    <rect width="1280" height="320" fill="url(#glow)"/>
+  <path d="M0 90 C 90 50, 180 130, 270 90 S 400 60, 420 90" fill="none" stroke="#fff" stroke-opacity=".14" stroke-width="2.4"/>
+  <path d="M0 124 C 90 84, 180 164, 270 124 S 400 94, 420 124" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2.4"/>
+  <path d="M0 158 C 90 118, 180 198, 270 158 S 400 128, 420 158" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="2.4"/>
+  <path d="M0 192 C 90 152, 180 232, 270 192 S 400 162, 420 192" fill="none" stroke="#fff" stroke-opacity=".26" stroke-width="2.4"/>
+  <path d="M0 226 C 90 186, 180 266, 270 226 S 400 196, 420 226" fill="none" stroke="#fff" stroke-opacity=".30" stroke-width="2.4"/>
+    <text x="420" y="140" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="64" font-weight="700" fill="#fff" letter-spacing="-1">MGD WordPress MCP</text>
+    <text x="422" y="196" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="23" fill="#fff" fill-opacity=".86">Ein WordPress MCP Plugin zum verwalten von WordPress</text><text x="422" y="226" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="23" fill="#fff" fill-opacity=".86">Projekten mit ChatGPT, Claude und Co</text>
+    <rect x="422" y="266" width="108" height="30" rx="15" fill="#fff" fill-opacity=".18"/>
+    <text x="436" y="287" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#fff">WordPress</text>
+  </g>
+</svg>
