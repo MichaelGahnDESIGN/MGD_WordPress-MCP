@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.10 – 2026-10-22
+
+- GitHub-Prüfungen auf verfügbare GitHub-Runner umgestellt.
+- Plugin-Icon lokal eingebunden und im Release-Paket enthalten.
+- Darstellung in der Erweiterungsverwaltung ergänzt beziehungsweise verbessert.
+- Keine Änderung an Fachlogik, Einstellungen oder Datenbank.
+
 Alle wesentlichen Änderungen an **MGD WordPress MCP** werden hier dokumentiert.
 
 ## [0.2.1] - 2026-09-15
