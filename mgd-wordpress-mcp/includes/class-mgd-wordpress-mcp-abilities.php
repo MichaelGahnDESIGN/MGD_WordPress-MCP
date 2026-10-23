@@ -71,10 +71,10 @@ final class MGD_WordPress_MCP_Abilities {
     public function register_category() {
         if ( function_exists( 'wp_register_ability_category' ) ) {
             wp_register_ability_category(
-                'mgd-wordpress-mcp',
+                'mgd-mcp-bridge',
                 array(
-                    'label'       => __( 'MGD WordPress MCP', 'mgd-wordpress-mcp' ),
-                    'description' => __( 'Sichere WordPress-Werkzeuge für MCP-kompatible KI-Agenten.', 'mgd-wordpress-mcp' ),
+                    'label'       => __( 'MGD WordPress MCP', 'mgd-mcp-bridge' ),
+                    'description' => __( 'Sichere WordPress-Werkzeuge für MCP-kompatible KI-Agenten.', 'mgd-mcp-bridge' ),
                 )
             );
         }
@@ -233,9 +233,9 @@ final class MGD_WordPress_MCP_Abilities {
         wp_register_ability(
             'mgd-wordpress-mcp/' . $slug,
             array(
-                'label'               => __( $label, 'mgd-wordpress-mcp' ),
-                'description'         => __( $description, 'mgd-wordpress-mcp' ),
-                'category'            => 'mgd-wordpress-mcp',
+                'label'               => $label,
+                'description'         => $description,
+                'category'            => 'mgd-mcp-bridge',
                 'input_schema'        => $schema,
                 'execute_callback'    => $callback,
                 'permission_callback' => $permission,
@@ -332,7 +332,7 @@ final class MGD_WordPress_MCP_Abilities {
             'mgd_mcp_approval_required',
             sprintf(
                 /* translators: %s: action key */
-                __( 'Für diese Aktion wird ein gültiges Bestätigungstoken benötigt. Rufe zuerst mgd-wordpress-mcp/request-approval mit action="%s" auf.', 'mgd-wordpress-mcp' ),
+                __( 'Für diese Aktion wird ein gültiges Bestätigungstoken benötigt. Rufe zuerst mgd-wordpress-mcp/request-approval mit action="%s" auf.', 'mgd-mcp-bridge' ),
                 $action
             ),
             array( 'status' => 403 )
@@ -340,11 +340,11 @@ final class MGD_WordPress_MCP_Abilities {
     }
 
     private function write_error() {
-        return new WP_Error( 'mgd_mcp_writes_disabled', __( 'Schreibzugriff ist in MGD WordPress MCP deaktiviert.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) );
+        return new WP_Error( 'mgd_mcp_writes_disabled', __( 'Schreibzugriff ist in MGD WordPress MCP deaktiviert.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) );
     }
 
     private function maintenance_error() {
-        return new WP_Error( 'mgd_mcp_maintenance_disabled', __( 'Wartungsaktionen sind in MGD WordPress MCP deaktiviert.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) );
+        return new WP_Error( 'mgd_mcp_maintenance_disabled', __( 'Wartungsaktionen sind in MGD WordPress MCP deaktiviert.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) );
     }
 
     private function normalize_post( $post ) {
@@ -415,7 +415,7 @@ final class MGD_WordPress_MCP_Abilities {
         $post_type = isset( $input['post_type'] ) ? sanitize_key( $input['post_type'] ) : 'post';
         $obj = get_post_type_object( $post_type );
         if ( ! $obj || ! $obj->show_ui ) {
-            return new WP_Error( 'mgd_mcp_invalid_post_type', __( 'Ungültiger oder nicht unterstützter Inhaltstyp.', 'mgd-wordpress-mcp' ) );
+            return new WP_Error( 'mgd_mcp_invalid_post_type', __( 'Ungültiger oder nicht unterstützter Inhaltstyp.', 'mgd-mcp-bridge' ) );
         }
         $page = max( 1, absint( isset( $input['page'] ) ? $input['page'] : 1 ) );
         $per_page = max( 1, min( 100, absint( isset( $input['per_page'] ) ? $input['per_page'] : 20 ) ) );
@@ -441,7 +441,7 @@ final class MGD_WordPress_MCP_Abilities {
     public function get_content( $input ) {
         $post = get_post( absint( $input['post_id'] ) );
         if ( ! $post ) {
-            return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-wordpress-mcp' ) );
+            return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-mcp-bridge' ) );
         }
         return $this->normalize_post( $post );
     }
@@ -468,7 +468,7 @@ final class MGD_WordPress_MCP_Abilities {
         );
         if ( ! empty( $input['divi_builder'] ) ) {
             if ( ! $this->can_write_divi() ) {
-                return new WP_Error( 'mgd_mcp_divi_writes_disabled', __( 'Divi-Schreibzugriff ist deaktiviert.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) );
+                return new WP_Error( 'mgd_mcp_divi_writes_disabled', __( 'Divi-Schreibzugriff ist deaktiviert.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) );
             }
             $postarr['post_content'] = isset( $input['content'] ) ? (string) $input['content'] : '';
         }
@@ -498,10 +498,10 @@ final class MGD_WordPress_MCP_Abilities {
         }
         $post = get_post( absint( $input['post_id'] ) );
         if ( ! $post ) {
-            return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-wordpress-mcp' ) );
+            return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-mcp-bridge' ) );
         }
         if ( ! $this->check_modified( $post, isset( $input['expected_modified_gmt'] ) ? $input['expected_modified_gmt'] : '' ) ) {
-            return new WP_Error( 'mgd_mcp_conflict', __( 'Der Inhalt wurde zwischenzeitlich geändert. Bitte zuerst neu laden.', 'mgd-wordpress-mcp' ), array( 'status' => 409 ) );
+            return new WP_Error( 'mgd_mcp_conflict', __( 'Der Inhalt wurde zwischenzeitlich geändert. Bitte zuerst neu laden.', 'mgd-mcp-bridge' ), array( 'status' => 409 ) );
         }
         wp_save_post_revision( $post->ID );
         $data = array( 'ID' => $post->ID );
@@ -531,16 +531,16 @@ final class MGD_WordPress_MCP_Abilities {
 
     public function trash_content( $input ) {
         if ( 'TRASH_CONTENT' !== $input['confirmation'] ) {
-            return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-wordpress-mcp' ) );
+            return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-mcp-bridge' ) );
         }
         $post_id = absint( $input['post_id'] );
         if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'trash-content', (string) $post_id ) ) {
             return $this->approval_error( 'trash-content' );
         }
         $post = get_post( $post_id );
-        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-mcp-bridge' ) ); }
         $result = wp_trash_post( $post_id );
-        if ( ! $result ) { return new WP_Error( 'mgd_mcp_trash_failed', __( 'Inhalt konnte nicht in den Papierkorb verschoben werden.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! $result ) { return new WP_Error( 'mgd_mcp_trash_failed', __( 'Inhalt konnte nicht in den Papierkorb verschoben werden.', 'mgd-mcp-bridge' ) ); }
         MGD_WordPress_MCP_Audit::log( 'trash-content', 'destructive', true, 'Trashed #' . $post_id, $post->post_type, $post_id );
         return array( 'post_id' => $post_id, 'status' => 'trash' );
     }
@@ -571,15 +571,15 @@ final class MGD_WordPress_MCP_Abilities {
 
     public function import_media( $input ) {
         if ( ! $this->can_import_media() ) {
-            return new WP_Error( 'mgd_mcp_media_import_disabled', __( 'Externe Medienimporte sind deaktiviert.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) );
+            return new WP_Error( 'mgd_mcp_media_import_disabled', __( 'Externe Medienimporte sind deaktiviert.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) );
         }
         $post_parent = isset( $input['post_id'] ) ? absint( $input['post_id'] ) : 0;
         if ( $post_parent && ! current_user_can( 'edit_post', $post_parent ) ) {
-            return new WP_Error( 'mgd_mcp_forbidden_parent', __( 'Keine Berechtigung für den angegebenen übergeordneten Inhalt.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) );
+            return new WP_Error( 'mgd_mcp_forbidden_parent', __( 'Keine Berechtigung für den angegebenen übergeordneten Inhalt.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) );
         }
         $url = esc_url_raw( $input['url'] );
         if ( ! wp_http_validate_url( $url ) ) {
-            return new WP_Error( 'mgd_mcp_invalid_url', __( 'Ungültige oder unsichere URL.', 'mgd-wordpress-mcp' ) );
+            return new WP_Error( 'mgd_mcp_invalid_url', __( 'Ungültige oder unsichere URL.', 'mgd-mcp-bridge' ) );
         }
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/media.php';
@@ -588,15 +588,15 @@ final class MGD_WordPress_MCP_Abilities {
         if ( is_wp_error( $tmp ) ) { return $tmp; }
         $max = max( 1, absint( MGD_WordPress_MCP::setting( 'max_upload_mb', 8 ) ) ) * MB_IN_BYTES;
         if ( filesize( $tmp ) > $max ) {
-            @unlink( $tmp );
-            return new WP_Error( 'mgd_mcp_file_too_large', __( 'Die Datei überschreitet das konfigurierte Größenlimit.', 'mgd-wordpress-mcp' ) );
+            wp_delete_file( $tmp );
+            return new WP_Error( 'mgd_mcp_file_too_large', __( 'Die Datei überschreitet das konfigurierte Größenlimit.', 'mgd-mcp-bridge' ) );
         }
         $path = wp_parse_url( $url, PHP_URL_PATH );
         $name = sanitize_file_name( basename( $path ) );
         if ( ! $name ) { $name = 'import-' . time(); }
         $file = array( 'name' => $name, 'tmp_name' => $tmp );
         $attachment_id = media_handle_sideload( $file, $post_parent, isset( $input['title'] ) ? sanitize_text_field( $input['title'] ) : '' );
-        if ( is_wp_error( $attachment_id ) ) { @unlink( $tmp ); return $attachment_id; }
+        if ( is_wp_error( $attachment_id ) ) { wp_delete_file( $tmp ); return $attachment_id; }
         if ( ! empty( $input['alt_text'] ) ) { update_post_meta( $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $input['alt_text'] ) ); }
         MGD_WordPress_MCP_Audit::log( 'import-media', 'write', true, 'Imported media #' . $attachment_id, 'attachment', $attachment_id );
         return array( 'attachment_id' => (int) $attachment_id, 'url' => wp_get_attachment_url( $attachment_id ), 'mime_type' => get_post_mime_type( $attachment_id ) );
@@ -605,17 +605,17 @@ final class MGD_WordPress_MCP_Abilities {
     public function upload_media_base64( $input ) {
         if ( ! $this->can_write_media() ) { return $this->write_error(); }
         $data = base64_decode( preg_replace( '#^data:[^;]+;base64,#', '', (string) $input['content_base64'] ), true );
-        if ( false === $data ) { return new WP_Error( 'mgd_mcp_invalid_base64', __( 'Ungültige Base64-Daten.', 'mgd-wordpress-mcp' ) ); }
+        if ( false === $data ) { return new WP_Error( 'mgd_mcp_invalid_base64', __( 'Ungültige Base64-Daten.', 'mgd-mcp-bridge' ) ); }
         $max = max( 1, absint( MGD_WordPress_MCP::setting( 'max_upload_mb', 8 ) ) ) * MB_IN_BYTES;
-        if ( strlen( $data ) > $max ) { return new WP_Error( 'mgd_mcp_file_too_large', __( 'Die Datei überschreitet das konfigurierte Größenlimit.', 'mgd-wordpress-mcp' ) ); }
+        if ( strlen( $data ) > $max ) { return new WP_Error( 'mgd_mcp_file_too_large', __( 'Die Datei überschreitet das konfigurierte Größenlimit.', 'mgd-mcp-bridge' ) ); }
         $post_parent = isset( $input['post_id'] ) ? absint( $input['post_id'] ) : 0;
         if ( $post_parent && ! current_user_can( 'edit_post', $post_parent ) ) {
-            return new WP_Error( 'mgd_mcp_forbidden_parent', __( 'Keine Berechtigung für den angegebenen übergeordneten Inhalt.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) );
+            return new WP_Error( 'mgd_mcp_forbidden_parent', __( 'Keine Berechtigung für den angegebenen übergeordneten Inhalt.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) );
         }
         $filename = sanitize_file_name( $input['filename'] );
         $mime = sanitize_mime_type( $input['mime_type'] );
         $allowed = get_allowed_mime_types();
-        if ( ! in_array( $mime, $allowed, true ) ) { return new WP_Error( 'mgd_mcp_mime_not_allowed', __( 'Dieser MIME-Typ ist nicht erlaubt.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! in_array( $mime, $allowed, true ) ) { return new WP_Error( 'mgd_mcp_mime_not_allowed', __( 'Dieser MIME-Typ ist nicht erlaubt.', 'mgd-mcp-bridge' ) ); }
         $upload = wp_upload_bits( $filename, null, $data );
         if ( ! empty( $upload['error'] ) ) { return new WP_Error( 'mgd_mcp_upload_failed', $upload['error'] ); }
         require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -640,7 +640,7 @@ final class MGD_WordPress_MCP_Abilities {
         if ( 0 === $attachment_id ) {
             delete_post_thumbnail( $post_id );
         } else {
-            if ( 'attachment' !== get_post_type( $attachment_id ) ) { return new WP_Error( 'mgd_mcp_invalid_attachment', __( 'Ungültige Medien-ID.', 'mgd-wordpress-mcp' ) ); }
+            if ( 'attachment' !== get_post_type( $attachment_id ) ) { return new WP_Error( 'mgd_mcp_invalid_attachment', __( 'Ungültige Medien-ID.', 'mgd-mcp-bridge' ) ); }
             set_post_thumbnail( $post_id, $attachment_id );
         }
         MGD_WordPress_MCP_Audit::log( 'set-featured-image', 'write', true, 'Featured image changed', get_post_type( $post_id ), $post_id );
@@ -670,7 +670,7 @@ final class MGD_WordPress_MCP_Abilities {
         if ( ! $this->can_write() ) { return $this->write_error(); }
         $post_id = absint( $input['post_id'] );
         $provider = $this->seo_provider();
-        if ( ! $provider ) { return new WP_Error( 'mgd_mcp_seo_missing', __( 'Kein unterstütztes SEO-Plugin erkannt.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! $provider ) { return new WP_Error( 'mgd_mcp_seo_missing', __( 'Kein unterstütztes SEO-Plugin erkannt.', 'mgd-mcp-bridge' ) ); }
         $title = isset( $input['title'] ) ? sanitize_text_field( $input['title'] ) : null;
         $description = isset( $input['description'] ) ? sanitize_textarea_field( $input['description'] ) : null;
         if ( 'rank_math' === $provider ) {
@@ -699,14 +699,14 @@ final class MGD_WordPress_MCP_Abilities {
             'builder_version' => defined( 'ET_BUILDER_VERSION' ) ? ET_BUILDER_VERSION : '',
             'writes_enabled' => (bool) MGD_WordPress_MCP::setting( 'divi_writes_enabled', false ),
             'mode' => 'raw-layout-bridge',
-            'warning' => __( 'Divi 5 writes operate on stored post_content with WordPress revisions. The agent must understand the site-specific Divi layout format.', 'mgd-wordpress-mcp' ),
+            'warning' => __( 'Divi 5 writes operate on stored post_content with WordPress revisions. The agent must understand the site-specific Divi layout format.', 'mgd-mcp-bridge' ),
         );
     }
 
     public function divi_get_layout( $input ) {
-        if ( ! $this->is_divi_available() ) { return new WP_Error( 'mgd_mcp_divi_missing', __( 'Divi wurde nicht erkannt.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! $this->is_divi_available() ) { return new WP_Error( 'mgd_mcp_divi_missing', __( 'Divi wurde nicht erkannt.', 'mgd-mcp-bridge' ) ); }
         $post = get_post( absint( $input['post_id'] ) );
-        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-mcp-bridge' ) ); }
         return array(
             'post_id' => (int) $post->ID,
             'title' => get_the_title( $post ),
@@ -718,13 +718,13 @@ final class MGD_WordPress_MCP_Abilities {
     }
 
     public function divi_save_layout( $input ) {
-        if ( ! $this->can_write_divi() ) { return new WP_Error( 'mgd_mcp_divi_writes_disabled', __( 'Divi-Schreibzugriff ist deaktiviert.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) ); }
-        if ( ! $this->is_divi_available() ) { return new WP_Error( 'mgd_mcp_divi_missing', __( 'Divi wurde nicht erkannt.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! $this->can_write_divi() ) { return new WP_Error( 'mgd_mcp_divi_writes_disabled', __( 'Divi-Schreibzugriff ist deaktiviert.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) ); }
+        if ( ! $this->is_divi_available() ) { return new WP_Error( 'mgd_mcp_divi_missing', __( 'Divi wurde nicht erkannt.', 'mgd-mcp-bridge' ) ); }
         $post = get_post( absint( $input['post_id'] ) );
-        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
-        if ( ! current_user_can( 'edit_post', $post->ID ) ) { return new WP_Error( 'mgd_mcp_forbidden', __( 'Keine Berechtigung.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) ); }
+        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-mcp-bridge' ) ); }
+        if ( ! current_user_can( 'edit_post', $post->ID ) ) { return new WP_Error( 'mgd_mcp_forbidden', __( 'Keine Berechtigung.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) ); }
         if ( ! $this->check_modified( $post, isset( $input['expected_modified_gmt'] ) ? $input['expected_modified_gmt'] : '' ) ) {
-            return new WP_Error( 'mgd_mcp_conflict', __( 'Das Divi-Layout wurde zwischenzeitlich geändert.', 'mgd-wordpress-mcp' ), array( 'status' => 409 ) );
+            return new WP_Error( 'mgd_mcp_conflict', __( 'Das Divi-Layout wurde zwischenzeitlich geändert.', 'mgd-mcp-bridge' ), array( 'status' => 409 ) );
         }
         wp_save_post_revision( $post->ID );
         $result = wp_update_post( wp_slash( array( 'ID' => $post->ID, 'post_content' => (string) $input['content'] ) ), true );
@@ -735,18 +735,19 @@ final class MGD_WordPress_MCP_Abilities {
     }
 
     public function divi_replace_text( $input ) {
-        if ( ! $this->can_write_divi() ) { return new WP_Error( 'mgd_mcp_divi_writes_disabled', __( 'Divi-Schreibzugriff ist deaktiviert.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) ); }
+        if ( ! $this->can_write_divi() ) { return new WP_Error( 'mgd_mcp_divi_writes_disabled', __( 'Divi-Schreibzugriff ist deaktiviert.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) ); }
         $post = get_post( absint( $input['post_id'] ) );
-        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
-        if ( ! current_user_can( 'edit_post', $post->ID ) ) { return new WP_Error( 'mgd_mcp_forbidden', __( 'Keine Berechtigung.', 'mgd-wordpress-mcp' ), array( 'status' => 403 ) ); }
+        if ( ! $post ) { return new WP_Error( 'mgd_mcp_not_found', __( 'Inhalt nicht gefunden.', 'mgd-mcp-bridge' ) ); }
+        if ( ! current_user_can( 'edit_post', $post->ID ) ) { return new WP_Error( 'mgd_mcp_forbidden', __( 'Keine Berechtigung.', 'mgd-mcp-bridge' ), array( 'status' => 403 ) ); }
         if ( ! $this->check_modified( $post, isset( $input['expected_modified_gmt'] ) ? $input['expected_modified_gmt'] : '' ) ) {
-            return new WP_Error( 'mgd_mcp_conflict', __( 'Das Layout wurde zwischenzeitlich geändert.', 'mgd-wordpress-mcp' ), array( 'status' => 409 ) );
+            return new WP_Error( 'mgd_mcp_conflict', __( 'Das Layout wurde zwischenzeitlich geändert.', 'mgd-mcp-bridge' ), array( 'status' => 409 ) );
         }
         $count = substr_count( $post->post_content, (string) $input['search'] );
         if ( isset( $input['expected_count'] ) && (int) $input['expected_count'] !== $count ) {
-            return new WP_Error( 'mgd_mcp_occurrence_mismatch', sprintf( __( 'Erwartet: %1$d Treffer. Gefunden: %2$d.', 'mgd-wordpress-mcp' ), (int) $input['expected_count'], $count ), array( 'status' => 409 ) );
+            /* translators: 1: expected match count, 2: actual match count. */
+            return new WP_Error( 'mgd_mcp_occurrence_mismatch', sprintf( __( 'Erwartet: %1$d Treffer. Gefunden: %2$d.', 'mgd-mcp-bridge' ), (int) $input['expected_count'], $count ), array( 'status' => 409 ) );
         }
-        if ( 0 === $count ) { return new WP_Error( 'mgd_mcp_text_not_found', __( 'Text wurde nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
+        if ( 0 === $count ) { return new WP_Error( 'mgd_mcp_text_not_found', __( 'Text wurde nicht gefunden.', 'mgd-mcp-bridge' ) ); }
         wp_save_post_revision( $post->ID );
         $new = str_replace( (string) $input['search'], (string) $input['replace'], $post->post_content, $replacements );
         $result = wp_update_post( wp_slash( array( 'ID' => $post->ID, 'post_content' => $new ) ), true );
@@ -756,12 +757,12 @@ final class MGD_WordPress_MCP_Abilities {
     }
 
     public function wpforms_run( $input ) {
-        if ( ! function_exists( 'wp_get_ability' ) ) { return new WP_Error( 'mgd_mcp_abilities_missing', __( 'Abilities API nicht verfügbar.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! function_exists( 'wp_get_ability' ) ) { return new WP_Error( 'mgd_mcp_abilities_missing', __( 'Abilities API nicht verfügbar.', 'mgd-mcp-bridge' ) ); }
         $action = sanitize_key( $input['action'] );
         $write_actions = array( 'create-form', 'add-field', 'update-field', 'update-form-settings' );
         if ( in_array( $action, $write_actions, true ) && ! $this->can_write() ) { return $this->write_error(); }
         $ability = wp_get_ability( 'wpforms/' . $action );
-        if ( ! $ability ) { return new WP_Error( 'mgd_mcp_wpforms_ability_missing', __( 'Die angeforderte WPForms Ability ist nicht verfügbar. Prüfe WPForms-Version und AI/MCP-Einstellungen.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! $ability ) { return new WP_Error( 'mgd_mcp_wpforms_ability_missing', __( 'Die angeforderte WPForms Ability ist nicht verfügbar. Prüfe WPForms-Version und AI/MCP-Einstellungen.', 'mgd-mcp-bridge' ) ); }
         $params = isset( $input['parameters'] ) && is_array( $input['parameters'] ) ? $input['parameters'] : array();
         $result = $ability->execute( $params );
         MGD_WordPress_MCP_Audit::log( 'wpforms-run:' . $action, in_array( $action, $write_actions, true ) ? 'write' : 'read', ! is_wp_error( $result ), is_wp_error( $result ) ? $result->get_error_message() : 'WPForms ability executed' );
@@ -769,15 +770,15 @@ final class MGD_WordPress_MCP_Abilities {
     }
 
     public function updraft_backup( $input ) {
-        if ( 'BACKUP_NOW' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-wordpress-mcp' ) ); }
+        if ( 'BACKUP_NOW' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-mcp-bridge' ) ); }
         if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'updraft-backup', '' ) ) {
             return $this->approval_error( 'updraft-backup' );
         }
-        if ( ! has_action( 'updraft_backupnow_backup_all' ) ) { return new WP_Error( 'mgd_mcp_updraft_missing', __( 'UpdraftPlus oder der Backup-Hook wurde nicht erkannt.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! has_action( 'updraft_backupnow_backup_all' ) ) { return new WP_Error( 'mgd_mcp_updraft_missing', __( 'UpdraftPlus oder der Backup-Hook wurde nicht erkannt.', 'mgd-mcp-bridge' ) ); }
         $nocloud = ( isset( $input['include_cloud'] ) && ! $input['include_cloud'] ) ? 1 : 0;
         do_action( 'updraft_backupnow_backup_all', array( 'nocloud' => $nocloud ) );
         MGD_WordPress_MCP_Audit::log( 'updraft-backup', 'admin', true, 'Backup triggered' );
-        return array( 'triggered' => true, 'include_cloud' => 0 === $nocloud, 'note' => __( 'UpdraftPlus arbeitet asynchron. Prüfe den Backup-Status in UpdraftPlus, bevor du riskante Updates startest.', 'mgd-wordpress-mcp' ) );
+        return array( 'triggered' => true, 'include_cloud' => 0 === $nocloud, 'note' => __( 'UpdraftPlus arbeitet asynchron. Prüfe den Backup-Status in UpdraftPlus, bevor du riskante Updates startest.', 'mgd-mcp-bridge' ) );
     }
 
     public function list_plugins() {
@@ -816,20 +817,20 @@ final class MGD_WordPress_MCP_Abilities {
 
     public function update_plugin( $input ) {
         if ( ! $this->can_maintain_plugin() ) { return $this->maintenance_error(); }
-        if ( 'UPDATE_PLUGIN' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-wordpress-mcp' ) ); }
+        if ( 'UPDATE_PLUGIN' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-mcp-bridge' ) ); }
         $plugin = sanitize_text_field( $input['plugin'] );
         if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'update-plugin', $plugin ) ) {
             return $this->approval_error( 'update-plugin' );
         }
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        if ( ! array_key_exists( $plugin, get_plugins() ) ) { return new WP_Error( 'mgd_mcp_plugin_missing', __( 'Plugin nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! array_key_exists( $plugin, get_plugins() ) ) { return new WP_Error( 'mgd_mcp_plugin_missing', __( 'Plugin nicht gefunden.', 'mgd-mcp-bridge' ) ); }
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         wp_update_plugins();
         $skin = new Automatic_Upgrader_Skin();
         $upgrader = new Plugin_Upgrader( $skin );
         $result = $upgrader->upgrade( $plugin );
         if ( is_wp_error( $result ) || false === $result ) {
-            $message = is_wp_error( $result ) ? $result->get_error_message() : __( 'Update fehlgeschlagen.', 'mgd-wordpress-mcp' );
+            $message = is_wp_error( $result ) ? $result->get_error_message() : __( 'Update fehlgeschlagen.', 'mgd-mcp-bridge' );
             MGD_WordPress_MCP_Audit::log( 'update-plugin', 'admin', false, $message, 'plugin' );
             return is_wp_error( $result ) ? $result : new WP_Error( 'mgd_mcp_update_failed', $message );
         }
@@ -839,22 +840,22 @@ final class MGD_WordPress_MCP_Abilities {
 
     public function update_theme( $input ) {
         if ( ! $this->can_maintain_theme() ) { return $this->maintenance_error(); }
-        if ( 'UPDATE_THEME' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-wordpress-mcp' ) ); }
+        if ( 'UPDATE_THEME' !== $input['confirmation'] ) { return new WP_Error( 'mgd_mcp_confirmation', __( 'Bestätigung fehlt.', 'mgd-mcp-bridge' ) ); }
         $theme = isset( $input['theme'] ) ? sanitize_text_field( wp_unslash( $input['theme'] ) ) : '';
         if ( '' === $theme || basename( $theme ) !== $theme || false !== strpos( $theme, '..' ) ) {
-            return new WP_Error( 'mgd_mcp_theme_invalid', __( 'Ungültiger Theme-Slug.', 'mgd-wordpress-mcp' ) );
+            return new WP_Error( 'mgd_mcp_theme_invalid', __( 'Ungültiger Theme-Slug.', 'mgd-mcp-bridge' ) );
         }
         if ( MGD_WordPress_MCP_Security::approval_required() && ! MGD_WordPress_MCP_Approvals::consume( isset( $input['approval_token'] ) ? $input['approval_token'] : '', 'update-theme', $theme ) ) {
             return $this->approval_error( 'update-theme' );
         }
-        if ( ! wp_get_theme( $theme )->exists() ) { return new WP_Error( 'mgd_mcp_theme_missing', __( 'Theme nicht gefunden.', 'mgd-wordpress-mcp' ) ); }
+        if ( ! wp_get_theme( $theme )->exists() ) { return new WP_Error( 'mgd_mcp_theme_missing', __( 'Theme nicht gefunden.', 'mgd-mcp-bridge' ) ); }
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         wp_update_themes();
         $skin = new Automatic_Upgrader_Skin();
         $upgrader = new Theme_Upgrader( $skin );
         $result = $upgrader->upgrade( $theme );
         if ( is_wp_error( $result ) || false === $result ) {
-            $message = is_wp_error( $result ) ? $result->get_error_message() : __( 'Update fehlgeschlagen.', 'mgd-wordpress-mcp' );
+            $message = is_wp_error( $result ) ? $result->get_error_message() : __( 'Update fehlgeschlagen.', 'mgd-mcp-bridge' );
             MGD_WordPress_MCP_Audit::log( 'update-theme', 'admin', false, $message, 'theme' );
             return is_wp_error( $result ) ? $result : new WP_Error( 'mgd_mcp_update_failed', $message );
         }

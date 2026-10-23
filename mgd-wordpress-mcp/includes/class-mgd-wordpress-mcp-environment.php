@@ -89,8 +89,8 @@ final class MGD_WordPress_MCP_Environment {
             'detected_plugins'   => $locks,
             'search_visibility'  => $blog_public ? 'public' : 'discourage_search_engines',
             'agent_instruction'  => ! empty( $locks )
-                ? __( 'Ein Frontend-Schutz wurde erkannt. Wenn eine visuelle Prüfung oder Browser-Automation blockiert wird, frage den Nutzer nach dem legitimen Entsperrweg oder einer temporären Freigabe. Frage nur bei Bedarf nach einer PIN. Speichere oder protokolliere keine PINs oder Passwörter.', 'mgd-wordpress-mcp' )
-                : __( 'Kein typischer Frontend-Schutz wurde anhand aktiver Plugins erkannt. Eine externe WAF, Basic-Auth oder Hosting-Sperre kann trotzdem existieren.', 'mgd-wordpress-mcp' ),
+                ? __( 'Ein Frontend-Schutz wurde erkannt. Wenn eine visuelle Prüfung oder Browser-Automation blockiert wird, frage den Nutzer nach dem legitimen Entsperrweg oder einer temporären Freigabe. Frage nur bei Bedarf nach einer PIN. Speichere oder protokolliere keine PINs oder Passwörter.', 'mgd-mcp-bridge' )
+                : __( 'Kein typischer Frontend-Schutz wurde anhand aktiver Plugins erkannt. Eine externe WAF, Basic-Auth oder Hosting-Sperre kann trotzdem existieren.', 'mgd-mcp-bridge' ),
         );
     }
 
