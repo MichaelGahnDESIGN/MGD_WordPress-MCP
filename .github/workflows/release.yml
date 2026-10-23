@@ -63,6 +63,8 @@ jobs:
           rsync -a --delete mgd-wordpress-mcp/ build/mgd-wordpress-mcp/
           cd build
           zip -r ../mgd-wordpress-mcp.zip mgd-wordpress-mcp
+          cd ..
+          sha256sum mgd-wordpress-mcp.zip > mgd-wordpress-mcp.zip.sha256
 
       - name: Create or update GitHub release
         env:
@@ -72,9 +74,9 @@ jobs:
         run: |
           set -euo pipefail
           if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
-            gh release upload "${RELEASE_TAG}" mgd-wordpress-mcp.zip --clobber
+            gh release upload "${RELEASE_TAG}" mgd-wordpress-mcp.zip mgd-wordpress-mcp.zip.sha256 --clobber
           else
-            gh release create "${RELEASE_TAG}" mgd-wordpress-mcp.zip --target "${GITHUB_SHA}" --generate-notes --title "MGD WordPress MCP ${RELEASE_TAG}"
+            gh release create "${RELEASE_TAG}" mgd-wordpress-mcp.zip mgd-wordpress-mcp.zip.sha256 --target "${GITHUB_SHA}" --generate-notes --title "MGD WordPress MCP ${RELEASE_TAG}"
           fi
 
       - name: Remove temporary release request branch
