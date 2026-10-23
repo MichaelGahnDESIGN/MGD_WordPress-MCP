@@ -2,7 +2,7 @@
 
 ## Verzeichnisfassung 0.5.11
 
-Die verbliebenen statischen Hinweise wurden gezielt nachgearbeitet. [Änderungen und 41 Integrationstests](docs/wordpress-org/ERGEBNIS.md) sowie [offengelegte Einzel-Ausnahmen](docs/wordpress-org/GEPRUEFTE-AUSNAHMEN.md) dokumentieren den neuen Stand.
+Die verbliebenen statischen Hinweise wurden gezielt nachgearbeitet. [Änderungen und 46 Integrationstests](docs/wordpress-org/ERGEBNIS.md) sowie [offengelegte Einzel-Ausnahmen](docs/wordpress-org/GEPRUEFTE-AUSNAHMEN.md) dokumentieren den neuen Stand.
 
 ![Plugin-Banner](wordpress-org/assets/banner-1544x500.png)
 
