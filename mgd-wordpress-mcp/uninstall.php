@@ -31,4 +31,4 @@ if ( is_multisite() ) {
 
 global $wpdb;
 $table = $wpdb->prefix . 'mgd_wordpress_mcp_audit';
-$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Ausschließlich bei ausdrücklich aktivierter Datenlöschung.
+$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Ausschließlich bei ausdrücklich aktivierter Datenlöschung.

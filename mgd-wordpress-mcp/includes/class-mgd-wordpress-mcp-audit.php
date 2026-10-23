@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class MGD_WordPress_MCP_Audit {
     private static $instance = null;
+    private static $cache_keys = array();
+    private const CACHE_GROUP = 'mgd_mcp_audit_request';
 
     public static function instance() {
         if ( null === self::$instance ) {
@@ -52,6 +54,8 @@ final class MGD_WordPress_MCP_Audit {
 
         global $wpdb;
 
+        foreach (self::$cache_keys as $key) { wp_cache_delete($key, self::CACHE_GROUP); }
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Eigene Audit-Tabelle; vorhandene Anfrageansichten sind oben verworfen.
         $wpdb->insert(
             self::table_name(),
             array(
@@ -73,17 +77,29 @@ final class MGD_WordPress_MCP_Audit {
     private static function trim() {
         global $wpdb;
         $table = self::table_name();
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Frischer Zähler für die begrenzte Aufbewahrung, auch bei parallelen MCP-Anfragen.
         $count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) );
         if ( $count <= 2000 ) {
             return;
         }
         $delete = $count - 1500;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Begrenzte Bereinigung eigener Audit-Zeilen; log() hat den Anfragecache invalidiert.
         $wpdb->query( $wpdb->prepare( 'DELETE FROM %i ORDER BY id ASC LIMIT %d', $table, $delete ) );
     }
 
     public static function latest( $limit = 50 ) {
         global $wpdb;
         $limit = max( 1, min( 200, absint( $limit ) ) );
-        return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY id DESC LIMIT %d', self::table_name(), $limit ), ARRAY_A );
+        // Audit-Daten nur während dieser Anfrage behalten, nicht im persistenten Object Cache.
+        wp_cache_add_non_persistent_groups(array(self::CACHE_GROUP));
+        $key = md5(self::table_name() . ':' . $limit);
+        self::$cache_keys[$key] = $key;
+        $cached = wp_cache_get($key, self::CACHE_GROUP, false, $found);
+        if ($found) { return $cached; }
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Vorbereitete Abfrage der eigenen Audit-Tabelle.
+        $items = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY id DESC LIMIT %d', self::table_name(), $limit ), ARRAY_A );
+        $items = is_array($items) ? $items : array();
+        if (!$wpdb->last_error) { wp_cache_set($key, $items, self::CACHE_GROUP); }
+        return $items;
     }
 }

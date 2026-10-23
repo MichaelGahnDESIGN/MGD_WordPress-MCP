@@ -1,15 +1,1 @@
-FILE: includes/class-mgd-wordpress-mcp-wizard.php
-[{"line":8,"column":209,"type":"WARNING","code":"WordPress.Security.NonceVerification.Recommended","message":"Processing form data without nonce verification.","docs":""}]
-
-FILE: includes/class-mgd-wordpress-mcp-admin.php
-[{"line":15,"column":146,"type":"WARNING","code":"WordPress.Security.NonceVerification.Recommended","message":"Processing form data without nonce verification.","docs":""}]
-
-FILE: includes/class-mgd-wordpress-mcp.php
-[{"line":14,"column":778,"type":"WARNING","code":"WordPress.PHP.DevelopmentFunctions.error_log_error_log","message":"error_log() found. Debug code should not normally be used in production.","docs":""}]
-
-FILE: uninstall.php
-[{"line":34,"column":1,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.DirectQuery","message":"Use of a direct database call is discouraged.","docs":""},{"line":34,"column":1,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.NoCaching","message":"Direct database call without caching detected. Consider using wp_cache_get() \/ wp_cache_set() or wp_cache_delete().","docs":""}]
-
-FILE: includes/class-mgd-wordpress-mcp-audit.php
-[{"line":55,"column":9,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.DirectQuery","message":"Use of a direct database call is discouraged.","docs":""},{"line":76,"column":24,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.DirectQuery","message":"Use of a direct database call is discouraged.","docs":""},{"line":76,"column":24,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.NoCaching","message":"Direct database call without caching detected. Consider using wp_cache_get() \/ wp_cache_set() or wp_cache_delete().","docs":""},{"line":81,"column":9,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.DirectQuery","message":"Use of a direct database call is discouraged.","docs":""},{"line":81,"column":9,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.NoCaching","message":"Direct database call without caching detected. Consider using wp_cache_get() \/ wp_cache_set() or wp_cache_delete().","docs":""},{"line":87,"column":16,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.DirectQuery","message":"Use of a direct database call is discouraged.","docs":""},{"line":87,"column":16,"type":"WARNING","code":"WordPress.DB.DirectDatabaseQuery.NoCaching","message":"Direct database call without caching detected. Consider using wp_cache_get() \/ wp_cache_set() or wp_cache_delete().","docs":""}]
-
+Success: Checks complete. No errors found.

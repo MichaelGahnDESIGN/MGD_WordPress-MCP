@@ -51,6 +51,7 @@ No analytics or telemetry service is included. WordPress communicates with WordP
 == Changelog ==
 
 = 0.5.11 =
+* Cache audit views within the current request and invalidate them when a new event is recorded.
 * Prepared a WordPress.org candidate with native updates, local assets and reviewed public credits.
 
 == Upgrade Notice ==

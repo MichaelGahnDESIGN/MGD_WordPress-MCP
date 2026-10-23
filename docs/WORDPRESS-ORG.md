@@ -47,3 +47,15 @@ Die nachträgliche Prüfung filtert Nonce-/Formulareingaben am Eingang, verwende
 Prüfplan: feste Paketliste bauen, Metadaten-/Updatevertrag prüfen, PHP-Syntax prüfen, Paket in der lokalen Testkopie installieren, 22 Schutzgrenzen-/Datenbanktests und die sieben Backends prüfen, offiziellen Plugin Check ausführen und ZIP gegen CI-Artefakt vergleichen. Rückfall bleibt der vorige Commit des separaten Kandidatenbranches; GitHub-main und Kundeninstallationen werden dadurch nicht geändert.
 
 Die aktuelle Einordnung der verbleibenden Meldungen steht in `wordpress-org/ERGEBNIS.md`. Multisite, umfassende Screenreader-Abnahme und ein echter MCP-Client mit offiziellem Adapter bleiben außerhalb dieses Nachweises.
+
+## Warnungen gezielt nacharbeiten
+
+Ziel: die verbliebenen Plugin-Check-Hinweise fachlich beheben. Dazu gehören gezielte Abfrage-Caches mit sofortiger Invalidierung, bedarfsweises Laden der Giveaway-Ressourcen und eine begrenzte, geprüfte Behandlung unvermeidbarer Direktabfragen und lesender URL-Parameter. Keine globale Regelunterdrückung.
+
+Nachweise: Wiederholungsabfragen und Invalidierung mit echten Daten, persönliche Feeds getrennt prüfen, token-/noncegeschützte Wege prüfen, native Frontend-Ansichten und dynamischen Shortcode rendern; danach vollständiger offizieller Plugin Check und bytegleiche CI-ZIPs. Vorige Kandidatencommits und Pakete bleiben als Rückfall erhalten. Änderungen betreffen nur die separate Verzeichnisfassung, keine Live-Datenmigration.
+
+## Ergebnis der gezielten Warnungsnacharbeit
+
+Die Audit-Ansicht verwendet einen ausdrücklich nicht persistenten WordPress-Anfragecache und wird vor einem neuen Audit-Eintrag invalidiert. Der Zähler für die begrenzte Aufbewahrung wird absichtlich frisch aus der eigenen Tabelle gelesen, damit parallele Anfragen berücksichtigt bleiben. Die nötigen Direktabfragen besitzen einzelne begründete Ausnahmen. Die feste Diagnosemeldung unter WP_DEBUG ist gezielt als technische Fehlerdiagnose dokumentiert; Exception-Inhalte und Zugangsdaten werden nicht geloggt.
+
+Es gibt jetzt ausdrücklich offengelegte statische Einzel-Ausnahmen. Die früheren Aussagen zu unverändert erhaltenen Rohmeldungen beschreiben die damaligen Läufe; der neue Stand enthält die fachlich geprüften Code-Anmerkungen. Keine Laufzeit-/Performance-Prüfung wird ausgeschaltet. Vollständige Liste: `wordpress-org/GEPRUEFTE-AUSNAHMEN.md`; neuer Bericht: `wordpress-org/ERGEBNIS.md`.

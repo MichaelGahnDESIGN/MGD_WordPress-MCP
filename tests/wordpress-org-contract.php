@@ -9,6 +9,8 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($stage, Fi
     $source = file_get_contents($file->getPathname());
     if (preg_match('/Update URI:\s*https?:/i', $source)) { $failures[] = 'Externe Update URI: ' . $file; }
     if (preg_match('/add_filter\s*\(\s*[\x22\x27](?:pre_set_site_transient_update_plugins|site_transient_update_plugins|update_plugins_github.com|plugins_api)[\x22\x27]/', $source)) { $failures[] = 'Überschriebener Update- oder Detailkanal: ' . $file; }
+    if (preg_match('/phpcs:(?:disable|ignore)\s*(?:$|--)/m', $source)) { $failures[] = 'Pauschale PHPCS-Ausnahme: ' . $file; }
+    if (strpos($source, 'phpcs:disable') !== false) { $failures[] = 'Blockweise PHPCS-Abschaltung: ' . $file; }
     if (strpos($source, 'api.github.com/repos/') !== false) { $failures[] = 'GitHub-Release-API im Paket: ' . $file; }
 }
 foreach (array('includes/plugin-catalog', 'assets/plugin-catalog', 'includes/class-mgd-wordpress-plugin-catalog.php') as $mgd_forbidden) {
