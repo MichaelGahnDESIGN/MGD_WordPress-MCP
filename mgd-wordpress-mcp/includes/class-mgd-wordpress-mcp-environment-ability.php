@@ -26,9 +26,9 @@ final class MGD_WordPress_MCP_Environment_Ability {
         wp_register_ability(
             'mgd-wordpress-mcp/environment-status',
             array(
-                'label'               => __( 'Environment status', 'mgd-wordpress-mcp' ),
-                'description'         => __( 'Detect page builder and common frontend locks. Never exposes PINs or passwords.', 'mgd-wordpress-mcp' ),
-                'category'            => 'mgd-wordpress-mcp',
+                'label'               => __( 'Environment status', 'mgd-mcp-bridge' ),
+                'description'         => __( 'Detect page builder and common frontend locks. Never exposes PINs or passwords.', 'mgd-mcp-bridge' ),
+                'category'            => 'mgd-mcp-bridge',
                 'input_schema'        => array( 'type' => 'object', 'properties' => array(), 'additionalProperties' => false ),
                 'execute_callback'    => array( $this, 'execute' ),
                 'permission_callback' => array( $this, 'permission' ),

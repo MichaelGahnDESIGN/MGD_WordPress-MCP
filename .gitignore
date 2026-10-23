@@ -9,3 +9,6 @@ vendor/
 .env
 .env.*
 !.env.example
+
+/build/wordpress-org/
+/artifacts/wordpress-org/

@@ -1,0 +1,31 @@
+name: WordPress.org Plugin Check
+on:
+  push:
+    branches: [codex/wordpress-org-preparation]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  plugin-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Einreichungspaket bauen
+        run: python3 scripts/build-wordpress-org.py
+      - name: Nativen Updatekanal und Grafiken prüfen
+        run: php tests/wordpress-org-contract.php
+      - name: Offizieller Plugin Check
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: build/wordpress-org/mgd-mcp-bridge
+          slug: mgd-mcp-bridge
+          include-experimental: false
+      - name: Paket und Prüfsummen bereitstellen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordpress-org-mgd-mcp-bridge
+          path: artifacts/wordpress-org/

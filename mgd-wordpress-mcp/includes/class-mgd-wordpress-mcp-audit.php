@@ -84,6 +84,6 @@ final class MGD_WordPress_MCP_Audit {
     public static function latest( $limit = 50 ) {
         global $wpdb;
         $limit = max( 1, min( 200, absint( $limit ) ) );
-        return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . self::table_name() . ' ORDER BY id DESC LIMIT %d', $limit ), ARRAY_A );
+        return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY id DESC LIMIT %d', self::table_name(), $limit ), ARRAY_A );
     }
 }

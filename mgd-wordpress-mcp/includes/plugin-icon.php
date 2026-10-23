@@ -16,20 +16,4 @@ return static function ($plugin_file) {
             . $selector . '::before{content:"";display:block;flex:0 0 40px;width:40px;height:40px;background:center/contain no-repeat url("' . esc_url($base_url . 'assets/plugin-branding/icon-128.png') . '");}';
         wp_add_inline_style($handle, $css);
     });
-    add_filter('pre_set_site_transient_update_plugins', static function ($value) use ($basename, $icons) {
-        if (!is_object($value)) { return $value; }
-        foreach (array('response', 'no_update') as $group) {
-            if (isset($value->{$group}[$basename]) && is_object($value->{$group}[$basename])) {
-                $value->{$group}[$basename]->icons = $icons;
-            }
-        }
-        return $value;
-    }, 99);
-    add_filter('plugins_api', static function ($result, $action, $args) use ($slug, $icons) {
-        // Ein fehlendes Detailobjekt nicht ersetzen und fremde Plugins nicht verändern.
-        if ('plugin_information' === $action && is_object($args) && $slug === ($args->slug ?? '') && is_object($result) && !is_wp_error($result)) {
-            $result->icons = $icons;
-        }
-        return $result;
-    }, 99, 3);
 };
