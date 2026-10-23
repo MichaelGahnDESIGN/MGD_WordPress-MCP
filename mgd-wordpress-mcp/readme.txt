@@ -10,6 +10,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Connect an explicitly authorized MCP client through controlled WordPress capabilities.
 
+== Description ==
+
+Connect an explicitly authorized MCP client through controlled WordPress capabilities.
+
 Features:
 
 * Select a permission profile before allowing a client to read or change content.
@@ -17,10 +21,6 @@ Features:
 * Keep writing, media import and maintenance actions explicitly configurable.
 * Use the local connection doctor and audit tools to inspect the integration.
 * This plugin does not provide an AI model or store an AI-provider API key.
-
-== Description ==
-
-Connect an explicitly authorized MCP client through controlled WordPress capabilities.
 
 This edition uses native WordPress.org updates. There is no GitHub self-updater or external plugin installer. Updates become available after approval and publication in the directory.
 

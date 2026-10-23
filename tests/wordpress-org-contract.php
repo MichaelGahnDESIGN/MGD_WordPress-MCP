@@ -13,6 +13,9 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($stage, Fi
 }
 $readme = file_get_contents($stage . '/readme.txt');
 if (strpos($readme, 'Contributors: michaelgahndesign') === false) { $failures[] = 'Mitwirkender fehlt'; }
+$mgd_header = explode('== Description ==', $readme, 2)[0];
+$mgd_intro = explode("\n\n", trim($mgd_header), 2);
+if (count($mgd_intro) !== 2 || strlen(trim($mgd_intro[1])) > 150) { $failures[] = 'Kurzbeschreibung muss vor dem ersten Abschnitt stehen und maximal 150 Zeichen lang sein'; }
 foreach (array('icon-128x128.png' => array(128,128), 'icon-256x256.png' => array(256,256), 'banner-772x250.png' => array(772,250), 'banner-1544x500.png' => array(1544,500)) as $name => $size) {
     $image = getimagesize($root . '/wordpress-org/assets/' . $name);
     if (!$image || $image[0] !== $size[0] || $image[1] !== $size[1]) { $failures[] = 'Grafikgröße: ' . $name; }
