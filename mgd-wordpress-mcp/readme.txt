@@ -31,8 +31,10 @@ The site owner selects the MCP client and authorizes access. That client receive
 == Installation ==
 
 1. Upload the plugin folder or install the approved directory release from Plugins > Add New.
-2. Activate the plugin and review its settings.
-3. Test the configured features before enabling them on a production website.
+2. Install and activate the official WordPress MCP Adapter separately from its documented source: https://github.com/WordPress/mcp-adapter . It is a required integration dependency and is not bundled.
+3. Activate MGD MCP Bridge and open Tools > MGD WordPress MCP. Writing is disabled by default.
+4. Connect only a trusted client with a dedicated WordPress account and application password. Never share credentials in a public support request.
+5. Test capabilities and the connection doctor before enabling writes.
 
 == Frequently Asked Questions ==
 
@@ -41,6 +43,10 @@ WordPress checks the official directory. This edition has no configurable update
 
 = Does it send analytics? =
 No analytics or telemetry service is included. WordPress communicates with WordPress.org for native updates. Support links open only when clicked.
+
+== Screenshots ==
+
+1. MCP connection overview and local dependency status.
 
 == Changelog ==
 

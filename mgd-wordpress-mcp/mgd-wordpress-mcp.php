@@ -27,7 +27,7 @@ require_once __DIR__ . '/includes/class-mgd-plugin-admin-tools.php';
     'name' => 'MGD WordPress MCP',
     'description' => 'Sichere MCP- und Abilities-Bridge für WordPress. Verbindet KI-Agenten kontrolliert mit WordPress-Inhalten und Integrationen.',
     'version' => '0.5.11',
-    'settings' => 'tools.php?page=mgd-wordpress-mcp',
+    'settings' => 'tools.php?page=mgd-mcp-bridge',
     'requires' => '6.9',
     'php' => '7.4',
     'caches' => ['mgd_wpmcp_release_828e8533143ca39f74744cc3a5e7b8a8'],

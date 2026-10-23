@@ -12,7 +12,7 @@ Die GitHub-Ausgabe auf main und deren vorhandene Releases bleiben eigenständig.
 
 ## Grafiken und Readme
 
-Die englische `readme.txt` folgt dem Verzeichnisformat und beschreibt externe Dienste und Grenzen. Die übrige technische Dokumentation bleibt deutsch. Vier PNG-Dateien unter `wordpress-org/assets` haben die offiziellen Maße 128×128, 256×256, 772×250 und 1544×500. Sie basieren auf den vorhandenen eigenen Plugin-Grafiken; neue Textbanner und Symbole stammen aus den SVG-Quelldateien des Projekts. Die PNGs wurden mit Sharp exportiert. Für SVN gehören sie in den separaten obersten assets-Ordner, nicht in trunk/assets. Es gibt keine erfundenen Screenshots und keine eingebauten externen Bilddienste.
+Die englische `readme.txt` folgt dem Verzeichnisformat und beschreibt externe Dienste und Grenzen. Die übrige technische Dokumentation bleibt deutsch. Vier PNG-Dateien unter `wordpress-org/assets` haben die offiziellen Maße 128×128, 256×256, 772×250 und 1544×500. Sie basieren auf den vorhandenen eigenen Plugin-Grafiken; neue Textbanner und Symbole stammen aus den SVG-Quelldateien des Projekts. Die PNGs wurden mit Sharp exportiert. Für SVN gehören sie in den separaten obersten assets-Ordner, nicht in trunk/assets. Ein echter Backend-Screenshot unter `wordpress-org/assets/screenshot-1.png` stammt aus der lokalen Testinstallation mit künstlichen Daten. Er gehört ebenfalls in den obersten SVN-assets-Ordner. Es gibt keine eingebauten externen Bilddienste.
 
 ## Herstellerlinks und Datenschutz
 
@@ -32,4 +32,18 @@ Geprüft mit WordPress 7.1.3, PHP 8.3 und Plugin Check 2.1.0 in einer lokalen Do
 
 Die Warnungen betreffen vor allem eigene Tabellen, fehlende Query-Caches, Präfixe in Maintenance-Templates und Eingaben, deren Prüfung über mehrere Methoden erfolgt. Tabellenbezeichner werden aus dem WordPress-Präfix und festen Plugin-Namen aufgebaut; Werte werden vorbereitet oder vor Speicherung gefiltert. GET-Filter und Hinweiskennungen lösen keine schreibenden Aktionen aus. Schreibende Admin-Endpunkte besitzen Capability- und Nonce-Prüfungen. Die Quelle bleibt für die manuelle Sicherheitsprüfung offen; einzelne Warnungen dürfen bei späteren Änderungen nicht ungeprüft übernommen werden. Vollständige Screenreader-, Multisite-, Hosting- und Theme-Kompatibilität sind nicht belegt.
 
-Vor Einreichung: Berichte und verbliebene Warnungen fachlich abnehmen, endgültigen Slug und Profil prüfen, reale Bildschirmfotos ergänzen und den Kandidaten manuell einreichen. Die Einreichung ist nicht Bestandteil dieses automatischen Vorbereitungsschritts.
+Vor Einreichung: Berichte und verbliebene Warnungen fachlich abnehmen, endgültigen Slug und Profil prüfen, die beigefügten Bildschirmfotos prüfen und den Kandidaten manuell einreichen. Die Einreichung ist nicht Bestandteil dieses automatischen Vorbereitungsschritts.
+
+## Abgleich mit der öffentlichen GitHub-Ausgabe
+
+Öffentliche Sichtbarkeit am 23.10.2026 erneut über GitHub geprüft. Abgeglichener main-Commit: `d97f0afd115941eacea2485b2f1d97f14d91668a`. Kandidatenversion: `0.5.11`. Private Repositories sind ausgeschlossen.
+
+Die jüngsten Änderungen der vier Katalog-Plugins betreffen ausschließlich den externen Empfehlungs- und Installationskatalog sowie dessen Tests und Paketversionen. Dieser Katalog gehört nicht zur Verzeichnisfassung. Die Versionsangaben wurden abgeglichen; der native Updatekanal und die Sicherheitsänderungen dieses Branches bleiben erhalten. Bei den drei weiteren Plugins gibt es seit der ersten Vorbereitung keine zusätzlichen main-Änderungen.
+
+## Erneute Härtung und Nachweis
+
+Die nachträgliche Prüfung filtert Nonce-/Formulareingaben am Eingang, verwendet vorbereitete Tabellenbezeichner in Notification, Giveaway und MCP, begrenzt MCP-Hinweise auf die eigenen Verwaltungsseiten und korrigiert die Links nach der Slug-Umstellung. Maintenance-Templatevariablen besitzen einen eigenen Präfix. Frontend-Skripte der Bedienhilfe und des Giveaway verwenden `defer`.
+
+Prüfplan: feste Paketliste bauen, Metadaten-/Updatevertrag prüfen, PHP-Syntax prüfen, Paket in der lokalen Testkopie installieren, 22 Schutzgrenzen-/Datenbanktests und die sieben Backends prüfen, offiziellen Plugin Check ausführen und ZIP gegen CI-Artefakt vergleichen. Rückfall bleibt der vorige Commit des separaten Kandidatenbranches; GitHub-main und Kundeninstallationen werden dadurch nicht geändert.
+
+Die aktuelle Einordnung der verbleibenden Meldungen steht in `wordpress-org/ERGEBNIS.md`. Multisite, umfassende Screenreader-Abnahme und ein echter MCP-Client mit offiziellem Adapter bleiben außerhalb dieses Nachweises.

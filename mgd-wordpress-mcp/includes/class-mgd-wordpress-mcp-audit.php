@@ -73,12 +73,12 @@ final class MGD_WordPress_MCP_Audit {
     private static function trim() {
         global $wpdb;
         $table = self::table_name();
-        $count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+        $count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) );
         if ( $count <= 2000 ) {
             return;
         }
         $delete = $count - 1500;
-        $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} ORDER BY id ASC LIMIT %d", $delete ) );
+        $wpdb->query( $wpdb->prepare( 'DELETE FROM %i ORDER BY id ASC LIMIT %d', $table, $delete ) );
     }
 
     public static function latest( $limit = 50 ) {
