@@ -1,6 +1,6 @@
 # Changelog
 
-## Unveröffentlicht
+## 0.5.12 – 2026-10-25
 
 - Codex erhält eine echte TOML-Konfiguration statt einer unpassenden JSON-Kopie.
 - Der lokale WordPress-Remote-Proxy wird auf eine getestete Version festgelegt; `@latest` wird nicht mehr verwendet.
