@@ -17,13 +17,11 @@
 
 MGD WordPress MCP verbindet WordPress mit MCP-kompatiblen KI-Agenten wie Claude Code, OpenAI Codex und anderen MCP-Clients. Das Plugin stellt klar begrenzte WordPress-Abilities für Inhalte, Medien, SEO, Divi 5, WPForms, UpdraftPlus, Updates und die Website-Umgebung bereit.
 
-## Aktueller Stand: 0.2.8
+## Aktueller Stand: 0.5.11
 
-Der GitHub-basierte WordPress-Self-Updater ist seit dem Test **0.2.7 → 0.2.8 erfolgreich End-to-End verifiziert**. WordPress erkennt einen neuen GitHub Release selbstständig, zeigt Version, Icon, Versionsdetails und Kompatibilität an und kann das validierte Release-Paket über die normale WordPress-Updateoberfläche installieren.
+Installation, Admin-Oberfläche, Release-Build und GitHub-Self-Update-Kette sind getestet. Der nächste verbindliche Praxisschritt ist ein echter MCP-Handshake mit einem separaten WordPress-Testkonto: zuerst lesend, danach mit einem ungefährlichen Entwurf. Bis dieser Test dokumentiert ist, wird keine vollständige Client-Kompatibilität behauptet.
 
-Die entscheidende Updater-Härtung erfolgte in 0.2.7. Sie orientiert sich am bereits produktiv funktionierenden Updater von MGD AI Kennzeichnung WordPress und kombiniert den klassischen WordPress-Update-Transient mit der Update-URI-Integration. Ein veralteter Release-Cache wird nicht mehr weiterverwendet, wenn er keine neuere Version als die installierte Version enthält.
-
-> **Projektstatus:** Installation, Admin-UI, Release-Build und Self-Update-Kette sind real getestet. Als nächste große Validierungsstufe folgen MCP Read-only, kontrollierter Schreibzugriff und die Integrationen auf einer realen Testwebsite. Die vollständige technische Checkliste steht in [`agent-readme.md`](agent-readme.md).
+> **Wichtig:** MGD WordPress MCP ergänzt den offiziellen WordPress MCP Adapter. Der Adapter stellt die technische MCP-Schnittstelle bereit; MGD WordPress MCP ergänzt Sicherheitsprofile, WordPress-Abilities, Audit-Log, Einrichtungsassistent und clientgerechte Anleitung.
 
 ## Was das Plugin ermöglichen soll
 
@@ -100,6 +98,12 @@ https://DEINE-DOMAIN.TLD/wp-json/mgd-wordpress-mcp/v1/mcp
 ```
 
 Für Remote-Zugriffe sollte ein separater WordPress-Benutzer mit minimal erforderlichen Rechten verwendet werden. Das Application Password gehört ausschließlich in den Secret-/Environment-Speicher des jeweiligen MCP-Clients. Zugangsdaten dürfen nicht in Chats, GitHub-Repositories, Skills, Screenshots oder Dokumentationen gespeichert werden.
+
+### Codex verbinden
+
+Im Einrichtungs-Assistenten unter **Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent** befindet sich eine separate Codex-Konfiguration. Sie ist absichtlich TOML, weil Codex seine MCP-Server in `~/.codex/config.toml` verwaltet. Nur auf dem eigenen Rechner werden der WordPress-Benutzername und das zugehörige Application Password eingesetzt.
+
+Danach zeigt `codex mcp list`, ob der lokale Proxy erkannt wurde. Erst dann sollte ein Agent eine reine Leseanfrage ausführen. Das Plugin speichert diese Zugangsdaten nicht und kann einen lokalen Codex-Handshake daher nicht vortäuschen oder heimlich durchführen.
 
 ## Einrichtungs-Assistent
 

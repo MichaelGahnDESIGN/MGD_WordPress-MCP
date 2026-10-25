@@ -57,6 +57,19 @@ Empfohlen wird:
 5. Client verbinden.
 6. Erst danach benötigte MGD-Schreibfreigaben aktivieren.
 
+## Schritt 5: Den richtigen Client-Block verwenden
+
+Der Assistent zeigt für Codex einen **TOML-Block** für `~/.codex/config.toml`. Claude Code, Cursor und andere Clients erhalten jeweils ihre passende JSON-Struktur. Diese Unterschiede sind wichtig: Ein JSON-Block für Codex wird nicht automatisch als MCP-Server erkannt.
+
+Der verwendete lokale Remote-Proxy ist bewusst auf eine getestete Version festgelegt. Dadurch kann ein künftiges, unbemerktes `@latest`-Update nicht ohne Prüfung die Verbindung verändern.
+
+Nach dem Einfügen der Codex-Konfiguration:
+
+1. Die zwei Platzhalter ausschließlich lokal ersetzen.
+2. `codex mcp list` ausführen.
+3. Einen neuen Codex-Chat starten und zuerst eine reine Leseaufgabe erteilen.
+4. Erst nach erfolgreichem Handshake das Sicherheitsprofil bei Bedarf erweitern.
+
 ## Frontend-Schutz
 
 Bereits im Assistenten wird auf typische aktive Schutzplugins hingewiesen. Wird ein möglicher Schutz erkannt, soll ein Agent bei einer blockierten visuellen Prüfung den Nutzer nach dem legitimen Entsperrweg fragen.
@@ -65,4 +78,4 @@ Siehe [Frontend-Sperren und Zugang](Frontend-Sperren-und-Zugang.md).
 
 ## Was der Assistent nicht macht
 
-Er speichert keine WordPress-Passwörter, PINs, API-Keys oder Application Passwords. Er veröffentlicht nichts, führt keine Updates aus und aktiviert keine Schreibrechte automatisch.
+Er speichert keine WordPress-Passwörter, PINs, API-Keys oder Application Passwords. Er veröffentlicht nichts, führt keine Updates aus und aktiviert keine Schreibrechte automatisch. Der Connection Doctor prüft nur die WordPress-Seite; der tatsächliche Handshake wird bewusst im jeweiligen MCP-Client geprüft.

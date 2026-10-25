@@ -1,5 +1,13 @@
 # Changelog
 
+## Unveröffentlicht
+
+- Codex erhält eine echte TOML-Konfiguration statt einer unpassenden JSON-Kopie.
+- Der lokale WordPress-Remote-Proxy wird auf eine getestete Version festgelegt; `@latest` wird nicht mehr verwendet.
+- Einrichtungsassistent trennt Website-Voraussetzungen klar vom echten Client-Handshake.
+- Connection Doctor liefert der Admin-Oberfläche eindeutige Prüfzustände.
+- Regressionstest für Client-Konfigurationen ergänzt.
+
 ## 0.5.10 – 2026-10-22
 
 - GitHub-Prüfungen auf verfügbare GitHub-Runner umgestellt.

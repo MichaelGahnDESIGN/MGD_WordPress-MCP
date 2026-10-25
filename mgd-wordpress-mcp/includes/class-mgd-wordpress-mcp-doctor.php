@@ -1,6 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class MGD_WordPress_MCP_Doctor {
+ /** Eindeutiger Anzeigezustand für die Admin-Oberfläche. */
+ private static function with_status($checks){foreach($checks as $key=>$check){$checks[$key]['status']=!empty($check['ok'])?'pass':'warn';}return $checks;}
  private static function endpoint_probe(){
   $url=MGD_WordPress_MCP::adapter_endpoint_url();
   $response=wp_safe_remote_get($url,array('timeout'=>8,'redirection'=>2,'headers'=>array('Accept'=>'application/json','Cache-Control'=>'no-cache','User-Agent'=>'MGD-WordPress-MCP-Doctor/'.MGD_WPMCP_VERSION)));
@@ -16,7 +18,7 @@ final class MGD_WordPress_MCP_Doctor {
  }
  public static function checks(){
   $adapter=class_exists('\\WP\\MCP\\Core\\McpAdapter');$abilities=function_exists('wp_register_ability');$permalinks=(string)get_option('permalink_structure','');$locks=MGD_WordPress_MCP_Environment::frontend_locks();$probe=($adapter&&$abilities)?self::endpoint_probe():array('ok'=>false,'detail'=>'Endpoint kann erst geprüft werden, wenn Adapter und Abilities API verfügbar sind.','cache'=>'');
-  return array(
+  return self::with_status(array(
    'wordpress'=>array('ok'=>version_compare(get_bloginfo('version'),'6.9','>='),'label'=>'WordPress '.get_bloginfo('version'),'detail'=>'WordPress 6.9 oder neuer erforderlich.'),
    'php'=>array('ok'=>version_compare(PHP_VERSION,'7.4','>='),'label'=>'PHP '.PHP_VERSION,'detail'=>'PHP 7.4 oder neuer erforderlich.'),
    'https'=>array('ok'=>is_ssl(),'label'=>is_ssl()?'HTTPS aktiv':'HTTPS nicht erkannt','detail'=>is_ssl()?'Transport ist TLS-geschützt.':'Remote MCP sollte ausschließlich über HTTPS verwendet werden.'),
@@ -27,7 +29,7 @@ final class MGD_WordPress_MCP_Doctor {
    'server'=>array('ok'=>$adapter&&$abilities,'label'=>$adapter&&$abilities?'MGD MCP Server kann registriert werden':'MGD MCP Server nicht bereit','detail'=>MGD_WordPress_MCP::adapter_endpoint_url()),
    'endpoint'=>array('ok'=>!empty($probe['ok']),'label'=>!empty($probe['ok'])?'MCP Endpoint antwortet':'MCP Endpoint nicht bestätigt','detail'=>$probe['detail']),
    'frontend'=>array('ok'=>true,'warning'=>!empty($locks['potentially_locked']),'label'=>empty($locks['potentially_locked'])?'Kein Frontend-Schutz erkannt':'Frontend-Schutz erkannt','detail'=>empty($locks['potentially_locked'])?'Keine bekannte Frontend-Sperre erkannt.':'Für MCP nicht automatisch ein Fehler. Kann visuelle Browser-Prüfungen blockieren.'),
-  );
+  ));
  }
  public static function summary(){ $c=self::checks();$ok=0;$warnings=0;foreach($c as $v){if(!empty($v['ok']))$ok++;if(!empty($v['warning']))$warnings++;}return array('passed'=>$ok,'total'=>count($c),'warnings'=>$warnings,'ready'=>$ok===count($c),'checks'=>$c,'summary'=>$ok.' von '.count($c).' technischen Prüfungen erfolgreich'.($warnings?' · '.$warnings.' Hinweis(e)':'').' · Authentifizierung und MCP-Handshake werden anschließend im Client getestet.'); }
 }
