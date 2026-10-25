@@ -17,7 +17,7 @@
 
 MGD WordPress MCP verbindet WordPress mit MCP-kompatiblen KI-Agenten wie Claude Code, OpenAI Codex und anderen MCP-Clients. Das Plugin stellt klar begrenzte WordPress-Abilities für Inhalte, Medien, SEO, Divi 5, WPForms, UpdraftPlus, Updates und die Website-Umgebung bereit.
 
-## Aktueller Stand: 0.5.13
+## Aktueller Stand: 0.5.14
 
 Installation, Admin-Oberfläche, Release-Build und GitHub-Self-Update-Kette sind getestet. Der nächste verbindliche Praxisschritt ist ein echter MCP-Handshake mit einem separaten WordPress-Testkonto: zuerst lesend, danach mit einem ungefährlichen Entwurf. Bis dieser Test dokumentiert ist, wird keine vollständige Client-Kompatibilität behauptet.
 
@@ -107,7 +107,7 @@ Danach zeigt `codex mcp list`, ob der lokale Proxy erkannt wurde. Erst dann soll
 
 ## Einrichtungs-Assistent
 
-Der Assistent startet nach der ersten Aktivierung und kann später über **Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent** bewusst neu gestartet werden. Er führt zuerst durch Website-Check, Auswahl von KI-Agent und Betriebssystem, separatem Application Password und die lokale Client-Konfiguration. Codex, Claude Code, Cursor / VS Code sowie andere Stdio-kompatible MCP-Clients stehen zur Auswahl; macOS, Windows und Linux erhalten passende Hinweise.
+Der Assistent startet nach der ersten Aktivierung und kann später über **Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent** bewusst neu gestartet werden. Er führt als echter Ablauf mit Fortschrittsanzeige einzeln durch Website-Check, Auswahl von KI-Agent und Betriebssystem, separatem Application Password, lokaler Client-Konfiguration sowie Sicherheitsprofil. Codex, Claude Code, Cursor / VS Code sowie andere Stdio-kompatible MCP-Clients stehen zur Auswahl; macOS, Windows und Linux erhalten passende Hinweise.
 
 Benutzername und Application Password werden dabei ausschließlich im Browser verarbeitet: Sie werden weder per WordPress-Formular übertragen noch in WordPress, im Plugin oder im Audit-Log gespeichert. Nach dem Kopieren entfernt der Assistent beide Angaben wieder aus seiner Oberfläche. Für Codex auf macOS und Linux kann er zusätzlich einen Terminal-Befehl kopieren, der das Kennwort erst im lokalen Terminal verdeckt abfragt.
 
@@ -277,6 +277,12 @@ E-Mail: Anfrage@Michael-Gahn.de
 ## Plugin-Icon – Version 0.5.10
 
 Eigenes lokales Icon in der WordPress-Pluginliste. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
+
+## 0.5.14 – Schrittweise Einrichtung
+
+- Navigation in eine feste, verständliche Reihenfolge gebracht;
+- Einrichtungsassistent zeigt immer nur einen Schritt mit Weiter-/Zurück-Navigation;
+- Fortschritt bleibt nach dem Speichern von Builder oder Sicherheitsprofil bei Schritt 5.
 
 ## 0.5.13 – Geführte lokale Verbindung
 

@@ -1,6 +1,6 @@
 {
   "runtime": "mgd-wordpress-mcp",
   "main": "mgd-wordpress-mcp.php",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "slug": "mgd-wordpress-mcp"
 }

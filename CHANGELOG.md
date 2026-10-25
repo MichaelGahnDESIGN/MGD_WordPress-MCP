@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.14 – 2026-10-26
+
+- Plugin-Navigation in die vereinbarte Reihenfolge gebracht und um den Link zur gemeinsamen Seite „Plugin-Empfehlungen“ ergänzt.
+- Einrichtungsassistent von einer langen Seite zu einem geführten Ablauf mit sechs einzelnen Schritten, Fortschrittsanzeige sowie Weiter- und Zurück-Navigation umgebaut.
+- Progressive Enhancement: Ohne JavaScript bleiben alle Informationen und Formulare erreichbar; mit JavaScript wird jeweils nur der aktuelle Schritt angezeigt.
+- Formular-Weiterleitungen für Builder und Sicherheitsprofil führen zurück zu Schritt 5.
+
 ## 0.5.13 – 2026-10-26
 
 - Geführter Einrichtungs-Assistent für Agent und Betriebssystem ergänzt.

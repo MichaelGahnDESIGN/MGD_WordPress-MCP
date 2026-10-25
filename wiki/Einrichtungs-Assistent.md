@@ -6,7 +6,7 @@ Der Einrichtungs-Assistent führt nach der Aktivierung durch die wichtigsten Ent
 
 WordPress-Installationen unterscheiden sich stark. Manche Websites verwenden Divi 5, andere Elementor oder Gutenberg. Einige Kundenwebsites sind öffentlich, andere durch Security-, Passwort- oder Maintenance-Lösungen geschützt. Außerdem soll ein Agent nicht automatisch Schreib- oder Update-Rechte erhalten.
 
-Der Assistent sammelt deshalb zunächst ungefährliche Kontextinformationen und führt anschließend Schritt für Schritt durch die notwendige lokale Verbindung.
+Der Assistent sammelt deshalb zunächst ungefährliche Kontextinformationen und führt anschließend Schritt für Schritt durch die notwendige lokale Verbindung. Mit aktiviertem JavaScript ist immer nur ein Schritt sichtbar; **Weiter** und **Zurück** führen durch den Ablauf. Ohne JavaScript bleiben alle Inhalte und Formulare verfügbar.
 
 ## Start
 
