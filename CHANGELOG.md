@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.13 – 2026-10-26
+
+- Geführter Einrichtungs-Assistent für Agent und Betriebssystem ergänzt.
+- Separate Auswahl für Codex, Claude Code, Cursor / VS Code und andere MCP-Clients sowie macOS, Windows und Linux.
+- Die lokale Konfiguration entsteht ausschließlich im Browser: Application Password und Benutzername werden weder an WordPress gesendet noch gespeichert und nach dem Kopieren entfernt.
+- Optionaler Codex-Terminalweg für macOS und Linux fragt das Kennwort verdeckt erst im lokalen Terminal ab; es erscheint weder im kopierten Befehl noch im Plugin.
+- Assistent kann nach Abschluss bewusst neu gestartet werden.
+
 ## 0.5.12 – 2026-10-25
 
 - Codex erhält eine echte TOML-Konfiguration statt einer unpassenden JSON-Kopie.

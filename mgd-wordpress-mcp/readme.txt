@@ -4,13 +4,19 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.12
+Stable tag: 0.5.13
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.5.13 - 2026-10-26 =
+* Einrichtungs-Assistent startet nach der ersten Aktivierung und lässt sich später bewusst erneut starten.
+* Geführte Auswahl für Codex, Claude Code, Cursor / VS Code oder andere MCP-Clients sowie macOS, Windows und Linux.
+* Lokaler Konfigurationsgenerator: Benutzername und Application Password werden nie an WordPress gesendet oder gespeichert und nach dem Kopieren aus dem Assistenten entfernt.
+* Für Codex unter macOS und Linux steht zusätzlich ein Terminal-Befehl bereit, der das Kennwort erst verdeckt im lokalen Terminal abfragt.
 
 = 0.5.9 - 2026-09-17 =
 * Plugin-Info-Modal ("Details ansehen") robuster gebaut: die Feature-Übersicht in der Beschreibung nutzt jetzt eine einfache Liste statt einer `table.widefat`-Tabelle. Auf Websites mit vielen aktiven Plugins/Themes kollidierte diese Klasse teils mit fremdem, global geladenem CSS (z. B. responsive Tabellen-Hacks) und ließ die Seitenleiste/den Beschreibungsbereich im "Details ansehen"-Dialog auf über 100.000px Höhe aufblähen. Real auf einer Live-Installation mit vielen aktiven Plugins reproduziert und verifiziert.
