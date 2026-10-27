@@ -4,13 +4,16 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.14
+Stable tag: 0.5.15
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.5.15 - 2026-10-27 =
+* Icons und Hintergründe der Karten unter „Weitere Plugins“ kommen jetzt aus theme.michael-gahn.de. Der Server holt sie einmal und speichert sie lokal, der Browser lädt nichts von extern. Ohne Bild bleibt das mitgelieferte Motiv. Versionen werden ohne führendes „v“ angezeigt.
 
 = 0.5.14 - 2026-10-26 =
 * Navigation im Plugin folgt jetzt der festen Reihenfolge: Einrichtungsassistent, Übersicht, Start Prompt, Sicherheit und Freigaben, Verbindung, Audit-Log, Über das Plugin und Plugin-Empfehlungen.
