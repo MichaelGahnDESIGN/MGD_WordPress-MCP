@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.15 – 2026-10-27
+
+- Icons und Hintergründe der Karten unter „Weitere Plugins“ kommen jetzt aus theme.michael-gahn.de. Der Server holt sie einmal und speichert sie lokal, der Browser lädt nichts von extern. Ohne Bild bleibt das mitgelieferte Motiv. Versionen werden ohne führendes „v“ angezeigt.
+
 ## 0.5.14 – 2026-10-26
 
 - Plugin-Navigation in die vereinbarte Reihenfolge gebracht und um den Link zur gemeinsamen Seite „Plugin-Empfehlungen“ ergänzt.

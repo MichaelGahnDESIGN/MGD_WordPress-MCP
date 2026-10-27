@@ -17,7 +17,7 @@
 
 MGD WordPress MCP verbindet WordPress mit MCP-kompatiblen KI-Agenten wie Claude Code, OpenAI Codex und anderen MCP-Clients. Das Plugin stellt klar begrenzte WordPress-Abilities für Inhalte, Medien, SEO, Divi 5, WPForms, UpdraftPlus, Updates und die Website-Umgebung bereit.
 
-## Aktueller Stand: 0.5.14
+## Aktueller Stand: 0.5.15
 
 Installation, Admin-Oberfläche, Release-Build und GitHub-Self-Update-Kette sind getestet. Der nächste verbindliche Praxisschritt ist ein echter MCP-Handshake mit einem separaten WordPress-Testkonto: zuerst lesend, danach mit einem ungefährlichen Entwurf. Bis dieser Test dokumentiert ist, wird keine vollständige Client-Kompatibilität behauptet.
 
@@ -277,6 +277,10 @@ E-Mail: Anfrage@Michael-Gahn.de
 ## Plugin-Icon – Version 0.5.10
 
 Eigenes lokales Icon in der WordPress-Pluginliste. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
+
+## 0.5.15 – Icons und Hintergründe aus dem Feed
+
+- Icons und Hintergründe der Karten unter „Weitere Plugins“ kommen jetzt aus theme.michael-gahn.de. Der Server holt sie einmal und speichert sie lokal, der Browser lädt nichts von extern. Ohne Bild bleibt das mitgelieferte Motiv. Versionen werden ohne führendes „v“ angezeigt.
 
 ## 0.5.14 – Schrittweise Einrichtung
 
