@@ -128,11 +128,11 @@ $b = $by['MGD-Share-WordPress'];
 check($b['icon_file'] === '' && $b['image_file'] === '' && $b['image_alt'] === '' && $b['accent'] === '', 'Ohne Felder: leer, kein Fehler');
 $c = $by['MGD-Maintenance-WordPress'];
 check($c['icon_file'] === '' && $c['image_file'] === '' && $c['image_alt'] === '' && $c['accent'] === '', 'Ungültige Felder verworfen');
-check(!array_filter($requests, static fn($u) => str_contains($u, 'evil.example')), 'Fremder Host nie abgerufen');
+check(!array_filter($requests, static fn($u) => strpos($u, 'evil.example') !== false), 'Fremder Host nie abgerufen');
 
 $decorated = $provider->decorate($catalog['items']);
 $da = array_values(array_filter($decorated, static fn($i) => $i['repository'] === 'MGD-Notification-WordPress'))[0];
-check(str_starts_with($da['icon_url'], 'https://shop.test/wp-content/uploads/mgd-plugin-catalog/') && $da['image_url'] !== '', 'Lokale Bild-URLs im Admin');
+check(strpos($da['icon_url'], 'https://shop.test/wp-content/uploads/mgd-plugin-catalog/') === 0 && $da['image_url'] !== '', 'Lokale Bild-URLs im Admin');
 $db = array_values(array_filter($decorated, static fn($i) => $i['repository'] === 'MGD-Share-WordPress'))[0];
 check($db['icon_url'] === '' && $db['image_url'] === '', 'Ohne Bild: Fallback auf mitgeliefert');
 // alter Cache ohne die neuen Felder
