@@ -1,6 +1,8 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/class-media.php';
+
 /** Öffentliche Metadaten im Cache; lokale Installation und Rechte immer frisch ermitteln. */
 final class MGD_Catalog_V4_Provider {
     private const OWNER = 'MichaelGahnDESIGN';
@@ -16,6 +18,7 @@ final class MGD_Catalog_V4_Provider {
         $central = is_array( $feed ) && 1 === ( $feed['schemaVersion'] ?? null ) && is_array( $feed['items'] ?? null );
         $entries = $central ? $feed['items'] : array_values( $defaults );
         $items = array();
+        $fetch_failed = 0;
         foreach ( array_slice( $entries, 0, 80 ) as $entry ) {
             if ( ! is_array( $entry ) || ( $central && ( 'wordpress' !== ( $entry['platform'] ?? '' ) || 'live' !== ( $entry['status'] ?? '' ) ) ) ) { continue; }
             $repo = $central ? $this->repository( $entry['repositoryUrl'] ?? '' ) : $entry['repository'];
@@ -28,6 +31,9 @@ final class MGD_Catalog_V4_Provider {
                 }
             }
             $release = 'free' === $tier ? $this->release( $repo, $refresh ) : array();
+            // Icon + Hintergrund aus dem Feed lokal holen, sonst bleibt das mitgelieferte Motiv
+            $icon_file = $central ? MGD_Catalog_V4_Media::sync( $entry['iconUrl'] ?? null, $fetch_failed ) : '';
+            $image_file = $central ? MGD_Catalog_V4_Media::sync( $entry['imageUrl'] ?? null, $fetch_failed ) : '';
             $items[ $repo ] = array(
                 'repository' => $repo,
                 'name' => sanitize_text_field( $entry['name'] ?? $local['name'] ?? $repo ),
@@ -38,16 +44,22 @@ final class MGD_Catalog_V4_Provider {
                 'features' => $local['features'] ?? array( 'Für WordPress entwickelt', 'Von Michael Gahn DESIGN' ),
                 'basenames' => $local['basenames'] ?? array(),
                 'tier' => $tier,
-                'version' => sanitize_text_field( $release['version'] ?? ( $central ? ( $entry['version'] ?? '' ) : '' ) ),
+                'version' => ltrim( sanitize_text_field( $release['version'] ?? ( $central ? ( $entry['version'] ?? '' ) : '' ) ), 'vV' ),
                 'download' => $release['download'] ?? '',
                 'url' => 'https://github.com/' . self::OWNER . '/' . $repo,
                 'details_url' => $this->details_url( $entry['detailsUrl'] ?? '' ),
+                'icon_file' => $icon_file,
+                'image_file' => $image_file,
+                'image_alt' => $image_file ? mb_substr( sanitize_text_field( $entry['imageAlt'] ?? '' ), 0, 160 ) : '',
+                'accent' => MGD_Catalog_V4_Media::accent( $central ? ( $entry['accent'] ?? '' ) : '' ),
             );
         }
         // Eine leere Zentralantwort ist ein echter Leerzustand; bei Ausfall bleibt ein letzter Stand nutzbar.
         if ( ! $central && is_array( $cached ) && ! empty( $cached['items'] ) ) {
             foreach ( $cached['items'] as $old ) { if ( ! isset( $items[ $old['repository'] ] ) ) { $items[ $old['repository'] ] = $old; } }
         }
+        // nicht mehr genutzte Bilder aufräumen
+        if ( $central ) { MGD_Catalog_V4_Media::prune( array_merge( array_column( $items, 'icon_file' ), array_column( $items, 'image_file' ) ) ); }
         $catalog = array( 'items' => array_values( $items ), 'source' => $central ? 'central' : 'fallback', 'checked_at' => time() );
         set_transient( self::CACHE, $catalog, 6 * HOUR_IN_SECONDS );
         return $catalog;
@@ -94,6 +106,11 @@ final class MGD_Catalog_V4_Provider {
         $plugins = get_plugins();
         $updates = get_site_transient( 'update_plugins' );
         foreach ( $items as &$item ) {
+            // lokale Feed-Bilder (alter Cache hat die Felder noch nicht)
+            $item['icon_url'] = ! empty( $item['icon_file'] ) ? MGD_Catalog_V4_Media::url( $item['icon_file'] ) : '';
+            $item['image_url'] = ! empty( $item['image_file'] ) ? MGD_Catalog_V4_Media::url( $item['image_file'] ) : '';
+            $item['image_alt'] = $item['image_url'] ? (string) ( $item['image_alt'] ?? '' ) : '';
+            $item['accent'] = MGD_Catalog_V4_Media::accent( $item['accent'] ?? '' );
             $item['installed'] = false;
             $item['active'] = false;
             $item['update_url'] = '';
