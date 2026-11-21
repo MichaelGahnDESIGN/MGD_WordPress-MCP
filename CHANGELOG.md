@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 – 2026-11-21
+
+- Brückenversion mit dem Plugin-Baukasten (Produkt `mgd-mcp-wordpress`): Updates über theme.michael-gahn.de mit Prüfung von Größe und SHA-256, kein Auto-Update.
+- Neue Seite „Info und Updates“ (Werkzeuge): Info, Updates, Weitere Plugins, Installation melden. Lizenz-Baustein bleibt aus.
+- Abmeldung bei theme.michael-gahn.de beim Löschen (eigene `uninstall.php`). Einstellungen und Audit-Log bleiben ohne `MGD_WPMCP_PURGE_ON_UNINSTALL` erhalten.
+- Alte Update-Zwischenspeicher (`mgd_wpmcp_release_*`) werden einmal aufgeräumt.
+- Der Baukasten braucht PHP 8.1. Auf PHP 7.4 und 8.0 bleiben alter GitHub-Updater und alte Plugin-Liste aktiv.
+- Rechte, Authentifizierung und MCP-Zugriffe unverändert.
+
 ## 0.5.15 – 2026-10-27
 
 - Icons und Hintergründe der Karten unter „Weitere Plugins“ kommen jetzt aus theme.michael-gahn.de. Der Server holt sie einmal und speichert sie lokal, der Browser lädt nichts von extern. Ohne Bild bleibt das mitgelieferte Motiv. Versionen werden ohne führendes „v“ angezeigt.

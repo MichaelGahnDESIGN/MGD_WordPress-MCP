@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class MGD_WordPress_MCP {
  const OPTION_SETTINGS='mgd_wordpress_mcp_settings'; private static $instance=null;
  public static function instance(){if(null===self::$instance){self::$instance=new self();}return self::$instance;}
- private function __construct(){MGD_WordPress_MCP_Audit::instance();MGD_WordPress_MCP_Abilities::instance();MGD_WordPress_MCP_Environment_Ability::instance();MGD_WordPress_MCP_Security::instance();MGD_WordPress_MCP_Wizard::instance();MGD_WordPress_MCP_Admin::instance();MGD_WordPress_MCP_Updater::instance();add_action('admin_notices',array($this,'dependency_notice'));add_action('mcp_adapter_init',array($this,'register_custom_mcp_server'));}
+ private function __construct(){MGD_WordPress_MCP_Audit::instance();MGD_WordPress_MCP_Abilities::instance();MGD_WordPress_MCP_Environment_Ability::instance();MGD_WordPress_MCP_Security::instance();MGD_WordPress_MCP_Wizard::instance();MGD_WordPress_MCP_Admin::instance();if(!MGD_WPMCP_KIT){MGD_WordPress_MCP_Updater::instance();}add_action('admin_notices',array($this,'dependency_notice'));add_action('mcp_adapter_init',array($this,'register_custom_mcp_server'));}
  public static function defaults(){return array('permission_profile'=>'read_only','writes_enabled'=>false,'maintenance_enabled'=>false,'divi_writes_enabled'=>false,'media_imports_enabled'=>false,'github_updates'=>true,'audit_enabled'=>true,'max_upload_mb'=>8);}
  public static function get_settings(){$saved=get_option(self::OPTION_SETTINGS,array());return wp_parse_args(is_array($saved)?$saved:array(),self::defaults());}
  public static function setting($key,$default=null){$settings=self::get_settings();return array_key_exists($key,$settings)?$settings[$key]:$default;}

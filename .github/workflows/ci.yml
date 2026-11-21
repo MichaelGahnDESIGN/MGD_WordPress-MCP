@@ -29,7 +29,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          find mgd-wordpress-mcp -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          # Baukasten (includes/Kit) braucht PHP 8.1, unter 8.1 laedt das Plugin ihn nicht
+          if php -r 'exit(PHP_VERSION_ID >= 80100 ? 0 : 1);'; then
+            find mgd-wordpress-mcp -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          else
+            find mgd-wordpress-mcp -type f -name '*.php' -not -path '*/includes/Kit/*' -print0 | xargs -0 -n1 php -l
+          fi
 
       - name: Run local regression tests
         if: matrix.php == '8.3'

@@ -26,4 +26,15 @@ foreach (array('class-provider.php', 'view.php', 'plugins.json') as $name) {
 $bootstrap = $main;
 foreach (glob($runtime . '/includes/*.php') as $file) { $bootstrap .= file_get_contents($file); }
 mgd_catalog_assert((bool) preg_match('/new\s+\\\\?MGD_WordPress_Plugin_Catalog_V4\s*\(/', $bootstrap), 'Versionsfester Einstiegspunkt');
+// ab 0.6.0: Baukasten ab PHP 8.1, alter Updater nur noch als Rückfall drunter
+mgd_catalog_assert(is_file($runtime . '/includes/Kit/Platform/WordPress/Updater.php'), 'Baukasten vorhanden');
+mgd_catalog_assert(str_contains($main, "define('MGD_WPMCP_KIT',PHP_VERSION_ID>=80100)"), 'PHP-Weiche');
+mgd_catalog_assert((bool) preg_match('/if \(MGD_WPMCP_KIT\) \{\s*\/\/[^\n]*\n\s*MGD_WordPress_MCP_Kit::boot/', $main), 'Baukasten startet ab 8.1');
+mgd_catalog_assert((bool) preg_match('/\} else \{[^}]*MGD_Plugin_Admin_Tools_20261023::register/s', $main), 'Alter Updater nur im else-Zweig');
+mgd_catalog_assert(str_contains($bootstrap, "if(!MGD_WPMCP_KIT){MGD_WordPress_MCP_Updater::instance();}"), 'Alter GitHub-Updater ab 8.1 aus');
+mgd_catalog_assert(str_contains($bootstrap, "const PRODUCT = 'mgd-mcp-wordpress';"), 'Produktname');
+mgd_catalog_assert(str_contains($bootstrap, "self::\$updater, \$list, false, ''"), 'Lizenz-Baustein aus');
+mgd_catalog_assert(str_contains($bootstrap, "cleanupLegacy( self::PRODUCT, MGD_WPMCP_VERSION, array( 'mgd_wpmcp_release_*' ) )"), 'Alte Caches aufräumen');
+$uninstall = file_get_contents($runtime . '/uninstall.php');
+mgd_catalog_assert(strpos($uninstall, "Setup::uninstall( 'mgd-mcp-wordpress', 'wordpress' )") < strpos($uninstall, "'MGD_WPMCP_PURGE_ON_UNINSTALL' ) ||"), 'Abmelden vor dem PURGE-Ausstieg');
 echo "PASS Pluginversion, sieben Katalogeinträge, lokale Icons und vollständige Laufzeitdateien\n";
