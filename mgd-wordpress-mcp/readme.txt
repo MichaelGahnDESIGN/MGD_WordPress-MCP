@@ -4,13 +4,17 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.6.2 - 2026-11-23 =
+
+* „Weitere Plugins“ zeigt nach einem Update sofort die aktuelle Liste statt der alten aus dem Zwischenspeicher.
 
 = 0.6.1 - 2026-11-23 =
 
