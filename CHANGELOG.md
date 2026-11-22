@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2 – 2026-11-23
+
+- „Weitere Plugins“ zeigt nach einem Update sofort die aktuelle Liste statt der alten aus dem Zwischenspeicher (Baukasten-Fix).
+
 ## 0.6.1 – 2026-11-23
 
 - „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
