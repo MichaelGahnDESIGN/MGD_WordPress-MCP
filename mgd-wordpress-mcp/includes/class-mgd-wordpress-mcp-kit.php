@@ -9,7 +9,7 @@ final class MGD_WordPress_MCP_Kit {
     const CATALOG_ID = 'plugin-wordpress-mcp';
     const REPO = 'MGD_WordPress-MCP';
 
-    // Katalog-IDs zu den Repos aus plugin-catalog/plugins.json
+    // Katalog-IDs zu den Repos aus kit-fallback-plugins.json
     const CATALOG_IDS = array(
         'MGD-AI-Kennzeichnung-WordPress' => 'plugin-ki-kennzeichnung-wordpress',
         'MGD-Maintenance-WordPress'      => 'plugin-maintenance-wordpress',
@@ -55,9 +55,9 @@ final class MGD_WordPress_MCP_Kit {
         $dash->page();
     }
 
-    /** Ersatzliste aus plugin-catalog/plugins.json, falls theme.michael-gahn.de nicht antwortet */
+    /** Ersatzliste aus kit-fallback-plugins.json, falls theme.michael-gahn.de nicht antwortet */
     public static function fallback_plugins() {
-        $raw  = file_get_contents( MGD_WPMCP_DIR . 'includes/plugin-catalog/plugins.json' );
+        $raw  = file_get_contents( MGD_WPMCP_DIR . 'includes/kit-fallback-plugins.json' );
         $data = is_string( $raw ) ? json_decode( $raw, true ) : null;
         $out  = array();
         foreach ( is_array( $data ) ? $data : array() as $repo => $row ) {

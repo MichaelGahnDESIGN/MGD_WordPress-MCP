@@ -75,7 +75,7 @@ final class Dashboard
         }
         $out .= self::section('info', 'Info', '<p>Plugin: ' . Text::e($this->pluginName) . '</p><p>Version: ' . Text::e($this->version) . '</p>');
         $out .= self::section('updates', 'Updates', $this->updates($today));
-        $rec = $this->recommendations !== null ? RecommendationsView::render($this->recommendations) : '';
+        $rec = $this->recommendations !== null ? RecommendationsView::render($this->recommendations, $this->product) : '';
         if ($rec !== '') {
             $out .= self::section('plugins', 'Weitere Plugins', $rec);
         }

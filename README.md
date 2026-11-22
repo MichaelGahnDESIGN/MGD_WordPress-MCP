@@ -17,7 +17,7 @@
 
 MGD WordPress MCP verbindet WordPress mit MCP-kompatiblen KI-Agenten wie Claude Code, OpenAI Codex und anderen MCP-Clients. Das Plugin stellt klar begrenzte WordPress-Abilities für Inhalte, Medien, SEO, Divi 5, WPForms, UpdraftPlus, Updates und die Website-Umgebung bereit.
 
-## Aktueller Stand: 0.5.15
+## Aktueller Stand: 0.6.1
 
 Installation, Admin-Oberfläche, Release-Build und GitHub-Self-Update-Kette sind getestet. Der nächste verbindliche Praxisschritt ist ein echter MCP-Handshake mit einem separaten WordPress-Testkonto: zuerst lesend, danach mit einem ungefährlichen Entwurf. Bis dieser Test dokumentiert ist, wird keine vollständige Client-Kompatibilität behauptet.
 
@@ -133,6 +133,8 @@ MGD WordPress MCP erkennt typische aktive Shield-, Passwort-, Restricted-Access-
 Wird eine visuelle Prüfung tatsächlich blockiert, soll ein Agent den autorisierten Benutzer nach dem legitimen Entsperrweg oder einer temporären Freigabe fragen. Das Plugin implementiert keine Funktion zum Umgehen solcher Schutzmechanismen. PINs und Passwörter werden nicht als Plugin-Konfiguration oder Audit-Daten gespeichert.
 
 ## WordPress Self-Updates
+
+> **Ab Version 0.6.0:** Auf PHP 8.1 oder neuer kommen Updates von theme.michael-gahn.de (Plugin-Baukasten). Vor dem Einspielen werden Größe und Prüfsumme (SHA-256) der Datei geprüft. Es gibt keine automatischen Updates. Die Seite dazu heißt „Info und Updates“ und liegt unter Werkzeuge. Der folgende Abschnitt gilt nur noch für PHP 7.4 und 8.0.
 
 MGD WordPress MCP prüft optional den neuesten stabilen GitHub Release dieses Repositorys. Als Updatepaket wird ausschließlich ein Release-Asset akzeptiert, das den erwarteten Repository-Pfad, GitHub als Downloadhost und den exakten Namen
 
@@ -277,6 +279,12 @@ E-Mail: Anfrage@Michael-Gahn.de
 ## Plugin-Icon – Version 0.5.10
 
 Eigenes lokales Icon in der WordPress-Pluginliste. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
+
+## 0.6.1 – Neue Ansicht „Weitere Plugins“
+
+- „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
+- Kostenlose Plugins kannst du dort mit einem Klick installieren. Sie werden nie automatisch aktiviert.
+- Die alte Seite „Weitere Plugins“ ist ganz entfernt.
 
 ## 0.5.15 – Icons und Hintergründe aus dem Feed
 

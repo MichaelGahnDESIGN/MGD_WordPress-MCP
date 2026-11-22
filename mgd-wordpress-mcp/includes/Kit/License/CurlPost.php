@@ -7,12 +7,13 @@ namespace Mgd\WordPressMcp\Kit\License;
 use Mgd\WordPressMcp\Kit\Install\{CurlTransport, Response};
 
 // cURL POST, gleiche Grenzen wie der Install-Client: nur https theme.michael-gahn.de, keine Weiterleitung, 3s/5s, max 16 KB
+// Pro-Pakete: größer + länger über $maxBytes / $timeout (ProContentClient 4 MB, 15s)
 // Fehlertexte ohne Header/Token
 final class CurlPost implements HttpPost
 {
     public const MAX_BYTES = 16384;
 
-    public function __construct(private readonly string $userAgent)
+    public function __construct(private readonly string $userAgent, private readonly int $maxBytes = self::MAX_BYTES, private readonly ?int $timeout = null)
     {
     }
 
@@ -37,12 +38,12 @@ final class CurlPost implements HttpPost
             CURLOPT_USERAGENT => $this->userAgent,
             CURLOPT_FOLLOWLOCATION => false,
             CURLOPT_CONNECTTIMEOUT => CurlTransport::CONNECT_TIMEOUT,
-            CURLOPT_TIMEOUT => CurlTransport::TIMEOUT,
+            CURLOPT_TIMEOUT => $this->timeout ?? CurlTransport::TIMEOUT,
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
-            CURLOPT_WRITEFUNCTION => static function ($c, string $chunk) use (&$out): int {
-                if (strlen($out) + strlen($chunk) > self::MAX_BYTES) {
+            CURLOPT_WRITEFUNCTION => function ($c, string $chunk) use (&$out): int {
+                if (strlen($out) + strlen($chunk) > $this->maxBytes) {
                     return -1;
                 }
                 $out .= $chunk;

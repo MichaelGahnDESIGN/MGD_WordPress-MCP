@@ -4,13 +4,19 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.6.1 - 2026-11-23 =
+
+* „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
+* Kostenlose Plugins kannst du dort mit einem Klick installieren. Sie werden nie automatisch aktiviert.
+* Die alte Seite „Weitere Plugins“ ist ganz entfernt.
 
 = 0.6.0 - 2026-11-21 =
 * Brückenversion: Updates kommen jetzt von theme.michael-gahn.de. Vor der Installation werden Größe und Prüfsumme (SHA-256) geprüft. Automatische Updates bleiben aus.

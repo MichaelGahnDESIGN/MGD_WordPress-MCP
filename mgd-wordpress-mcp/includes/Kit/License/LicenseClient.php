@@ -19,10 +19,13 @@ final class LicenseClient
     public const TOKEN_RE = '/^[A-Za-z0-9_.-]{20,5000}$/D';
     public const DOMAIN_RE = '/^[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?$/D';
     public const TIERS = ['free', 'plus', 'pro', 'agency'];
+    // Berechtigung = Produkt-SKU oder Theme-Modul, z.B. mgd-maintenance-pro
+    public const ENTITLEMENT_RE = '/^[a-z0-9]+(?:[-:][a-z0-9]+)*$/D';
+    public const MAX_ENTITLEMENTS = 200;
 
     private readonly bool $enabled;
     private readonly \Closure $now;
-    /** @var array{valid:bool,tier:string,reason:string,source:string}|null */
+    /** @var array{valid:bool,tier:string,reason:string,source:string,entitlements:list<string>}|null */
     private ?array $memo = null;
 
     public function __construct(
@@ -46,6 +49,22 @@ final class LicenseClient
         $s = $this->state();
 
         return $s['valid'] && $s['tier'] !== 'free';
+    }
+
+    // Pro-Funktion X freigeschaltet? Nur was der Server in entitlements schickt, sonst nein
+    public function has(string $entitlement): bool
+    {
+        $s = $this->state();
+
+        return $s['valid'] && in_array($entitlement, $s['entitlements'], true);
+    }
+
+    /** @return list<string> */
+    public function entitlements(): array
+    {
+        $s = $this->state();
+
+        return $s['valid'] ? $s['entitlements'] : [];
     }
 
     public function status(): string
@@ -87,7 +106,7 @@ final class LicenseClient
         $this->memo = null;
     }
 
-    /** @return array{valid:bool,tier:string,reason:string,source:string} */
+    /** @return array{valid:bool,tier:string,reason:string,source:string,entitlements:list<string>} */
     public function state(): array
     {
         try {
@@ -111,7 +130,7 @@ final class LicenseClient
         if ($now < (int) ($st['until'] ?? 0)) {
             $valid = ($st['valid'] ?? false) === true;
 
-            return ['valid' => $valid, 'tier' => $valid ? (string) $st['tier'] : 'free', 'reason' => (string) ($st['reason'] ?? 'ok'), 'source' => 'cache'];
+            return ['valid' => $valid, 'tier' => $valid ? (string) $st['tier'] : 'free', 'reason' => (string) ($st['reason'] ?? 'ok'), 'source' => 'cache', 'entitlements' => $valid ? self::cleanList($st['ent'] ?? []) : []];
         }
         // Server grad weg > nicht bei jedem Seitenaufruf bis zum Timeout warten
         if ($now < (int) ($st['retry'] ?? 0)) {
@@ -158,9 +177,10 @@ final class LicenseClient
         // Abo verlängert > neuer Schlüssel vom Server
         $renewed = $json['renewed_token'] ?? null;
         $token = is_string($renewed) && preg_match(self::TOKEN_RE, $renewed) === 1 ? $renewed : $this->token($st);
-        $this->store->save(['token' => $token, 'valid' => true, 'tier' => $tier, 'reason' => 'ok', 'until' => $until, 'ok_until' => $until, 'ok_tier' => $tier]);
+        $ent = self::cleanList($lic['entitlements'] ?? []);
+        $this->store->save(['token' => $token, 'valid' => true, 'tier' => $tier, 'reason' => 'ok', 'until' => $until, 'ok_until' => $until, 'ok_tier' => $tier, 'ent' => $ent, 'ok_ent' => $ent]);
 
-        return ['valid' => true, 'tier' => $tier, 'reason' => 'ok', 'source' => 'live'];
+        return ['valid' => true, 'tier' => $tier, 'reason' => 'ok', 'source' => 'live', 'entitlements' => $ent];
     }
 
     // klares Nein: Gnadenfrist weg, sofort Free
@@ -170,7 +190,7 @@ final class LicenseClient
             ? $json['reason'] : ($status === 401 ? 'token_malformed' : 'invalid');
         $this->store->save(['token' => $this->token($st), 'valid' => false, 'tier' => 'free', 'reason' => $reason, 'until' => $now + self::NEGATIVE_TTL]);
 
-        return ['valid' => false, 'tier' => 'free', 'reason' => $reason, 'source' => 'live'];
+        return ['valid' => false, 'tier' => 'free', 'reason' => $reason, 'source' => 'live', 'entitlements' => []];
     }
 
     private static function fallback(array $st, int $now): array
@@ -178,7 +198,7 @@ final class LicenseClient
         $okUntil = (int) ($st['ok_until'] ?? 0);
         $tier = (string) ($st['ok_tier'] ?? '');
         if ($okUntil > 0 && $now < $okUntil + self::GRACE && in_array($tier, self::TIERS, true)) {
-            return ['valid' => true, 'tier' => $tier, 'reason' => 'ok', 'source' => 'grace'];
+            return ['valid' => true, 'tier' => $tier, 'reason' => 'ok', 'source' => 'grace', 'entitlements' => self::cleanList($st['ok_ent'] ?? [])];
         }
 
         return self::free('unreachable');
@@ -191,9 +211,29 @@ final class LicenseClient
         return is_string($t) && preg_match(self::TOKEN_RE, $t) === 1 ? $t : '';
     }
 
-    /** @return array{valid:bool,tier:string,reason:string,source:string} */
+    /** @return array{valid:bool,tier:string,reason:string,source:string,entitlements:list<string>} */
     private static function free(string $reason): array
     {
-        return ['valid' => false, 'tier' => 'free', 'reason' => $reason, 'source' => 'none'];
+        return ['valid' => false, 'tier' => 'free', 'reason' => $reason, 'source' => 'none', 'entitlements' => []];
+    }
+
+    // nur saubere Namen, max 64 Zeichen, max 200 Stück, doppelte raus
+    /** @return list<string> */
+    private static function cleanList(mixed $list): array
+    {
+        if (!is_array($list)) {
+            return [];
+        }
+        $out = [];
+        foreach ($list as $e) {
+            if (is_string($e) && strlen($e) <= 64 && preg_match(self::ENTITLEMENT_RE, $e) === 1) {
+                $out[$e] = $e;
+            }
+            if (count($out) >= self::MAX_ENTITLEMENTS) {
+                break;
+            }
+        }
+
+        return array_values($out);
     }
 }
