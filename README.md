@@ -17,13 +17,11 @@
 
 MGD WordPress MCP verbindet WordPress mit MCP-kompatiblen KI-Agenten wie Claude Code, OpenAI Codex und anderen MCP-Clients. Das Plugin stellt klar begrenzte WordPress-Abilities für Inhalte, Medien, SEO, Divi 5, WPForms, UpdraftPlus, Updates und die Website-Umgebung bereit.
 
-## Aktueller Stand: 0.2.8
+## Aktueller Stand: 0.6.2
 
-Der GitHub-basierte WordPress-Self-Updater ist seit dem Test **0.2.7 → 0.2.8 erfolgreich End-to-End verifiziert**. WordPress erkennt einen neuen GitHub Release selbstständig, zeigt Version, Icon, Versionsdetails und Kompatibilität an und kann das validierte Release-Paket über die normale WordPress-Updateoberfläche installieren.
+Installation, Admin-Oberfläche, Release-Build und GitHub-Self-Update-Kette sind getestet. Der nächste verbindliche Praxisschritt ist ein echter MCP-Handshake mit einem separaten WordPress-Testkonto: zuerst lesend, danach mit einem ungefährlichen Entwurf. Bis dieser Test dokumentiert ist, wird keine vollständige Client-Kompatibilität behauptet.
 
-Die entscheidende Updater-Härtung erfolgte in 0.2.7. Sie orientiert sich am bereits produktiv funktionierenden Updater von MGD AI Kennzeichnung WordPress und kombiniert den klassischen WordPress-Update-Transient mit der Update-URI-Integration. Ein veralteter Release-Cache wird nicht mehr weiterverwendet, wenn er keine neuere Version als die installierte Version enthält.
-
-> **Projektstatus:** Installation, Admin-UI, Release-Build und Self-Update-Kette sind real getestet. Als nächste große Validierungsstufe folgen MCP Read-only, kontrollierter Schreibzugriff und die Integrationen auf einer realen Testwebsite. Die vollständige technische Checkliste steht in [`agent-readme.md`](agent-readme.md).
+> **Wichtig:** MGD WordPress MCP ergänzt den offiziellen WordPress MCP Adapter. Der Adapter stellt die technische MCP-Schnittstelle bereit; MGD WordPress MCP ergänzt Sicherheitsprofile, WordPress-Abilities, Audit-Log, Einrichtungsassistent und clientgerechte Anleitung.
 
 ## Was das Plugin ermöglichen soll
 
@@ -101,9 +99,19 @@ https://DEINE-DOMAIN.TLD/wp-json/mgd-wordpress-mcp/v1/mcp
 
 Für Remote-Zugriffe sollte ein separater WordPress-Benutzer mit minimal erforderlichen Rechten verwendet werden. Das Application Password gehört ausschließlich in den Secret-/Environment-Speicher des jeweiligen MCP-Clients. Zugangsdaten dürfen nicht in Chats, GitHub-Repositories, Skills, Screenshots oder Dokumentationen gespeichert werden.
 
+### Codex verbinden
+
+Im Einrichtungs-Assistenten unter **Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent** befindet sich eine separate Codex-Konfiguration. Sie ist absichtlich TOML, weil Codex seine MCP-Server in `~/.codex/config.toml` verwaltet. Nur auf dem eigenen Rechner werden der WordPress-Benutzername und das zugehörige Application Password eingesetzt.
+
+Danach zeigt `codex mcp list`, ob der lokale Proxy erkannt wurde. Erst dann sollte ein Agent eine reine Leseanfrage ausführen. Das Plugin speichert diese Zugangsdaten nicht und kann einen lokalen Codex-Handshake daher nicht vortäuschen oder heimlich durchführen.
+
 ## Einrichtungs-Assistent
 
-Der Assistent erkennt die WordPress-Umgebung und unterstützt bei der Auswahl des bevorzugten Builders. Divi 5, Elementor, Gutenberg, Bricks und Beaver Builder werden berücksichtigt. Ein anderes System kann manuell angegeben werden.
+Der Assistent startet nach der ersten Aktivierung und kann später über **Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent** bewusst neu gestartet werden. Er führt als echter Ablauf mit Fortschrittsanzeige einzeln durch Website-Check, Auswahl von KI-Agent und Betriebssystem, separatem Application Password, lokaler Client-Konfiguration sowie Sicherheitsprofil. Codex, Claude Code, Cursor / VS Code sowie andere Stdio-kompatible MCP-Clients stehen zur Auswahl; macOS, Windows und Linux erhalten passende Hinweise.
+
+Benutzername und Application Password werden dabei ausschließlich im Browser verarbeitet: Sie werden weder per WordPress-Formular übertragen noch in WordPress, im Plugin oder im Audit-Log gespeichert. Nach dem Kopieren entfernt der Assistent beide Angaben wieder aus seiner Oberfläche. Für Codex auf macOS und Linux kann er zusätzlich einen Terminal-Befehl kopieren, der das Kennwort erst im lokalen Terminal verdeckt abfragt.
+
+Der Assistent erkennt außerdem die WordPress-Umgebung und unterstützt bei der Auswahl des bevorzugten Builders. Divi 5, Elementor, Gutenberg, Bricks und Beaver Builder werden berücksichtigt. Ein anderes System kann manuell angegeben werden.
 
 Bei Divi 5 empfiehlt der Assistent zusätzlich den MGD Divi 5 Dev Skill. Ein WordPress-Plugin installiert diesen Skill nicht ungefragt auf dem lokalen Computer.
 
@@ -125,6 +133,8 @@ MGD WordPress MCP erkennt typische aktive Shield-, Passwort-, Restricted-Access-
 Wird eine visuelle Prüfung tatsächlich blockiert, soll ein Agent den autorisierten Benutzer nach dem legitimen Entsperrweg oder einer temporären Freigabe fragen. Das Plugin implementiert keine Funktion zum Umgehen solcher Schutzmechanismen. PINs und Passwörter werden nicht als Plugin-Konfiguration oder Audit-Daten gespeichert.
 
 ## WordPress Self-Updates
+
+> **Ab Version 0.6.0:** Auf PHP 8.1 oder neuer kommen Updates von theme.michael-gahn.de (Plugin-Baukasten). Vor dem Einspielen werden Größe und Prüfsumme (SHA-256) der Datei geprüft. Es gibt keine automatischen Updates. Die Seite dazu heißt „Info und Updates“ und liegt unter Werkzeuge. Der folgende Abschnitt gilt nur noch für PHP 7.4 und 8.0.
 
 MGD WordPress MCP prüft optional den neuesten stabilen GitHub Release dieses Repositorys. Als Updatepaket wird ausschließlich ein Release-Asset akzeptiert, das den erwarteten Repository-Pfad, GitHub als Downloadhost und den exakten Namen
 
@@ -269,6 +279,41 @@ E-Mail: Anfrage@Michael-Gahn.de
 ## Plugin-Icon – Version 0.5.10
 
 Eigenes lokales Icon in der WordPress-Pluginliste. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
+
+## 0.6.2 – Liste sofort aktuell
+
+- „Weitere Plugins“ zeigt nach einem Update sofort die aktuelle Liste statt der alten aus dem Zwischenspeicher.
+
+## 0.6.1 – Neue Ansicht „Weitere Plugins“
+
+- „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
+- Kostenlose Plugins kannst du dort mit einem Klick installieren. Sie werden nie automatisch aktiviert.
+- Die alte Seite „Weitere Plugins“ ist ganz entfernt.
+
+## 0.5.15 – Icons und Hintergründe aus dem Feed
+
+- Icons und Hintergründe der Karten unter „Weitere Plugins“ kommen jetzt aus theme.michael-gahn.de. Der Server holt sie einmal und speichert sie lokal, der Browser lädt nichts von extern. Ohne Bild bleibt das mitgelieferte Motiv. Versionen werden ohne führendes „v“ angezeigt.
+
+## 0.5.14 – Schrittweise Einrichtung
+
+- Navigation in eine feste, verständliche Reihenfolge gebracht;
+- Einrichtungsassistent zeigt immer nur einen Schritt mit Weiter-/Zurück-Navigation;
+- Fortschritt bleibt nach dem Speichern von Builder oder Sicherheitsprofil bei Schritt 5.
+
+## 0.5.13 – Geführte lokale Verbindung
+
+- Auswahl von KI-Agent und Betriebssystem vor der Verbindungsanleitung;
+- lokaler Konfigurationsgenerator ohne Speicherung oder Übertragung von Zugangsdaten;
+- sicherer Codex-Terminalweg für macOS und Linux ohne Klartextkennwort im Befehl;
+- Assistent kann bewusst erneut gestartet werden.
+
+## 0.5.12 – Einfachere Codex-Verbindung
+
+- eigene TOML-Konfiguration für Codex statt einer JSON-Kopie;
+- fest geprüfte Version des lokalen WordPress-MCP-Proxys;
+- klar getrennte Website- und Client-Prüfung im Einrichtungs-Assistenten;
+- neue Regressionstests für die Client-Konfiguration;
+- gemeinsame MGD-Plugin-Kollektion mit lokalen Icons und Hintergrundbildern.
 
 ## 0.5.11 – Plugin-Verwaltung
 

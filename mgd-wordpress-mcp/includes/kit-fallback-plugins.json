@@ -1,0 +1,107 @@
+{
+  "MGD-AI-Kennzeichnung-WordPress": {
+    "name": "KI-Bildkennzeichnung",
+    "description": "Zeige transparent, welche Bilder mit KI entstanden sind. Direkt aus deiner Mediathek, dezent im Frontend.",
+    "category": "Medien",
+    "icon": "ai.svg",
+    "tone": "rose",
+    "features": [
+      "Kennzeichnung direkt am Bild",
+      "Mehrere Bilder gleichzeitig bearbeiten",
+      "Position und Darstellung wählen"
+    ],
+    "basenames": ["mgd-ai-image-labels/mgd-ai-image-labels.php"],
+    "repository": "MGD-AI-Kennzeichnung-WordPress",
+    "tier": "free"
+  },
+  "MGD-Maintenance-WordPress": {
+    "name": "Maintenance Studio",
+    "description": "Eine Wartungsseite, die zu deiner Marke passt. Mit eigenen Layouts, Live-Vorschau und klar geregelten Zugriffen.",
+    "category": "Gestaltung",
+    "icon": "maintenance.svg",
+    "tone": "mint",
+    "features": [
+      "Layouts mit Live-Vorschau",
+      "Logo, Farben und Hintergründe",
+      "Eigene 404- und 403-Seiten"
+    ],
+    "basenames": ["mg-maintenance-studio/mg-maintenance-studio.php"],
+    "repository": "MGD-Maintenance-WordPress",
+    "tier": "free"
+  },
+  "MGD-Barrierefrei-WordPress": {
+    "name": "Barrierefrei",
+    "description": "Ergänze lokale Lesehilfen und erstelle einen bearbeitbaren Entwurf für deine Erklärung zur Barrierefreiheit.",
+    "category": "Barrierefreiheit",
+    "icon": "accessibility.svg",
+    "tone": "blue",
+    "features": [
+      "Kontrast, Fokus und Schrift anpassen",
+      "Anpassbares Bedienpanel",
+      "Erklärung als Seitenentwurf"
+    ],
+    "basenames": ["mgd-barrierefrei-wordpress/mgd-barrierefrei-wordpress.php"],
+    "repository": "MGD-Barrierefrei-WordPress",
+    "tier": "free"
+  },
+  "MGD-Share-WordPress": {
+    "name": "Share",
+    "description": "Mach Inhalte leichter teilbar. Mit nativer Teilen-Funktion, Link-Kopie und einem Datenschutz-Dashboard.",
+    "category": "Marketing",
+    "icon": "share.svg",
+    "tone": "sand",
+    "features": [
+      "Native Teilen-Funktion",
+      "Link mit einem Klick kopieren",
+      "Datensparsame Einbindung"
+    ],
+    "basenames": ["mgd-share-wordpress/mgd-share-wordpress.php"],
+    "repository": "MGD-Share-WordPress",
+    "tier": "free"
+  },
+  "MGD-Notification-WordPress": {
+    "name": "Notification Center",
+    "description": "Halte Besucher und angemeldete Nutzer auf dem Laufenden. Öffentliche Neuigkeiten und persönliche Mitteilungen an einem Ort.",
+    "category": "Kommunikation",
+    "icon": "notification.svg",
+    "tone": "lavender",
+    "features": [
+      "Öffentliche Ankündigungen",
+      "Persönliche Benachrichtigungen",
+      "Inhalte planen und verwalten"
+    ],
+    "basenames": ["mgd-notification-center/mgd-notification-center.php"],
+    "repository": "MGD-Notification-WordPress",
+    "tier": "free"
+  },
+  "MGD_Giveaway_WP-Plugin": {
+    "name": "Giveaway",
+    "description": "Teile E-Books und PDFs über gestaltbare Formulare. Mit Zustimmungsfeldern und geschützten Download-Links.",
+    "category": "Marketing",
+    "icon": "giveaway.svg",
+    "tone": "rose",
+    "features": [
+      "Flexible Download-Formulare",
+      "Bestätigung per Double-Opt-in",
+      "Geschützte Datei-Links"
+    ],
+    "basenames": ["mgd-giveaway/mgd-giveaway.php"],
+    "repository": "MGD_Giveaway_WP-Plugin",
+    "tier": "free"
+  },
+  "MGD_WordPress-MCP": {
+    "name": "WordPress MCP",
+    "description": "Verbinde freigegebene MCP-Clients mit WordPress. Du bestimmst, welche Inhalte und Funktionen zugänglich sind.",
+    "category": "Administration",
+    "icon": "mcp.svg",
+    "tone": "mint",
+    "features": [
+      "Explizite Berechtigungsprofile",
+      "Schreibzugriffe gezielt freigeben",
+      "Nachvollziehbare Aktionen"
+    ],
+    "basenames": ["mgd-wordpress-mcp/mgd-wordpress-mcp.php"],
+    "repository": "MGD_WordPress-MCP",
+    "tier": "free"
+  }
+}

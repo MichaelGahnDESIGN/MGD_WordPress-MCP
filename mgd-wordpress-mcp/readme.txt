@@ -4,13 +4,44 @@ Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.11
+Stable tag: 0.6.2
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
 
 Sichere WordPress-Abilities für MCP-kompatible KI-Agenten.
 
 == Changelog ==
+
+= 0.6.2 - 2026-11-23 =
+
+* „Weitere Plugins“ zeigt nach einem Update sofort die aktuelle Liste statt der alten aus dem Zwischenspeicher.
+
+= 0.6.1 - 2026-11-23 =
+
+* „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
+* Kostenlose Plugins kannst du dort mit einem Klick installieren. Sie werden nie automatisch aktiviert.
+* Die alte Seite „Weitere Plugins“ ist ganz entfernt.
+
+= 0.6.0 - 2026-11-21 =
+* Brückenversion: Updates kommen jetzt von theme.michael-gahn.de. Vor der Installation werden Größe und Prüfsumme (SHA-256) geprüft. Automatische Updates bleiben aus.
+* Neue Seite „Info und Updates“ unter Werkzeuge: Version, Update-Stand, „Weitere Plugins“ und der Schalter „Installation melden“.
+* Beim Löschen des Plugins meldet sich die Installation bei theme.michael-gahn.de ab. Einstellungen und Audit-Log bleiben wie bisher erhalten.
+* Der alte GitHub-Updater ist ab PHP 8.1 abgeschaltet. Auf PHP 7.4 und 8.0 läuft er weiter wie bisher.
+* Rechte, Anmeldung und MCP-Zugriffe sind unverändert.
+
+= 0.5.15 - 2026-10-27 =
+* Icons und Hintergründe der Karten unter „Weitere Plugins“ kommen jetzt aus theme.michael-gahn.de. Der Server holt sie einmal und speichert sie lokal, der Browser lädt nichts von extern. Ohne Bild bleibt das mitgelieferte Motiv. Versionen werden ohne führendes „v“ angezeigt.
+
+= 0.5.14 - 2026-10-26 =
+* Navigation im Plugin folgt jetzt der festen Reihenfolge: Einrichtungsassistent, Übersicht, Start Prompt, Sicherheit und Freigaben, Verbindung, Audit-Log, Über das Plugin und Plugin-Empfehlungen.
+* Der Einrichtungsassistent ist jetzt ein geführter Ablauf: ein Schritt pro Ansicht, Fortschrittsanzeige sowie Weiter- und Zurück-Schalter.
+* Beim Speichern von Builder oder Sicherheitsprofil kehrt der Assistent gezielt zu Schritt 5 zurück.
+
+= 0.5.13 - 2026-10-26 =
+* Einrichtungs-Assistent startet nach der ersten Aktivierung und lässt sich später bewusst erneut starten.
+* Geführte Auswahl für Codex, Claude Code, Cursor / VS Code oder andere MCP-Clients sowie macOS, Windows und Linux.
+* Lokaler Konfigurationsgenerator: Benutzername und Application Password werden nie an WordPress gesendet oder gespeichert und nach dem Kopieren aus dem Assistenten entfernt.
+* Für Codex unter macOS und Linux steht zusätzlich ein Terminal-Befehl bereit, der das Kennwort erst verdeckt im lokalen Terminal abfragt.
 
 = 0.5.9 - 2026-09-17 =
 * Plugin-Info-Modal ("Details ansehen") robuster gebaut: die Feature-Übersicht in der Beschreibung nutzt jetzt eine einfache Liste statt einer `table.widefat`-Tabelle. Auf Websites mit vielen aktiven Plugins/Themes kollidierte diese Klasse teils mit fremdem, global geladenem CSS (z. B. responsive Tabellen-Hacks) und ließ die Seitenleiste/den Beschreibungsbereich im "Details ansehen"-Dialog auf über 100.000px Höhe aufblähen. Real auf einer Live-Installation mit vielen aktiven Plugins reproduziert und verifiziert.

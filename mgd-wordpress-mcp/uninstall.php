@@ -15,6 +15,17 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
 }
 
+// Abmelden bei theme.michael-gahn.de (Baukasten), läuft immer - auch ohne PURGE
+if ( PHP_VERSION_ID >= 80100 ) {
+    spl_autoload_register( static function ( $class ) {
+        $prefix = 'Mgd\\WordPressMcp\\Kit\\';
+        if ( 0 !== strpos( $class, $prefix ) ) { return; }
+        $file = __DIR__ . '/includes/Kit/' . str_replace( '\\', '/', substr( $class, strlen( $prefix ) ) ) . '.php';
+        if ( is_file( $file ) ) { require $file; }
+    } );
+    \Mgd\WordPressMcp\Kit\Platform\WordPress\Setup::uninstall( 'mgd-mcp-wordpress', 'wordpress' );
+}
+
 if ( ! defined( 'MGD_WPMCP_PURGE_ON_UNINSTALL' ) || true !== MGD_WPMCP_PURGE_ON_UNINSTALL ) {
     return;
 }

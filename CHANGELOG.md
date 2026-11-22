@@ -1,5 +1,52 @@
 # Changelog
 
+## 0.6.2 – 2026-11-23
+
+- „Weitere Plugins“ zeigt nach einem Update sofort die aktuelle Liste statt der alten aus dem Zwischenspeicher (Baukasten-Fix).
+
+## 0.6.1 – 2026-11-23
+
+- „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
+- Kostenlose Plugins kannst du dort mit einem Klick installieren. Sie werden nie automatisch aktiviert.
+- Die alte Seite „Weitere Plugins“ ist ganz entfernt. Auf PHP 7.4 und 8.0 gibt es keine Plugin-Liste mehr, Updates laufen dort weiter über GitHub.
+- Rechte, Authentifizierung und MCP-Zugriffe unverändert.
+
+## 0.6.0 – 2026-11-21
+
+- Brückenversion mit dem Plugin-Baukasten (Produkt `mgd-mcp-wordpress`): Updates über theme.michael-gahn.de mit Prüfung von Größe und SHA-256, kein Auto-Update.
+- Neue Seite „Info und Updates“ (Werkzeuge): Info, Updates, Weitere Plugins, Installation melden. Lizenz-Baustein bleibt aus.
+- Abmeldung bei theme.michael-gahn.de beim Löschen (eigene `uninstall.php`). Einstellungen und Audit-Log bleiben ohne `MGD_WPMCP_PURGE_ON_UNINSTALL` erhalten.
+- Alte Update-Zwischenspeicher (`mgd_wpmcp_release_*`) werden einmal aufgeräumt.
+- Der Baukasten braucht PHP 8.1. Auf PHP 7.4 und 8.0 bleiben alter GitHub-Updater und alte Plugin-Liste aktiv.
+- Rechte, Authentifizierung und MCP-Zugriffe unverändert.
+
+## 0.5.15 – 2026-10-27
+
+- Icons und Hintergründe der Karten unter „Weitere Plugins“ kommen jetzt aus theme.michael-gahn.de. Der Server holt sie einmal und speichert sie lokal, der Browser lädt nichts von extern. Ohne Bild bleibt das mitgelieferte Motiv. Versionen werden ohne führendes „v“ angezeigt.
+
+## 0.5.14 – 2026-10-26
+
+- Plugin-Navigation in die vereinbarte Reihenfolge gebracht und um den Link zur gemeinsamen Seite „Plugin-Empfehlungen“ ergänzt.
+- Einrichtungsassistent von einer langen Seite zu einem geführten Ablauf mit sechs einzelnen Schritten, Fortschrittsanzeige sowie Weiter- und Zurück-Navigation umgebaut.
+- Progressive Enhancement: Ohne JavaScript bleiben alle Informationen und Formulare erreichbar; mit JavaScript wird jeweils nur der aktuelle Schritt angezeigt.
+- Formular-Weiterleitungen für Builder und Sicherheitsprofil führen zurück zu Schritt 5.
+
+## 0.5.13 – 2026-10-26
+
+- Geführter Einrichtungs-Assistent für Agent und Betriebssystem ergänzt.
+- Separate Auswahl für Codex, Claude Code, Cursor / VS Code und andere MCP-Clients sowie macOS, Windows und Linux.
+- Die lokale Konfiguration entsteht ausschließlich im Browser: Application Password und Benutzername werden weder an WordPress gesendet noch gespeichert und nach dem Kopieren entfernt.
+- Optionaler Codex-Terminalweg für macOS und Linux fragt das Kennwort verdeckt erst im lokalen Terminal ab; es erscheint weder im kopierten Befehl noch im Plugin.
+- Assistent kann nach Abschluss bewusst neu gestartet werden.
+
+## 0.5.12 – 2026-10-25
+
+- Codex erhält eine echte TOML-Konfiguration statt einer unpassenden JSON-Kopie.
+- Der lokale WordPress-Remote-Proxy wird auf eine getestete Version festgelegt; `@latest` wird nicht mehr verwendet.
+- Einrichtungsassistent trennt Website-Voraussetzungen klar vom echten Client-Handshake.
+- Connection Doctor liefert der Admin-Oberfläche eindeutige Prüfzustände.
+- Regressionstest für Client-Konfigurationen ergänzt.
+
 ## 0.5.10 – 2026-10-22
 
 - GitHub-Prüfungen auf verfügbare GitHub-Runner umgestellt.
