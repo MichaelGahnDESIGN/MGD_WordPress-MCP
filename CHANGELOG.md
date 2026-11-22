@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.1 – 2026-11-23
+
+- „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
+- Kostenlose Plugins kannst du dort mit einem Klick installieren. Sie werden nie automatisch aktiviert.
+- Die alte Seite „Weitere Plugins“ ist ganz entfernt. Auf PHP 7.4 und 8.0 gibt es keine Plugin-Liste mehr, Updates laufen dort weiter über GitHub.
+- Rechte, Authentifizierung und MCP-Zugriffe unverändert.
+
 ## 0.6.0 – 2026-11-21
 
 - Brückenversion mit dem Plugin-Baukasten (Produkt `mgd-mcp-wordpress`): Updates über theme.michael-gahn.de mit Prüfung von Größe und SHA-256, kein Auto-Update.

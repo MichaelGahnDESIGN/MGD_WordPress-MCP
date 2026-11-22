@@ -13,6 +13,9 @@ use Mgd\WordPressMcp\Kit\License\{CurlPost, LicenseClient};
 final class Setup
 {
     public const PRODUCT_RE = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D';
+    // Installieren-Knopf je Produkt nur 1x anmelden
+    /** @var array<string,true> */
+    private static array $catalogRegistered = [];
 
     /**
      * Updater + Hinweis anmelden, startet auch den Install-Client (WordPress::boot) mit. $platform = wordpress oder woocommerce
@@ -44,7 +47,11 @@ final class Setup
                 return false;
             }
 
-            return InstallBoot::start($pluginFile, $product, $platform, $version, $settingsUrl !== '' ? $settingsUrl : self::dashboardUrl($product));
+            $url = $settingsUrl !== '' ? $settingsUrl : self::dashboardUrl($product);
+            // Installieren bei Weitere Plugins schon beim Laden anmelden, admin-post.php baut keine Admin-Seite auf
+            self::catalogAuto($product, $platform, $url);
+
+            return InstallBoot::start($pluginFile, $product, $platform, $version, $url);
         } catch (\Throwable) {
             return false;
         }
@@ -164,6 +171,29 @@ final class Setup
         }
     }
 
+    // Pro-Pakete vom Server (ProContentClient), nutzt den Schlüssel vom Lizenz-Baustein, Standard AUS
+    // $keys = fest eingebaute öffentliche Schlüssel kid => base64 (docs/PRO-CONTENT-API.md)
+    /** @param array<string,string> $keys */
+    public static function proContent(string $product, string $platform, array $keys, bool $enabled = false): \Mgd\WordPressMcp\Kit\License\ProContentClient
+    {
+        $off = static fn (): \Mgd\WordPressMcp\Kit\License\ProContentClient => new \Mgd\WordPressMcp\Kit\License\ProContentClient(null, new CallbackStore(static fn (): mixed => '', static function (string $v): void {
+        }), '', [], false);
+        try {
+            if (!$enabled || preg_match(self::PRODUCT_RE, $product) !== 1) {
+                return $off();
+            }
+            $opt = 'mgd_kit_lic_' . str_replace('-', '_', $product);
+            // nur lesen, schreiben macht der LicenseClient
+            $store = new CallbackStore(static fn (): mixed => \get_option($opt, ''), static function (string $v): void {
+            });
+            $domain = strtolower((string) \wp_parse_url(\home_url(), PHP_URL_HOST));
+
+            return new \Mgd\WordPressMcp\Kit\License\ProContentClient(new CurlPost('MGDKit/1.0 (' . $platform . ')', \Mgd\WordPressMcp\Kit\License\ProContentClient::MAX_BYTES, \Mgd\WordPressMcp\Kit\License\ProContentClient::TIMEOUT), $store, $domain, $keys, true);
+        } catch (\Throwable) {
+            return $off();
+        }
+    }
+
     /**
      * Admin-Seite mit allen Bereichen. $parent = options-general.php (Einstellungen) oder eigener Menü-Slug, '' = kein Menüpunkt
      * Speichern von "Installation melden" läuft über WordPress::boot(), das startet updater() bzw. boot() schon
@@ -191,11 +221,53 @@ final class Setup
             if ($parent !== '') {
                 $d->register($parent);
             }
+            self::catalogActions($product, $recommendations, $parent !== '' ? self::dashboardUrl($product, $parent) : '');
 
             return $d;
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * Knopf "Installieren" bei Weitere Plugins anmelden (admin-post.php). Setup::updater()/boot() machen das schon beim Laden,
+     * Setup::dashboard auch. Von Hand nur, wenn dein Plugin weder updater() noch boot() aufruft
+     */
+    public static function catalogActions(string $product, ?Recommendations $recommendations, string $returnUrl = ''): void
+    {
+        try {
+            if ($recommendations === null || preg_match(self::PRODUCT_RE, $product) !== 1) {
+                return;
+            }
+            if (isset(self::$catalogRegistered[$product])) {
+                return;
+            }
+            self::$catalogRegistered[$product] = true;
+            $i = new CatalogInstaller($product, $recommendations, $returnUrl);
+            \add_action('admin_post_' . CatalogInstaller::action($product), [$i, 'handle']);
+        } catch (\Throwable) {
+        }
+    }
+
+    // aus boot()/updater(): Liste erst beim Klick laden (gleicher Speicher wie die Ansicht), eigenes Plugin ist eh installiert
+    private static function catalogAuto(string $product, string $platform, string $returnUrl): void
+    {
+        if (isset(self::$catalogRegistered[$product]) || !function_exists('add_action')) {
+            return;
+        }
+        self::$catalogRegistered[$product] = true;
+        \add_action('admin_post_' . CatalogInstaller::action($product), static function () use ($product, $platform, $returnUrl): void {
+            $r = self::recommendations($product, $platform, '');
+            if ($r !== null) {
+                (new CatalogInstaller($product, $r, $returnUrl))->handle();
+            }
+        });
+    }
+
+    /** nur Tests: Merker zurücksetzen */
+    public static function resetCatalogActions(): void
+    {
+        self::$catalogRegistered = [];
     }
 
     // gleiche Option wie WordPress::client, Transport nur für Tests austauschbar. Version egal fürs Löschen
