@@ -1,6 +1,6 @@
 # Schnellstart
 
-Nach Installation und Aktivierung öffnest du **Werkzeuge → MGD WordPress MCP**.
+Nach Installation und Aktivierung öffnest du **MGD Tools → WordPress MCP**.
 
 ## 1. Endpoint kopieren
 

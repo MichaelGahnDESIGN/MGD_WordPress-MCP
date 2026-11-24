@@ -12,7 +12,7 @@ Der Assistent sammelt deshalb zunächst ungefährliche Kontextinformationen und 
 
 Nach der Aktivierung versucht das Plugin Administratoren einmalig zu folgendem Bereich weiterzuleiten:
 
-`Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent`
+`MGD Tools → WordPress MCP → Einrichtungs-Assistent`
 
 Nach Abschluss steht im Assistenten der Button **„Assistent neu starten“** bereit. Er startet die Anleitung erneut, ohne Sicherheitsprofil oder Website-Kontext heimlich zu verändern.
 

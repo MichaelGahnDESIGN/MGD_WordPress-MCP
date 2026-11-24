@@ -16,7 +16,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Abmelden bei theme.michael-gahn.de (Baukasten), läuft immer - auch ohne PURGE
-if ( PHP_VERSION_ID >= 80100 ) {
+{
     spl_autoload_register( static function ( $class ) {
         $prefix = 'Mgd\\WordPressMcp\\Kit\\';
         if ( 0 !== strpos( $class, $prefix ) ) { return; }

@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Mgd\WordPressMcp\Kit\Platform\WordPress;
 
 // Alte Caches vom vorherigen Updater wegräumen (z. B. mgd_admin_release_*), 1x pro Plugin-Version
-// Nur Namen mit mgd_ vorne, * am Ende = Präfix. Install-Client + Kit-Daten sind tabu
+// Nur Namen mit mgd_ oder michatheme_ vorne, * am Ende = Präfix. Install-Client + Kit-Daten sind tabu
 // Präfix streng [a-z0-9_], Rest dahinter darf - haben (Slugs wie mgd_admin_release_mgd-share-wordpress)
 final class LegacyCleanup
 {
-    public const NAME_RE = '/^mgd_[a-z0-9_-]{3,150}$/D';
-    public const PREFIX_RE = '/^mgd_[a-z0-9_]{3,150}$/D';
+    // michatheme_ dazu (Befund theme: alte Optionen hießen michatheme_*)
+    public const NAME_RE = '/^(?:mgd|michatheme)_[a-z0-9_-]{3,150}$/D';
+    public const PREFIX_RE = '/^(?:mgd|michatheme)_[a-z0-9_]{3,150}$/D';
     public const REST_RE = '/^[a-z0-9_-]+$/D';
-    public const PROTECTED = ['mgd_install_', 'mgd_kit_'];
+    public const PROTECTED = ['mgd_install_', 'mgd_kit_', 'mgd_tools'];
     public const MAX_ROWS = 500;
     // so legt WP Transients in wp_options ab
     public const WRAP = ['', '_transient_', '_transient_timeout_', '_site_transient_', '_site_transient_timeout_'];

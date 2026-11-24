@@ -3,7 +3,7 @@ Contributors: MichaelGahnDESIGN
 Tags: mcp, ai, abilities-api, automation, divi, wpforms, updraftplus
 Requires at least: 6.9
 Tested up to: 7.1
-Requires PHP: 7.4
+Requires PHP: 8.1
 Stable tag: 0.6.2
 License: GPL-2.0-or-later
 License URI: https://spdx.org/licenses/GPL-2.0-or-later.html

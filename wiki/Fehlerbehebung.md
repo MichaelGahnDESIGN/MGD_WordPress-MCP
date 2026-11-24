@@ -16,7 +16,7 @@ Wenn der Endpoint ohne Anmeldung mit `401` oder `403` antwortet, ist das nicht a
 
 ## Lesen funktioniert, Schreiben nicht
 
-Das ist häufig beabsichtigt. Prüfe unter `Werkzeuge → MGD WordPress MCP → Sicherheit & Freigaben`, ob Schreibzugriff aktiviert ist und ob der WordPress-Benutzer die benötigte Capability besitzt.
+Das ist häufig beabsichtigt. Prüfe unter `MGD Tools → WordPress MCP → Sicherheit & Freigaben`, ob Schreibzugriff aktiviert ist und ob der WordPress-Benutzer die benötigte Capability besitzt.
 
 ## Divi kann gelesen, aber nicht geändert werden
 

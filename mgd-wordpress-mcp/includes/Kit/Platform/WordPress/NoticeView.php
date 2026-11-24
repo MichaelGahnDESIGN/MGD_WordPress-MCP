@@ -7,14 +7,18 @@ namespace Mgd\WordPressMcp\Kit\Platform\WordPress;
 use Mgd\WordPressMcp\Kit\Support\Text;
 use Mgd\WordPressMcp\Kit\Update\UpdateInfo;
 
-// Hinweis "Bitte aktualisieren" aus dem notice-Feld als Admin-Notice, nur für manage_options
+// Hinweis "Bitte aktualisieren" aus dem notice-Feld: in der Plugin-Liste + Dashboard, nur für manage_options
 final class NoticeView
 {
     public static function register(Updater $updater, string $pluginName): void
     {
-        \add_action('admin_notices', static function () use ($updater, $pluginName): void {
+        // kein admin_notices mehr (Regel: keine Dauer-Hinweise), nur in der Plugin-Liste unter dem Update + in MGD Tools
+        \add_action('in_plugin_update_message-' . $updater->basename(), static function () use ($updater): void {
             try {
-                echo self::output($updater, $pluginName, gmdate('Y-m-d'));
+                $n = $updater->info()?->notice;
+                if ($n !== null && \current_user_can('manage_options') && $n->shouldShow($updater->installedVersion(), gmdate('Y-m-d'))) {
+                    echo ' ' . Text::e($n->text);
+                }
             } catch (\Throwable) {
                 // nie den WP-Admin killen
             }

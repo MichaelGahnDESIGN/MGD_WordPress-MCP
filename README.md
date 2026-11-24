@@ -70,7 +70,7 @@ Der direkte Base64-Medienupload bleibt fail-closed deaktiviert, bis tatsächlich
 ## Voraussetzungen
 
 * WordPress 6.9 oder neuer
-* PHP 7.4 oder neuer
+* PHP 8.1 oder neuer
 * HTTPS für Remote-MCP-Verbindungen
 * offizieller WordPress MCP Adapter
 * für Remote-Zugriff ein geeigneter WordPress-Benutzer und ein separates Application Password
@@ -101,13 +101,13 @@ Für Remote-Zugriffe sollte ein separater WordPress-Benutzer mit minimal erforde
 
 ### Codex verbinden
 
-Im Einrichtungs-Assistenten unter **Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent** befindet sich eine separate Codex-Konfiguration. Sie ist absichtlich TOML, weil Codex seine MCP-Server in `~/.codex/config.toml` verwaltet. Nur auf dem eigenen Rechner werden der WordPress-Benutzername und das zugehörige Application Password eingesetzt.
+Im Einrichtungs-Assistenten unter **MGD Tools → WordPress MCP → Einrichtungs-Assistent** befindet sich eine separate Codex-Konfiguration. Sie ist absichtlich TOML, weil Codex seine MCP-Server in `~/.codex/config.toml` verwaltet. Nur auf dem eigenen Rechner werden der WordPress-Benutzername und das zugehörige Application Password eingesetzt.
 
 Danach zeigt `codex mcp list`, ob der lokale Proxy erkannt wurde. Erst dann sollte ein Agent eine reine Leseanfrage ausführen. Das Plugin speichert diese Zugangsdaten nicht und kann einen lokalen Codex-Handshake daher nicht vortäuschen oder heimlich durchführen.
 
 ## Einrichtungs-Assistent
 
-Der Assistent startet nach der ersten Aktivierung und kann später über **Werkzeuge → MGD WordPress MCP → Einrichtungs-Assistent** bewusst neu gestartet werden. Er führt als echter Ablauf mit Fortschrittsanzeige einzeln durch Website-Check, Auswahl von KI-Agent und Betriebssystem, separatem Application Password, lokaler Client-Konfiguration sowie Sicherheitsprofil. Codex, Claude Code, Cursor / VS Code sowie andere Stdio-kompatible MCP-Clients stehen zur Auswahl; macOS, Windows und Linux erhalten passende Hinweise.
+Der Assistent startet nach der ersten Aktivierung und kann später über **MGD Tools → WordPress MCP → Einrichtungs-Assistent** bewusst neu gestartet werden. Er führt als echter Ablauf mit Fortschrittsanzeige einzeln durch Website-Check, Auswahl von KI-Agent und Betriebssystem, separatem Application Password, lokaler Client-Konfiguration sowie Sicherheitsprofil. Codex, Claude Code, Cursor / VS Code sowie andere Stdio-kompatible MCP-Clients stehen zur Auswahl; macOS, Windows und Linux erhalten passende Hinweise.
 
 Benutzername und Application Password werden dabei ausschließlich im Browser verarbeitet: Sie werden weder per WordPress-Formular übertragen noch in WordPress, im Plugin oder im Audit-Log gespeichert. Nach dem Kopieren entfernt der Assistent beide Angaben wieder aus seiner Oberfläche. Für Codex auf macOS und Linux kann er zusätzlich einen Terminal-Befehl kopieren, der das Kennwort erst im lokalen Terminal verdeckt abfragt.
 
@@ -134,7 +134,7 @@ Wird eine visuelle Prüfung tatsächlich blockiert, soll ein Agent den autorisie
 
 ## WordPress Self-Updates
 
-> **Ab Version 0.6.0:** Auf PHP 8.1 oder neuer kommen Updates von theme.michael-gahn.de (Plugin-Baukasten). Vor dem Einspielen werden Größe und Prüfsumme (SHA-256) der Datei geprüft. Es gibt keine automatischen Updates. Die Seite dazu heißt „Info und Updates“ und liegt unter Werkzeuge. Der folgende Abschnitt gilt nur noch für PHP 7.4 und 8.0.
+> **Updates:** Sie kommen von theme.michael-gahn.de (Plugin-Baukasten). Vor dem Einspielen werden Größe und Prüfsumme (SHA-256) der Datei geprüft. Es gibt keine automatischen Updates. Alles dazu steht im Menüpunkt **MGD Tools** (Übersicht und Updates). Der folgende Abschnitt beschreibt den alten GitHub-Updater bis Version 0.5.x.
 
 MGD WordPress MCP prüft optional den neuesten stabilen GitHub Release dieses Repositorys. Als Updatepaket wird ausschließlich ein Release-Asset akzeptiert, das den erwarteten Repository-Pfad, GitHub als Downloadhost und den exakten Namen
 
@@ -176,7 +176,7 @@ Der GitHub-Workflow prüft die Release-Metadaten und PHP-Syntax und erzeugt ansc
 
 ## Qualitätssicherung
 
-CI prüft PHP 7.4, 8.1, 8.3 und 8.4. Das Plugin wurde zusätzlich real mit WordPress 7.1 und PHP 8.5.x betrieben. Auf dieser Testinstallation wurden Abilities API, offizieller MCP Adapter, HTTPS und Divi 5 erkannt.
+CI prüft PHP 8.1, 8.3 und 8.4. Das Plugin wurde zusätzlich real mit WordPress 7.1 und PHP 8.5.x betrieben. Auf dieser Testinstallation wurden Abilities API, offizieller MCP Adapter, HTTPS und Divi 5 erkannt.
 
 Der Self-Updater ist real verifiziert. MCP Read-/Write- und Integrationsprüfungen sind die nächste Teststufe und werden transparent in `agent-readme.md` geführt.
 
@@ -286,7 +286,7 @@ Eigenes lokales Icon in der WordPress-Pluginliste. Die Grafik ist im Release-Pak
 
 ## 0.6.1 – Neue Ansicht „Weitere Plugins“
 
-- „Weitere Plugins“ (unter Werkzeuge → Info und Updates) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
+- „Weitere Plugins“ (unter MGD Tools) hat jetzt das Design der MGD Plugin-Kollektion: Bilder, Kategorien, Suche, Filter und ein Details-Fenster.
 - Kostenlose Plugins kannst du dort mit einem Klick installieren. Sie werden nie automatisch aktiviert.
 - Die alte Seite „Weitere Plugins“ ist ganz entfernt.
 

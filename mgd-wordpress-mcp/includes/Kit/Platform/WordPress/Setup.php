@@ -13,6 +13,8 @@ use Mgd\WordPressMcp\Kit\License\{CurlPost, LicenseClient};
 final class Setup
 {
     public const PRODUCT_RE = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D';
+    // gemeinsamer Lizenz-Speicher aller MGD-Plugins
+    public const LICENSE_OPT = 'mgd_tools_license';
     // Installieren-Knopf je Produkt nur 1x anmelden
     /** @var array<string,true> */
     private static array $catalogRegistered = [];
@@ -156,13 +158,7 @@ final class Setup
             if (!$licenseEnabled || preg_match(self::PRODUCT_RE, $product) !== 1) {
                 return self::licenseOff();
             }
-            $opt = 'mgd_kit_lic_' . str_replace('-', '_', $product);
-            $store = new CallbackStore(
-                static fn (): mixed => \get_option($opt, ''),
-                static function (string $v) use ($opt): void {
-                    \update_option($opt, $v, false);
-                },
-            );
+            $store = self::licenseStore($product, true);
             $domain = strtolower((string) \wp_parse_url(\home_url(), PHP_URL_HOST));
 
             return new LicenseClient(new CurlPost('MGDKit/1.0 (' . $platform . ')'), $store, $domain, true);
@@ -182,16 +178,105 @@ final class Setup
             if (!$enabled || preg_match(self::PRODUCT_RE, $product) !== 1) {
                 return $off();
             }
-            $opt = 'mgd_kit_lic_' . str_replace('-', '_', $product);
             // nur lesen, schreiben macht der LicenseClient
-            $store = new CallbackStore(static fn (): mixed => \get_option($opt, ''), static function (string $v): void {
-            });
+            $store = self::licenseStore($product, false);
             $domain = strtolower((string) \wp_parse_url(\home_url(), PHP_URL_HOST));
 
             return new \Mgd\WordPressMcp\Kit\License\ProContentClient(new CurlPost('MGDKit/1.0 (' . $platform . ')', \Mgd\WordPressMcp\Kit\License\ProContentClient::MAX_BYTES, \Mgd\WordPressMcp\Kit\License\ProContentClient::TIMEOUT), $store, $domain, $keys, true);
         } catch (\Throwable) {
             return $off();
         }
+    }
+
+    /**
+     * Ein Schlüssel für alle MGD-Plugins (MGD Tools > Lizenz). Alter Einzel-Schlüssel mgd_kit_lic_<produkt> wird 1x übernommen
+     */
+    public static function licenseStore(string $product, bool $writable): CallbackStore
+    {
+        $old = 'mgd_kit_lic_' . str_replace('-', '_', $product);
+        $read = static function () use ($old, $writable): mixed {
+            $v = \get_option(self::LICENSE_OPT, '');
+            if (is_string($v) && $v !== '') {
+                return $v;
+            }
+            $legacy = \get_option($old, '');
+            if ($writable && is_string($legacy) && $legacy !== '') {
+                \update_option(self::LICENSE_OPT, $legacy, false);
+            }
+
+            return $legacy;
+        };
+        $write = $writable ? static function (string $v): void {
+            \update_option(self::LICENSE_OPT, $v, false);
+        } : static function (string $v): void {
+        };
+
+        return new CallbackStore($read, $write);
+    }
+
+    /**
+     * MGD Tools (ab Plattform 1.11): Plugin ins gemeinsame Menü, Übersicht/Updates, zentrale Lizenz, Weitere Plugins,
+     * Icons + einheitliche Plugin-Liste. Ersetzt Setup::dashboard() und das eigene Hauptmenü
+     * $o: settings => [page, title, cap, render], slug => Katalog-Kennung, repo => GitHub-Repo, license => bool, pro => [Berechtigung => Name]
+     * @param array<string,mixed> $o
+     */
+    public static function tools(string $pluginFile, string $product, string $platform, string $version, string $pluginName, ?Updater $updater = null, array $o = []): bool
+    {
+        try {
+            if (preg_match(self::PRODUCT_RE, $product) !== 1) {
+                return false;
+            }
+            $slug = is_string($o['slug'] ?? null) ? $o['slug'] : '';
+            $rec = self::recommendations($product, $platform, $slug, [], is_string($o['repo'] ?? null) ? $o['repo'] : '');
+            $icons = self::icons($pluginFile);
+            $updater?->setIcons($icons);
+            $ok = Tools::add([
+                'product' => $product,
+                'name' => $pluginName,
+                'version' => $version,
+                'basename' => \plugin_basename($pluginFile),
+                'icon' => $icons['1x'] ?? '',
+                'slug' => $slug,
+                'settings' => is_array($o['settings'] ?? null) ? $o['settings'] : null,
+                'status' => $updater !== null ? static fn (bool $fresh = false): array => $updater->status($fresh) : null,
+                'install' => static fn (): string => WordPress::settingsHtml($product, $platform, $version),
+                'license' => ($o['license'] ?? false) === true,
+                'pro' => is_array($o['pro'] ?? null) ? $o['pro'] : [],
+            ], $rec, $platform);
+            if (!$ok) {
+                return false;
+            }
+            self::catalogActions($product, $rec, Tools::url(Tools::PAGE_CATALOG));
+            // Farbwähler auf allen MGD-Seiten (ersetzt input type=color / wp-color-picker)
+            ColorPicker::register();
+            $page = is_array($o['settings'] ?? null) && is_string($o['settings']['page'] ?? null) ? $o['settings']['page'] : '';
+            PluginList::register(\plugin_basename($pluginFile), Tools::url($page !== '' && preg_match(Tools::PAGE_RE, $page) === 1 ? $page : Tools::PARENT), $icons['1x'] ?? '');
+
+            return true;
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * assets/icon-128x128.png + icon-256x256.png im Plugin (aus dem Katalog), nur wenn die Datei da ist
+     * @return array<string,string>
+     */
+    public static function icons(string $pluginFile): array
+    {
+        $out = [];
+        foreach (['1x' => 'icon-128x128.png', '2x' => 'icon-256x256.png', 'svg' => 'icon.svg'] as $k => $f) {
+            if (is_file(dirname($pluginFile) . '/assets/' . $f) && function_exists('plugins_url')) {
+                $url = (string) \plugins_url('assets/' . $f, $pluginFile);
+                // hinter Proxy meint WP manchmal http, die Seite läuft aber mit https (Befund share)
+                if (str_starts_with((string) \home_url(), 'https://')) {
+                    $url = (string) preg_replace('#^http://#', 'https://', $url);
+                }
+                $out[$k] = $url;
+            }
+        }
+
+        return $out;
     }
 
     /**
@@ -217,6 +302,7 @@ final class Setup
                 $recommendations,
                 self::license($product, $platform, $licenseEnabled),
                 static fn (): string => WordPress::settingsHtml($product, $platform, $version),
+                $parent === '',
             );
             if ($parent !== '') {
                 $d->register($parent);
@@ -288,7 +374,7 @@ final class Setup
     private static function forget(string $product): void
     {
         $id = str_replace('-', '_', $product);
-        foreach (['mgd_install_', 'mgd_kit_cleanup_', 'mgd_kit_rec_', 'mgd_kit_lic_', 'mgd_kit_upd_ok_', 'mgd_kit_ver_'] as $p) {
+        foreach (['mgd_install_', 'mgd_kit_cleanup_', 'mgd_kit_rec_', 'mgd_kit_lic_', 'mgd_kit_upd_ok_', 'mgd_kit_upd_fail_', 'mgd_kit_ver_'] as $p) {
             \delete_option($p . $id);
         }
         \delete_site_transient('mgd_kit_upd_' . $id);
