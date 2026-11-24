@@ -2,7 +2,7 @@
 if(!defined('ABSPATH'))exit;
 final class MGD_WordPress_MCP_Admin{
  private static $instance=null;public static function instance(){if(null===self::$instance)self::$instance=new self();return self::$instance;}
- private function __construct(){add_action('admin_init',array($this,'settings'));add_action('admin_enqueue_scripts',array($this,'assets'));add_filter('plugin_action_links_'.MGD_WPMCP_BASENAME,array($this,'action_links'));add_filter('plugin_row_meta',array($this,'row_meta'),10,2);}
+ private function __construct(){add_action('admin_init',array($this,'settings'));add_action('admin_enqueue_scripts',array($this,'assets'));}
  public function settings(){register_setting('mgd_wordpress_mcp',MGD_WordPress_MCP::OPTION_SETTINGS,array('type'=>'array','sanitize_callback'=>array($this,'sanitize'),'default'=>MGD_WordPress_MCP::defaults()));}
  public function sanitize($input){$old=MGD_WordPress_MCP::get_settings();$clean=$old;foreach(array('writes_enabled','maintenance_enabled','divi_writes_enabled','media_imports_enabled','audit_enabled') as $key)$clean[$key]=!empty($input[$key]);$clean['max_upload_mb']=max(1,min(64,absint($input['max_upload_mb']??($old['max_upload_mb']??8))));if(isset($input['permission_profile'])){$profile=sanitize_key($input['permission_profile']);if(in_array($profile,array('read_only','content_editor','admin','full_access'),true))$clean['permission_profile']=$profile;}return $clean;}
  public function assets($hook){$own=str_ends_with((string)$hook,'_page_mgd-wordpress-mcp');if(!$own)return;wp_enqueue_style('mgd-wordpress-mcp-admin',MGD_WPMCP_URL.'assets/admin.css',array(),MGD_WPMCP_VERSION);wp_enqueue_script('mgd-wordpress-mcp-wizard',MGD_WPMCP_URL.'assets/wizard.js',array(),MGD_WPMCP_VERSION,true);}
