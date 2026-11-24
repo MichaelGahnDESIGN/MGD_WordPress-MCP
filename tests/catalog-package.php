@@ -17,6 +17,7 @@ foreach (['includes/class-mgd-wordpress-plugin-catalog.php', 'includes/plugin-ca
 }
 mgd_catalog_assert(!str_contains($bootstrap, 'MGD_WPMCP_KIT') && !str_contains($bootstrap, 'Catalog_V4') && !str_contains($bootstrap, 'Admin_Tools'), 'Keine Reste alter Bausteine');
 mgd_catalog_assert(!str_contains($bootstrap, 'add_menu_page') && !str_contains($bootstrap, 'add_management_page') && !str_contains($bootstrap, 'add_submenu_page'), 'Kein eigenes Menü');
+mgd_catalog_assert(!str_contains($bootstrap, 'array($this,\'row_meta\')') && !str_contains($bootstrap, 'array($this,\'action_links\')'), 'Keine Hooks auf gelöschte Methoden');
 // Baukasten
 mgd_catalog_assert(is_file($runtime . '/includes/Kit/Platform/WordPress/Tools.php'), 'Baukasten mit MGD Tools');
 mgd_catalog_assert(str_contains($main, "Setup::updater(__FILE__, 'mgd-mcp-wordpress'"), 'Updater, Produktname');
