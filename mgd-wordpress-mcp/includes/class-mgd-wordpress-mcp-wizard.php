@@ -41,7 +41,7 @@ final class MGD_WordPress_MCP_Wizard {
 		if ( wp_doing_ajax() || isset( $_GET['activate-multi'] ) ) {
 			return;
 		}
-		wp_safe_redirect( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=wizard' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=wizard' ) );
 		exit;
 	}
 
@@ -66,7 +66,7 @@ final class MGD_WordPress_MCP_Wizard {
 		$data['other_builder'] = isset( $_POST['other_builder'] ) ? sanitize_text_field( wp_unslash( $_POST['other_builder'] ) ) : '';
 		$data['divi_skill']    = ( 'divi' === $builder && ! empty( $_POST['divi_skill'] ) ) ? 'recommended' : 'not-selected';
 		update_option( self::OPTION_WIZARD, $data, false );
-		wp_safe_redirect( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=wizard&saved=1#mgd-wizard-step-5' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=wizard&saved=1#mgd-wizard-step-5' ) );
 		exit;
 	}
 
@@ -86,7 +86,7 @@ final class MGD_WordPress_MCP_Wizard {
 		$settings['media_imports_enabled'] = in_array( $profile, array( 'content_editor', 'admin', 'full_access' ), true );
 		$settings['maintenance_enabled']  = in_array( $profile, array( 'admin', 'full_access' ), true );
 		update_option( MGD_WordPress_MCP::OPTION_SETTINGS, $settings, false );
-		wp_safe_redirect( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=wizard&profile_saved=1#mgd-wizard-step-5' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=wizard&profile_saved=1#mgd-wizard-step-5' ) );
 		exit;
 	}
 
@@ -98,7 +98,7 @@ final class MGD_WordPress_MCP_Wizard {
 		$data              = self::data();
 		$data['completed'] = true;
 		update_option( self::OPTION_WIZARD, $data, false );
-		wp_safe_redirect( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=status' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=status' ) );
 		exit;
 	}
 
@@ -110,7 +110,7 @@ final class MGD_WordPress_MCP_Wizard {
 		$data              = self::data();
 		$data['completed'] = false;
 		update_option( self::OPTION_WIZARD, $data, false );
-		wp_safe_redirect( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=wizard&restarted=1' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=wizard&restarted=1' ) );
 		exit;
 	}
 
@@ -194,7 +194,7 @@ final class MGD_WordPress_MCP_Wizard {
 			<script type="application/json" id="mgd-wpmcp-setup-data"><?php echo $payload; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></script>
 			<section class="mgd-wpmcp-card mgd-wpmcp-wizard-intro"><span class="mgd-wpmcp-step-kicker">SCHRITT FÜR SCHRITT</span><h2>WordPress sicher mit deinem KI-Agenten verbinden</h2><p>Wähle Agent und Betriebssystem. Der Assistent zeigt nur passende Schritte. Dein Application Password bleibt in deinem Browser und wird weder an WordPress gesendet noch im Plugin gespeichert.</p><?php if ( ! empty( $data['completed'] ) ) : ?><div class="mgd-wpmcp-wizard-intro-actions"><?php self::restart_button(); ?></div><?php endif; ?></section>
 
-			<section id="mgd-wizard-step-1" class="mgd-wpmcp-card" data-mgd-wizard-step="1"><div class="mgd-wpmcp-section-head"><span class="mgd-wpmcp-step" aria-hidden="true">1</span><div><h2>Ist deine Website bereit?</h2><p>Die wichtigsten Voraussetzungen werden automatisch geprüft.</p></div></div><div class="mgd-wpmcp-ready-grid"><?php self::status_item( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ), 'WordPress ' . get_bloginfo( 'version' ), 'Abilities API verfügbar' ); self::status_item( is_ssl(), 'HTTPS', is_ssl() ? 'Sichere Verbindung aktiv' : 'Für Remote-MCP empfohlen' ); self::status_item( $adapter, 'MCP Adapter', $adapter ? 'Offizieller Adapter erkannt' : 'Noch nicht erkannt' ); self::status_item( true, $detected['label'], 'Builder erkannt' ); self::status_item( ! $locks['potentially_locked'], 'Frontend-Zugriff', $locks['potentially_locked'] ? 'Schutz erkannt, nur bei visueller Prüfung relevant' : 'Kein Schutz erkannt' ); ?></div><div class="mgd-wpmcp-doctor-summary"><strong>Connection Doctor:</strong> <?php echo esc_html( $doctor['passed'] . ' von ' . $doctor['total'] . ' Prüfungen erfolgreich' ); ?> <a href="<?php echo esc_url( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=help' ) ); ?>">Details prüfen →</a></div></section>
+			<section id="mgd-wizard-step-1" class="mgd-wpmcp-card" data-mgd-wizard-step="1"><div class="mgd-wpmcp-section-head"><span class="mgd-wpmcp-step" aria-hidden="true">1</span><div><h2>Ist deine Website bereit?</h2><p>Die wichtigsten Voraussetzungen werden automatisch geprüft.</p></div></div><div class="mgd-wpmcp-ready-grid"><?php self::status_item( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ), 'WordPress ' . get_bloginfo( 'version' ), 'Abilities API verfügbar' ); self::status_item( is_ssl(), 'HTTPS', is_ssl() ? 'Sichere Verbindung aktiv' : 'Für Remote-MCP empfohlen' ); self::status_item( $adapter, 'MCP Adapter', $adapter ? 'Offizieller Adapter erkannt' : 'Noch nicht erkannt' ); self::status_item( true, $detected['label'], 'Builder erkannt' ); self::status_item( ! $locks['potentially_locked'], 'Frontend-Zugriff', $locks['potentially_locked'] ? 'Schutz erkannt, nur bei visueller Prüfung relevant' : 'Kein Schutz erkannt' ); ?></div><div class="mgd-wpmcp-doctor-summary"><strong>Connection Doctor:</strong> <?php echo esc_html( $doctor['passed'] . ' von ' . $doctor['total'] . ' Prüfungen erfolgreich' ); ?> <a href="<?php echo esc_url( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=help' ) ); ?>">Details prüfen →</a></div></section>
 
 			<section id="mgd-wizard-step-2" class="mgd-wpmcp-card" data-mgd-wizard-step="2"><div class="mgd-wpmcp-section-head"><span class="mgd-wpmcp-step" aria-hidden="true">2</span><div><h2>Womit arbeitest du?</h2><p>Diese Auswahl verändert nur die lokale Anleitung. Sie wird nicht gespeichert.</p></div></div><fieldset class="mgd-wpmcp-agent-choice"><legend>KI-Agent auswählen</legend><div class="mgd-wpmcp-choice-grid"><?php foreach ( $clients as $key => $client ) : ?><label class="mgd-wpmcp-choice"><input type="radio" name="mgd_wpmcp_client" value="<?php echo esc_attr( $key ); ?>" <?php checked( 'codex', $key ); ?>><span><strong><?php echo esc_html( $client[0] ); ?></strong><small><?php echo esc_html( $client[1] ); ?></small></span></label><?php endforeach; ?></div></fieldset><fieldset class="mgd-wpmcp-agent-choice"><legend>Dein Betriebssystem</legend><div class="mgd-wpmcp-choice-grid mgd-wpmcp-os-grid"><?php foreach ( $systems as $key => $system ) : ?><label class="mgd-wpmcp-choice"><input type="radio" name="mgd_wpmcp_system" value="<?php echo esc_attr( $key ); ?>" <?php checked( 'macos', $key ); ?>><span><strong><?php echo esc_html( $system[0] ); ?></strong><small><?php echo esc_html( $system[1] ); ?></small></span></label><?php endforeach; ?></div></fieldset><p class="mgd-wpmcp-selection-summary" data-mgd-selection-summary aria-live="polite"></p></section>
 
@@ -204,7 +204,7 @@ final class MGD_WordPress_MCP_Wizard {
 
 			<section id="mgd-wizard-step-5" class="mgd-wpmcp-card" data-mgd-wizard-step="5"><div class="mgd-wpmcp-section-head"><span class="mgd-wpmcp-step" aria-hidden="true">5</span><div><h2>Website-Kontext und Freigaben</h2><p>Diese WordPress-Einstellungen sind unabhängig von deinem lokalen Kennwort.</p></div></div><form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="mgd_wpmcp_wizard_save"><?php wp_nonce_field( 'mgd_wpmcp_wizard_save' ); $choices = array( 'divi' => 'Divi 5 / Divi Builder', 'elementor' => 'Elementor', 'gutenberg' => 'WordPress Block Editor / Gutenberg', 'bricks' => 'Bricks', 'beaver-builder' => 'Beaver Builder', 'other' => 'Anderes System' ); $selected = $data['builder'] ? $data['builder'] : $detected['type']; ?><div class="mgd-wpmcp-choice-grid"><?php foreach ( $choices as $value => $label ) : ?><label class="mgd-wpmcp-choice"><input type="radio" name="builder" value="<?php echo esc_attr( $value ); ?>" <?php checked( $selected, $value ); ?>><span><strong><?php echo esc_html( $label ); ?></strong><?php if ( $value === $detected['type'] ) : ?><small>Automatisch erkannt</small><?php endif; ?></span></label><?php endforeach; ?></div><p><label>Anderes System<br><input class="regular-text" type="text" name="other_builder" value="<?php echo esc_attr( $data['other_builder'] ); ?>"></label></p><?php if ( 'divi' === $selected || 'divi' === $detected['type'] ) : ?><div class="mgd-wpmcp-recommend"><strong>Divi 5 erkannt</strong><p>Für Claude Code und Codex empfehlen wir zusätzlich den kostenlosen MGD Divi 5 Dev Skill. Er läuft beim Agenten und benötigt keine WordPress-Zugangsdaten.</p><label><input type="checkbox" name="divi_skill" value="1" <?php checked( 'recommended', $data['divi_skill'] ); ?>> Divi 5 Dev Skill verwenden</label> <a target="_blank" rel="noopener" href="https://github.com/MichaelGahnDESIGN/MGD_Divi5-Dev_SKILL">Skill ansehen →</a></div><?php endif; ?><?php submit_button( 'Website-Kontext speichern', 'secondary' ); ?></form><div id="mgd-security-profiles" class="mgd-wpmcp-profile-grid"><?php $profiles = array( 'read_only' => array( 'Nur lesen', 'Website analysieren und Inhalte lesen, aber nichts verändern.' ), 'content_editor' => array( 'Inhalte bearbeiten', 'Beiträge, Seiten, Medien, SEO und freigegebene Builder-Funktionen bearbeiten.' ), 'admin' => array( 'Administration', 'Zusätzlich Wartung, Backups und Updates. Kritische Aktionen benötigen eine weitere Bestätigung.' ), 'full_access' => array( 'Vollzugriff', 'Alle vom Plugin angebotenen Funktionen ohne zusätzliche Einzelbestätigung. WordPress-Benutzerrechte bleiben die Obergrenze.' ) ); foreach ( $profiles as $key => $item ) : ?><form class="mgd-wpmcp-profile <?php echo $profile === $key ? 'is-active' : ''; ?>" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="mgd_wpmcp_wizard_profile"><input type="hidden" name="profile" value="<?php echo esc_attr( $key ); ?>"><?php wp_nonce_field( 'mgd_wpmcp_wizard_profile' ); ?><span class="mgd-wpmcp-profile-check" aria-hidden="true"><?php echo $profile === $key ? '✓' : '○'; ?></span><strong><?php echo esc_html( $item[0] ); ?></strong><small><?php echo esc_html( $item[1] ); ?></small><?php if ( 'full_access' === $key ) : ?><em>Nur bewusst und beaufsichtigt verwenden</em><?php endif; ?><button type="submit" class="button <?php echo $profile === $key ? '' : 'button-secondary'; ?>" <?php disabled( $profile, $key ); ?>><?php echo $profile === $key ? 'Aktiv' : 'Auswählen'; ?></button></form><?php endforeach; ?></div><p class="description">Aktuell: <strong><?php echo esc_html( self::profile_label( $profile ) ); ?></strong>. Audit-Log, Rate Limit, Secret Redaction und WordPress-Benutzerrechte bleiben auch bei Vollzugriff aktiv.</p></section>
 
-			<section id="mgd-wizard-step-6" class="mgd-wpmcp-card mgd-wpmcp-finish" data-mgd-wizard-step="6"><div><h2>Jetzt sicher testen</h2><p>Starte deinen Agenten nach dem Einrichten neu. Prüfe zuerst die Serverliste und stelle eine reine Leseanfrage. Erst danach solltest du absichtlich Schreibrechte nutzen.</p></div><div><a class="button button-primary button-hero" href="<?php echo esc_url( admin_url( 'tools.php?page=mgd-wordpress-mcp&tab=help' ) ); ?>">Website bereit prüfen</a><form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="mgd_wpmcp_wizard_finish"><?php wp_nonce_field( 'mgd_wpmcp_wizard_finish' ); ?><button class="button" type="submit">Assistent abschließen</button></form></div></section>
+			<section id="mgd-wizard-step-6" class="mgd-wpmcp-card mgd-wpmcp-finish" data-mgd-wizard-step="6"><div><h2>Jetzt sicher testen</h2><p>Starte deinen Agenten nach dem Einrichten neu. Prüfe zuerst die Serverliste und stelle eine reine Leseanfrage. Erst danach solltest du absichtlich Schreibrechte nutzen.</p></div><div><a class="button button-primary button-hero" href="<?php echo esc_url( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=help' ) ); ?>">Website bereit prüfen</a><form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="mgd_wpmcp_wizard_finish"><?php wp_nonce_field( 'mgd_wpmcp_wizard_finish' ); ?><button class="button" type="submit">Assistent abschließen</button></form></div></section>
 		</div>
 		<?php
 	}

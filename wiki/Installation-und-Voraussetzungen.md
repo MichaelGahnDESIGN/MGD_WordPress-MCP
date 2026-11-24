@@ -17,7 +17,7 @@ Projekt: https://github.com/WordPress/mcp-adapter
 1. Lade aus dem GitHub-Release die Datei `mgd-wordpress-mcp.zip` herunter.
 2. Öffne **Plugins → Installieren → Plugin hochladen**.
 3. Lade die ZIP hoch und aktiviere **MGD WordPress MCP**.
-4. Öffne **Werkzeuge → MGD WordPress MCP**.
+4. Öffne **MGD Tools → WordPress MCP**.
 5. Prüfe im Status-Reiter, ob WordPress, PHP und MCP Adapter erkannt werden.
 
 ## Warum kein eingebauter MCP Adapter?

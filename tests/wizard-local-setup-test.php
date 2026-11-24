@@ -43,7 +43,7 @@ if ( false === strpos( $script, 'setupGuidedWizard' ) || false === strpos( $scri
 	throw new RuntimeException( 'Der Assistent muss die Schritte einzeln und zugänglich anzeigen.' );
 }
 
-$expected_tabs = array( 'Einrichtungsassistent', 'Übersicht', 'Start Prompt', 'Sicherheit und Freigaben', 'Verbindung', 'Audit-Log', 'Über das Plugin', 'Info und Updates' );
+$expected_tabs = array( 'Einrichtungsassistent', 'Übersicht', 'Start Prompt', 'Sicherheit und Freigaben', 'Verbindung', 'Audit-Log', 'Über das Plugin', 'MGD Tools' );
 $last_position = -1;
 foreach ( $expected_tabs as $tab ) {
 	$position = strpos( $admin, $tab );

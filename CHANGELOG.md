@@ -1,5 +1,12 @@
 # Changelog
 
+## Unveröffentlicht – Umbau auf MGD Tools
+
+- Alles liegt jetzt unter dem Menüpunkt **MGD Tools**: Übersicht und Updates, Weitere Plugins und die Einstellungen von MGD WordPress MCP. Das eigene Menü unter „Werkzeuge“ ist weg, alte Links leiten von selbst um.
+- Plugin-Kopf nach Norm, Icons 128 und 256 Pixel, Baukasten 1.12.1 neu erzeugt.
+- Mindestens PHP 8.1. Alter GitHub-Updater, alte Liste und alter Admin-Baustein sind entfernt. Der Schalter „Plugin-Updates über GitHub prüfen“ entfällt.
+- Rechte, Anmeldung und MCP-Zugriffe unverändert.
+
 ## 0.6.2 – 2026-11-23
 
 - „Weitere Plugins“ zeigt nach einem Update sofort die aktuelle Liste statt der alten aus dem Zwischenspeicher (Baukasten-Fix).

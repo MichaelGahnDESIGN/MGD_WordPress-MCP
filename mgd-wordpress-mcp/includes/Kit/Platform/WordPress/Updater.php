@@ -23,6 +23,9 @@ final class Updater
     private readonly string $slug;
     private readonly string $cacheKey;
     private readonly string $okKey;
+    private readonly string $failKey;
+    /** @var array<string,string> WP-Icons 1x/2x/svg */
+    private array $icons = [];
 
     /** @param string $basename plugin_basename(__FILE__), z. B. mgd-share/mgd-share.php */
     public function __construct(
@@ -38,6 +41,7 @@ final class Updater
         $this->slug = dirname($basename);
         $this->cacheKey = 'mgd_kit_upd_' . str_replace('-', '_', $client->product());
         $this->okKey = 'mgd_kit_upd_ok_' . str_replace('-', '_', $client->product());
+        $this->failKey = 'mgd_kit_upd_fail_' . str_replace('-', '_', $client->product());
     }
 
     public function register(): void
@@ -47,6 +51,11 @@ final class Updater
         // ganz spät, damit kein anderer Filter die geprüfte Datei noch tauscht
         \add_filter('upgrader_pre_download', [$this, 'download'], PHP_INT_MAX, 4);
         \add_filter('auto_update_plugin', [$this, 'autoUpdate'], 99, 2);
+    }
+
+    public function basename(): string
+    {
+        return $this->basename;
     }
 
     public function installedVersion(): string
@@ -66,10 +75,8 @@ final class Updater
                 $raw = (string) ($this->client->fetchUpdates() ?? '');
                 $ok = $this->parse($raw) !== null;
                 \set_site_transient($this->cacheKey, $ok ? $raw : '', $ok ? self::CACHE_OK : self::CACHE_FAIL);
-                // merken: gab schon mal gültige Daten (Dashboard unterscheidet "noch keine Datei" von Fehler)
-                if ($ok && \get_option($this->okKey, '') !== '1') {
-                    \update_option($this->okKey, '1', false);
-                }
+                // merken wann zuletzt ok / kaputt (MGD Tools zeigt das, Dashboard unterscheidet "noch keine Datei" von Fehler)
+                \update_option($ok ? $this->okKey : $this->failKey, (string) time(), false);
             }
 
             return $this->parse($raw);
@@ -82,10 +89,40 @@ final class Updater
     public function hadData(): bool
     {
         try {
-            return \get_option($this->okKey, '') === '1';
+            return (string) \get_option($this->okKey, '') !== '';
         } catch (\Throwable) {
             return false;
         }
+    }
+
+    /**
+     * Icons für Update-Seite + Plugin-Liste (auch bei "kein Update"), nur http(s)-Adressen
+     * @param array<string,string> $icons z. B. ['1x' => .../icon-128x128.png, '2x' => .../icon-256x256.png]
+     */
+    public function setIcons(array $icons): void
+    {
+        $this->icons = array_filter(
+            array_intersect_key($icons, ['1x' => 1, '2x' => 1, 'svg' => 1, 'default' => 1]),
+            static fn (mixed $u): bool => is_string($u) && preg_match('#^https?://[^\s"<>]+$#D', $u) === 1,
+        );
+    }
+
+    /**
+     * für MGD Tools: neueste Version, Update?, letzte Prüfung ok/kaputt, Hinweis
+     * @return array{latest:?string,newer:bool,ok:int,fail:int,notice:string}
+     */
+    public function status(bool $fresh = false): array
+    {
+        $u = $this->info($fresh);
+        $n = $u?->notice;
+
+        return [
+            'latest' => $u?->version,
+            'newer' => $u !== null && $u->isNewerThan($this->version),
+            'ok' => (int) \get_option($this->okKey, '0'),
+            'fail' => (int) \get_option($this->failKey, '0'),
+            'notice' => $n !== null && $n->shouldShow($this->version, gmdate('Y-m-d')) ? $n->text : '',
+        ];
     }
 
     /** Update-Angebot in die WP-Liste */
@@ -109,6 +146,9 @@ final class Updater
                 'package' => $newer ? $u->downloadUrl : '',
                 'requires_php' => '8.1',
             ];
+            if ($this->icons !== []) {
+                $item->icons = $this->icons;
+            }
             $resp = is_array($transient->response ?? null) ? $transient->response : [];
             $none = is_array($transient->no_update ?? null) ? $transient->no_update : [];
             // fremde Angebote für unser Plugin (z. B. gleicher Slug auf wordpress.org) fliegen raus

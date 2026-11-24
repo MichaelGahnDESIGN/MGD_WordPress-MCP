@@ -24,6 +24,8 @@ final class Dashboard
         private readonly ?Recommendations $recommendations = null,
         private readonly ?LicenseClient $license = null,
         private readonly ?\Closure $installHtml = null,
+        // in eigene Plugin-Seite eingebettet (Menü leer) > kein zweiter wrap-Rahmen + keine zweite h1 (Befund theme)
+        private readonly bool $embedded = false,
     ) {
     }
 
@@ -69,7 +71,9 @@ final class Dashboard
         if (!\current_user_can('manage_options')) {
             return '';
         }
-        $out = self::style() . '<div class="wrap mgd-kit-dash"><h1>' . Text::e($this->pluginName) . '</h1>';
+        $out = self::style() . ($this->embedded
+            ? '<div class="mgd-kit-dash mgd-kit-dash--embedded"><h2>' . Text::e($this->pluginName) . '</h2>'
+            : '<div class="wrap mgd-kit-dash"><h1>' . Text::e($this->pluginName) . '</h1>');
         if ($message !== '') {
             $out .= '<div class="mgd-kit-message" role="status"><p>' . Text::e($message) . '</p></div>';
         }

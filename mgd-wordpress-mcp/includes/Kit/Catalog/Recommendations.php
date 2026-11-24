@@ -11,6 +11,8 @@ use Mgd\WordPressMcp\Kit\Support\Text;
 // 15 Min Cache, 5 Min Pause nach Fehler, letzte gute Liste 7 Tage, sonst die mitgelieferte Liste. Wirft nie
 final class Recommendations
 {
+    // Repos mit mehreren Plugins (JTL-Sammelrepo) > Repo sagt nix übers eigene Plugin
+    public const SHARED_REPOS = ['michathemev5_jtl-shop-5'];
     public const URL_PREFIX = 'https://theme.michael-gahn.de/api/v1/recommendations/';
     public const DETAILS_PREFIX = 'https://theme.michael-gahn.de/plugins/';
     public const CATALOG_PREFIX = 'https://theme.michael-gahn.de/downloads?plattform=';
@@ -281,10 +283,10 @@ final class Recommendations
         return array_slice($out, 0, self::MAX_BASENAMES);
     }
 
-    // alte Listen ohne Katalog-Kennung > eigenes Plugin übers Repo erkennen
+    // alte Listen ohne Katalog-Kennung > eigenes Plugin übers Repo erkennen. Sammelrepos nie (sonst fliegen Suche + Notification mit raus, Befund theme)
     private function isSelfRepo(array $row): bool
     {
-        if ($this->selfRepo === '') {
+        if ($this->selfRepo === '' || in_array($this->selfRepo, self::SHARED_REPOS, true)) {
             return false;
         }
         foreach (self::REPO_FIELDS as $f) {

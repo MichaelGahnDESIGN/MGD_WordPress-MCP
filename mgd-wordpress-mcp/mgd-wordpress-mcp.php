@@ -1,44 +1,45 @@
 <?php
 /**
  * Plugin Name: MGD WordPress MCP
- * Plugin URI: https://Michael-Gahn.de
- * Description: Sichere MCP- und Abilities-Bridge für WordPress. Verbindet KI-Agenten kontrolliert mit WordPress-Inhalten und Integrationen.
+ * Plugin URI: https://theme.michael-gahn.de/plugins/plugin-wordpress-mcp
+ * Description: Sichere MCP-Verbindung für WordPress, mit der KI-Agenten kontrolliert auf Inhalte und Integrationen zugreifen.
  * Version: 0.6.2
+ * Requires at least: 6.9
+ * Requires PHP: 8.1
  * Author: Michael Gahn DESIGN
- * Author URI: https://Michael-Gahn.de
+ * Author URI: https://michael-gahn.de
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: mgd-wordpress-mcp
- * Requires at least: 6.9
- * Requires PHP: 7.4
  * Update URI: https://github.com/MichaelGahnDESIGN/MGD_WordPress-MCP
+ * Text Domain: mgd-wordpress-mcp
  */
 if(!defined('ABSPATH'))exit;
 define('MGD_WPMCP_VERSION','0.6.2');define('MGD_WPMCP_FILE',__FILE__);define('MGD_WPMCP_DIR',plugin_dir_path(__FILE__));define('MGD_WPMCP_URL',plugin_dir_url(__FILE__));define('MGD_WPMCP_BASENAME',plugin_basename(__FILE__));define('MGD_WPMCP_GITHUB_REPO','MichaelGahnDESIGN/MGD_WordPress-MCP');define('MGD_WPMCP_MCP_ENDPOINT','mgd-wordpress-mcp/v1/mcp');
-// Baukasten braucht PHP 8.1 - drunter bleibt der alte GitHub-Updater
-define('MGD_WPMCP_KIT',PHP_VERSION_ID>=80100);
-require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-audit.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-environment.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-approvals.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-doctor.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-client-config.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-abilities.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-environment-ability.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-security.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-wizard.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-admin.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-updater.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-kit.php';register_activation_hook(__FILE__,array('MGD_WordPress_MCP','activate'));register_deactivation_hook(__FILE__,array('MGD_WordPress_MCP','deactivate'));add_action('plugins_loaded',static function(){MGD_WordPress_MCP::instance();});
+require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-audit.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-environment.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-approvals.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-doctor.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-client-config.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-abilities.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-environment-ability.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-security.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-wizard.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp-admin.php';require_once MGD_WPMCP_DIR.'includes/class-mgd-wordpress-mcp.php';register_activation_hook(__FILE__,array('MGD_WordPress_MCP','activate'));register_deactivation_hook(__FILE__,array('MGD_WordPress_MCP','deactivate'));add_action('plugins_loaded',static function(){MGD_WordPress_MCP::instance();});
 
-// Icon in der Pluginverwaltung.
-(require __DIR__ . '/includes/plugin-icon.php')(__FILE__);
+// Baukasten aus MichaThemeV5-Pro > includes/Kit (bin/build-plugin-kit.php)
+spl_autoload_register(static function (string $class): void {
+    $prefix = 'Mgd\\WordPressMcp\\Kit\\';
+    if (str_starts_with($class, $prefix)) {
+        $file = MGD_WPMCP_DIR . 'includes/Kit/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
+        if (is_file($file)) {
+            require $file;
+        }
+    }
+});
 
-if (MGD_WPMCP_KIT) {
-    // Baukasten aus MichaThemeV5-Pro > includes/Kit (bin/build-plugin-kit.php)
-    MGD_WordPress_MCP_Kit::boot(__FILE__);
-} else {
-    // alter GitHub-Updater nur noch für PHP unter 8.1
-    require_once __DIR__ . '/includes/class-mgd-plugin-admin-tools.php';
-    \MGD_Plugin_Admin_Tools_20261023::register([
-        'file' => __FILE__,
-        'repo' => 'MGD_WordPress-MCP',
-        'slug' => 'mgd-wordpress-mcp',
-        'name' => 'MGD WordPress MCP',
-        'description' => 'Sichere MCP- und Abilities-Bridge für WordPress. Verbindet KI-Agenten kontrolliert mit WordPress-Inhalten und Integrationen.',
-        'version' => MGD_WPMCP_VERSION,
-        'settings' => 'tools.php?page=mgd-wordpress-mcp',
-        'requires' => '6.9',
-        'php' => '7.4',
-        'caches' => ['mgd_wpmcp_release_828e8533143ca39f74744cc3a5e7b8a8'],
-        'package' => '',
-    ]);
-}
+// Updater + MGD Tools Menü vom Baukasten
+use Mgd\WordPressMcp\Kit\Platform\WordPress\Setup;
+use Mgd\WordPressMcp\Kit\Platform\WordPress\Tools;
+
+$mgd_wpmcp_updater = Setup::updater(__FILE__, 'mgd-mcp-wordpress', 'wordpress', MGD_WPMCP_VERSION, 'MGD WordPress MCP', Tools::url());
+// Reste vom alten GitHub-Updater wegräumen, 1x pro Version
+Setup::cleanupLegacy('mgd-mcp-wordpress', MGD_WPMCP_VERSION, array('mgd_wpmcp_release_*'));
+
+// Einstellungsseite unter MGD Tools - Seiten-Kennung bleibt mgd-wordpress-mcp
+Setup::tools(__FILE__, 'mgd-mcp-wordpress', 'wordpress', MGD_WPMCP_VERSION, 'MGD WordPress MCP', $mgd_wpmcp_updater, array(
+    'slug'     => 'plugin-wordpress-mcp',
+    'repo'     => 'MGD_WordPress-MCP',
+    'settings' => array('page' => 'mgd-wordpress-mcp', 'title' => 'WordPress MCP', 'cap' => 'manage_options', 'render' => static function (): void { MGD_WordPress_MCP_Admin::instance()->render(); }),
+    'license'  => false,
+));
