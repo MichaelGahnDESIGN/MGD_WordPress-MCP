@@ -56,8 +56,10 @@ final class PluginList
         foreach ($meta as $k => $m) {
             $t = self::text($m);
             $isAuthor = str_contains($t, 'michael gahn');
-            $isDetails = in_array($t, ['details anzeigen', 'view details', 'plugin-website besuchen', 'visit plugin site'], true);
-            if ($t === '' || isset($seen[$t]) || ($isAuthor && $author) || ($isDetails && $details)) {
+            $isDetails = in_array($t, ['details anzeigen', 'view details', 'plugin-website besuchen', 'plugin-website aufrufen', 'visit plugin site'], true);
+            // einheitlich: Extra-Links (Doku, Support, GitHub) gehören auf die Plugin-Seite, nicht in die Liste (Befund Test mit allen 9)
+            $isExtra = in_array($t, ['dokumentation', 'documentation', 'support', 'github', 'handbuch', 'docs'], true);
+            if ($t === '' || $isExtra || isset($seen[$t]) || ($isAuthor && $author) || ($isDetails && $details)) {
                 continue;
             }
             $seen[$t] = true;

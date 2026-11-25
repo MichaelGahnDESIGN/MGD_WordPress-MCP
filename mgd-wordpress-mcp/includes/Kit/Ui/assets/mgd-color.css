@@ -137,6 +137,7 @@
 @media (hover: none) { .mgd-color__del { opacity: 1; } }
 .mgd-color__empty { margin: 0; color: var(--mgd-c-muted); font-size: 12px; }
 .mgd-color__save { width: 100%; margin-top: 8px; }
+.mgd-color__clear { margin-right: auto; }
 .mgd-color__foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--mgd-c-line); }
 
 /* schmal: Blatt von unten, große Ziele */
@@ -165,5 +166,6 @@
   box-shadow: inset 0 0 0 2px #fff;
   cursor: pointer;
 }
+.mgd-color__swatch--empty { background: repeating-conic-gradient(#c3c4c7 0 25%, #fff 0 50%) 0 0 / 10px 10px !important; }
 .mgd-color__input { width: 7.5em; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
 @media (prefers-reduced-motion: no-preference) { .mgd-color { transition: opacity .12s ease; } }

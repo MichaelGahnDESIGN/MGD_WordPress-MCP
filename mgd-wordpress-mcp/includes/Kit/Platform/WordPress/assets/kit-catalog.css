@@ -617,3 +617,11 @@
   .mgd-kit-catalog input:focus-visible,
   .mgd-kit-catalog select:focus-visible { outline-color: Highlight !important; }
 }
+
+/* Tag-Chips (mehrere wählbar) */
+.mgd-kit-catalog__tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 14px}
+.mgd-kit-catalog__tags-title{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.75;margin-right:4px}
+.mgd-kit-catalog__tags button{min-height:30px;padding:0 12px;border:1px solid currentColor;border-radius:999px;background:transparent;color:inherit;font:inherit;font-size:13px;cursor:pointer;opacity:.85}
+.mgd-kit-catalog__tags button[aria-pressed="true"]{background:var(--mgd-kit-cat-accent,#1e2c2c);border-color:var(--mgd-kit-cat-accent,#1e2c2c);color:#fff;opacity:1}
+.mgd-kit-catalog__tags button:focus-visible{outline:3px solid #2271b1;outline-offset:2px}
+.mgd-kit-catalog__tags .mgd-kit-catalog__tags-reset{border-style:dashed}

@@ -143,6 +143,19 @@ final class RecommendationsView
         foreach (array_values(array_unique(array_column($items, 'category'))) as $c) {
             $cats .= '<button type="button" data-category="' . Text::e($c) . '" aria-pressed="false">' . Text::e($c) . '</button>';
         }
+        // Tag-Chips (mehrere wählbar), nur wenn der Feed Tags liefert
+        $all = [];
+        foreach ($items as $it) {
+            foreach ((array) ($it['tags'] ?? []) as $t) {
+                $all[mb_strtolower((string) $t)] = (string) $t;
+            }
+        }
+        $chips = '';
+        foreach ($all as $key => $label) {
+            $chips .= '<button type="button" data-tag="' . Text::e($key) . '" aria-pressed="false">' . Text::e($label) . '</button>';
+        }
+        $tagBar = $chips === '' ? '' : '<div class="mgd-kit-catalog__tags" role="group" aria-label="Nach Tag filtern" data-filters hidden><span class="mgd-kit-catalog__tags-title">Tags</span>' . $chips
+            . '<button type="button" class="mgd-kit-catalog__tags-reset" data-tag-reset hidden>Alle Tags zurücksetzen</button></div>';
         $cards = '';
         foreach ($items as $it) {
             $cards .= CatalogCard::html($it, $uid, $ctx);
@@ -156,6 +169,7 @@ final class RecommendationsView
             . '<label class="mgd-kit-catalog__select">Preis<select data-price><option value="all">Alle Preise</option><option value="free">Kostenlos</option><option value="paid">Kostenpflichtig</option></select></label></div>'
             . '<div class="mgd-kit-catalog__browse-heading"><div class="mgd-kit-catalog__categories" role="group" aria-label="Kategorie filtern" data-filters hidden><button type="button" data-category="all" aria-pressed="true">Alle entdecken</button>' . $cats . '</div>'
             . '<p class="mgd-kit-catalog__count" aria-live="polite" aria-atomic="true" data-count>' . $n . ' ' . ($n === 1 ? 'Plugin' : 'Plugins') . '</p></div>'
+            . $tagBar
             . '<div class="mgd-kit-catalog__grid">' . $cards . '</div>'
             . '<div class="mgd-kit-catalog__empty" data-empty' . ($n > 0 ? ' hidden' : '') . '><span aria-hidden="true">⌕</span>'
             . '<h4>' . ($n > 0 ? 'Noch nicht das Richtige dabei?' : 'Hier ist gerade nichts gelistet.') . '</h4>'

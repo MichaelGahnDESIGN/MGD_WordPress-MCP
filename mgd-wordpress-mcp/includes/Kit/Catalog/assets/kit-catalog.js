@@ -18,6 +18,10 @@
     const status = root.querySelector("[data-status]");
     const price = root.querySelector("[data-price]");
     const categories = [...root.querySelectorAll("button[data-category]")];
+    // Tags: mehrere wählbar, alle gewählten müssen passen
+    const tagButtons = [...root.querySelectorAll("button[data-tag]")];
+    const tagReset = root.querySelector("[data-tag-reset]");
+    const picked = new Set();
     const empty = root.querySelector("[data-empty]");
     const reset = root.querySelector("[data-reset]");
     const count = root.querySelector("[data-count]");
@@ -40,6 +44,7 @@
           (category === "all" || card.dataset.category === category) &&
           (st === "all" || (st === "installed" ? installed : card.dataset.state === st)) &&
           (price.value === "all" || card.dataset.tier === price.value) &&
+          [...picked].every((t) => (card.dataset.tags || "").split("|").includes(t)) &&
           terms.every((term) => normalize(card.dataset.search).includes(term));
         card.hidden = !match;
         if (match) visible++;
@@ -58,7 +63,23 @@
         filter();
       }),
     );
+    const setTags = () => {
+      tagButtons.forEach((b) => b.setAttribute("aria-pressed", String(picked.has(b.dataset.tag))));
+      if (tagReset) tagReset.hidden = picked.size === 0;
+      filter();
+    };
+    tagButtons.forEach((b) =>
+      b.addEventListener("click", () => {
+        if (picked.has(b.dataset.tag)) picked.delete(b.dataset.tag);
+        else picked.add(b.dataset.tag);
+        setTags();
+      }),
+    );
+    if (tagReset) tagReset.addEventListener("click", () => { picked.clear(); setTags(); });
     reset.addEventListener("click", () => {
+      picked.clear();
+      tagButtons.forEach((b) => b.setAttribute("aria-pressed", "false"));
+      if (tagReset) tagReset.hidden = true;
       search.value = "";
       if (status) status.value = "all";
       price.value = "all";

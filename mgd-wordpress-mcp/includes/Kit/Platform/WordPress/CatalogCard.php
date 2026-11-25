@@ -16,7 +16,10 @@ final class CatalogCard
         $name = (string) $it['name'];
         $did = $uid . '-d-' . $slug;
         $features = array_slice((array) $it['features'], 0, 3);
-        $search = $name . ' ' . $it['description'] . ' ' . $it['category'] . ' ' . implode(' ', $features);
+        $tags = is_array($it['tags'] ?? null) ? $it['tags'] : [];
+        // Suche findet auch Tags, data-tags fürs Filtern (klein, mit | getrennt)
+        $search = $name . ' ' . $it['description'] . ' ' . $it['category'] . ' ' . implode(' ', $features) . ' ' . implode(' ', $tags);
+        $tagAttr = implode('|', array_map(static fn (string $t): string => mb_strtolower($t), $tags));
         $accent = is_string($it['accent']) ? ' style="--mgd-kit-cat-accent:' . Text::e($it['accent']) . '"' : '';
         $li = '';
         foreach ($features as $f) {
@@ -30,7 +33,7 @@ final class CatalogCard
         }
 
         return '<article class="mgd-kit-catalog__card" data-card' . $accent . ' data-category="' . Text::e((string) $it['category']) . '" data-state="' . Text::e((string) $it['state'])
-            . '" data-tier="' . Text::e((string) $it['tier']) . '" data-search="' . Text::e($search) . '">'
+            . '" data-tier="' . Text::e((string) $it['tier']) . '" data-tags="' . Text::e($tagAttr) . '" data-search="' . Text::e($search) . '">'
             . '<div class="mgd-kit-catalog__card-art">' . $bg
             . '<span class="mgd-kit-catalog__category">' . Text::e((string) $it['category']) . '</span>'
             . RecommendationsView::icon($it, 'mgd-kit-catalog__card-icon', 78)

@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.1] - 2026-11-25
+
+- Gemeinsame Verwaltung unter MGD Tools, einheitliche Darstellung, Icons.
+
 ## Unveröffentlicht – Umbau auf MGD Tools
 
 - Alles liegt jetzt unter dem Menüpunkt **MGD Tools**: Übersicht und Updates, Weitere Plugins und die Einstellungen von MGD WordPress MCP. Das eigene Menü unter „Werkzeuge“ ist weg, alte Links leiten von selbst um.

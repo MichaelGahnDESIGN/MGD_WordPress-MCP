@@ -48,6 +48,7 @@ final class CatalogItems
             'url' => Recommendations::DETAILS_PREFIX . $slug,
             'category' => $f['category'],
             'features' => $f['features'],
+            'tags' => $f['tags'],
             'tier' => $f['tier'],
             'accent' => $f['accent'],
             'icon' => $local($f['iconUrl']),

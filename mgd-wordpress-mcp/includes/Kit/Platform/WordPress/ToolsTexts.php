@@ -10,6 +10,9 @@ final class ToolsTexts
     public const MENU = 'MGD Tools';
     public const OVERVIEW = 'Übersicht und Updates';
     public const OVERVIEW_H1 = 'Deine MGD-Plugins';
+    // Kopf (Text 51) und Abzeichen Fehler (Text 52), Freigabe offen
+    public const INTRO = 'Alle Plugins von Michael Gahn DESIGN an einem Ort: Updates, Lizenz und Einstellungen.';
+    public const ERROR_BADGE = 'Fehler';
     public const LICENSE = 'Lizenz';
     public const CATALOG = 'Weitere Plugins';
     public const COLS = ['Plugin', 'Installiert', 'Neueste', 'Status', 'Update-Prüfung', 'Links'];

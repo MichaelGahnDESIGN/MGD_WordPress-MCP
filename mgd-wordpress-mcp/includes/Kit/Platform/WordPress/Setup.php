@@ -248,7 +248,7 @@ final class Setup
             }
             self::catalogActions($product, $rec, Tools::url(Tools::PAGE_CATALOG));
             // Farbwähler auf allen MGD-Seiten (ersetzt input type=color / wp-color-picker)
-            ColorPicker::register();
+            ColorPicker::register($product);
             $page = is_array($o['settings'] ?? null) && is_string($o['settings']['page'] ?? null) ? $o['settings']['page'] : '';
             PluginList::register(\plugin_basename($pluginFile), Tools::url($page !== '' && preg_match(Tools::PAGE_RE, $page) === 1 ? $page : Tools::PARENT), $icons['1x'] ?? '');
 

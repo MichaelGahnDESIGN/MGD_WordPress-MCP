@@ -29,8 +29,10 @@ final class Recommendations
     // Katalog-Felder für die Karten (Kategorie, Häkchen, Erkennung installiert, Update-Datei, Bilder)
     public const CATEGORIES = ['Marketing', 'Medien', 'Administration', 'Kommunikation', 'Gestaltung', 'Barrierefreiheit', 'Weitere'];
     public const CATEGORY_DEFAULT = 'Weitere';
-    public const MAX_FEATURES = 3;
+    public const MAX_FEATURES = 5;
     public const FEATURE_LEN = 80;
+    public const MAX_TAGS = 12;
+    public const TAG_LEN = 40;
     public const MAX_BASENAMES = 5;
     // kein Punkt vorne bei Ordner oder Datei (../x.php, .versteckt/x.php fliegen raus)
     public const BASENAME_RE = '/^[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._-]*\.php$/D';
@@ -226,7 +228,7 @@ final class Recommendations
 
     /**
      * neue Katalog-Felder, alles optional. Alte Speicherstände ohne die Felder kriegen die Standards
-     * @return array{category:string,features:list<string>,basenames:list<string>,updateProduct:?string,tier:string,iconUrl:?string,imageUrl:?string,imageAlt:string,accent:?string}
+     * @return array{category:string,features:list<string>,tags:list<string>,basenames:list<string>,updateProduct:?string,tier:string,iconUrl:?string,imageUrl:?string,imageAlt:string,accent:?string}
      */
     public static function catalogFields(array $row): array
     {
@@ -238,6 +240,8 @@ final class Recommendations
         return [
             'category' => is_string($cat) && in_array($cat, self::CATEGORIES, true) ? $cat : self::CATEGORY_DEFAULT,
             'features' => self::features($row['features'] ?? null),
+            // Tags (Feed ab Plattform 1.14.1), fehlt = leer
+            'tags' => self::tags($row['tags'] ?? null),
             'basenames' => self::basenames($row['basenames'] ?? null),
             'updateProduct' => is_string($upd) && strlen($upd) <= 100 && preg_match(self::SLUG_RE, $upd) === 1 ? $upd : null,
             // fehlt = kostenlos, kaputter Wert = kostenpflichtig (dann gibts keinen Installieren-Knopf)
@@ -254,6 +258,20 @@ final class Recommendations
         // Präfix fest + nur 32 hex .webp dahinter, kein ?, # oder Pfad
         return is_string($url) && str_starts_with($url, self::MEDIA_PREFIX)
             && preg_match(self::MEDIA_FILE_RE, substr($url, strlen(self::MEDIA_PREFIX))) === 1 ? $url : null;
+    }
+
+    /** @return list<string> */
+    private static function tags(mixed $list): array
+    {
+        $out = [];
+        foreach (is_array($list) ? array_slice(array_values($list), 0, 30) : [] as $t) {
+            $t = is_string($t) ? Text::plain($t, self::TAG_LEN) : '';
+            if ($t !== '' && !in_array($t, $out, true)) {
+                $out[] = $t;
+            }
+        }
+
+        return array_slice($out, 0, self::MAX_TAGS);
     }
 
     /** @return list<string> */

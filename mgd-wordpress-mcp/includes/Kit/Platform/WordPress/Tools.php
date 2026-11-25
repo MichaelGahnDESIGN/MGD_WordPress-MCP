@@ -66,7 +66,9 @@ final class Tools
         if ($s !== null && is_string($s['page'] ?? null) && preg_match(self::PAGE_RE, $s['page']) === 1 && is_callable($s['render'] ?? null)) {
             $cap = is_string($s['cap'] ?? null) && preg_match(self::CAP_RE, $s['cap']) === 1 ? $s['cap'] : 'manage_options';
             $title = is_string($s['title'] ?? null) && trim($s['title']) !== '' ? trim($s['title']) : self::shortName($str('name'));
-            $settings = ['page' => $s['page'], 'cap' => $cap, 'title' => mb_substr($title, 0, 60), 'render' => $s['render']];
+            // alte Seiten-Kennungen (umbenannt), leiten auf die neue Seite um
+            $legacy = array_values(array_filter(is_array($s['legacy'] ?? null) ? $s['legacy'] : [], static fn ($p): bool => is_string($p) && preg_match(self::PAGE_RE, $p) === 1));
+            $settings = ['page' => $s['page'], 'cap' => $cap, 'title' => mb_substr($title, 0, 60), 'render' => $s['render'], 'legacy' => array_slice($legacy, 0, 5)];
         }
         $pro = [];
         foreach (is_array($e['pro'] ?? null) ? $e['pro'] : [] as $k => $label) {
@@ -153,14 +155,19 @@ final class Tools
         if (str_starts_with($page, 'mgd-kit-') && isset($entries[substr($page, 8)])) {
             return 'admin.php?page=' . self::PARENT;
         }
-        if ($pagenow === 'admin.php') {
-            return null;
-        }
+        $keep = static fn (mixed $v, mixed $k): bool => is_string($k) && $k !== 'page' && preg_match('/^[a-z0-9_-]{1,40}$/D', $k) === 1 && is_scalar($v);
         foreach ($entries as $e) {
-            if (is_array($e['settings'] ?? null) && $e['settings']['page'] === $page) {
-                $q = array_filter($get, static fn (mixed $v, mixed $k): bool => is_string($k) && preg_match('/^[a-z0-9_-]{1,40}$/D', $k) === 1 && is_scalar($v), ARRAY_FILTER_USE_BOTH);
-
-                return 'admin.php?' . http_build_query($q);
+            $st = is_array($e['settings'] ?? null) ? $e['settings'] : null;
+            if ($st === null) {
+                continue;
+            }
+            // umbenannte Seite: immer umleiten, auch auf admin.php
+            if (in_array($page, $st['legacy'] ?? [], true)) {
+                return 'admin.php?' . http_build_query(['page' => $st['page']] + array_filter($get, $keep, ARRAY_FILTER_USE_BOTH));
+            }
+            // gleiche Kennung, alter Elternpunkt (options-general.php, tools.php, upload.php …)
+            if ($st['page'] === $page && $pagenow !== 'admin.php') {
+                return 'admin.php?' . http_build_query(['page' => $page] + array_filter($get, $keep, ARRAY_FILTER_USE_BOTH));
             }
         }
 
@@ -234,15 +241,22 @@ final class Tools
                 $submenu[self::PARENT] = self::sortItems($submenu[self::PARENT]);
             }
         }, 99);
-        \add_action('admin_init', static function () use ($own): void {
+        $redirect = static function () use ($own): void {
             global $pagenow;
             if (!$own()) {
                 return;
             }
-            ToolsPages::muteLegacy();
             $to = self::redirectTarget((string) $pagenow, $_GET, self::entries());
             if ($to !== null && \wp_safe_redirect(\admin_url($to))) {
                 exit;
+            }
+        };
+        // WP prüft die Rechte für ?page= schon in menu.php VOR admin_init > alte Adressen gaben 403 (Befund ebook/mcp)
+        \add_action('admin_page_access_denied', $redirect, 1);
+        \add_action('admin_init', static function () use ($own, $redirect): void {
+            if ($own()) {
+                ToolsPages::muteLegacy();
+                $redirect();
             }
         }, 1);
         \add_action('admin_notices', static function () use ($own): void {

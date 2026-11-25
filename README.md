@@ -160,7 +160,7 @@ WordPress → Dashboard → Aktualisierungen → Erneut überprüfen
 WordPress erkennt MGD WordPress MCP 0.2.8 automatisch
 ```
 
-WordPress zeigte dabei die installierte Version 0.2.7, die verfügbare Version 0.2.8, das lokale Plugin-Icon, den Link zu den Versionsdetails sowie die Kompatibilitätsinformation für WordPress 7.1 korrekt an.
+WordPress zeigte dabei die installierte Version 2.1.1, die verfügbare Version 2.1.1, das lokale Plugin-Icon, den Link zu den Versionsdetails sowie die Kompatibilitätsinformation für WordPress 7.1 korrekt an.
 
 ### Warum frühere Versuche scheiterten
 
@@ -276,7 +276,7 @@ Tel.: +49 (0) 151 59156639
 E-Mail: Anfrage@Michael-Gahn.de
 <!-- /MGD-LEGAL -->
 
-## Plugin-Icon – Version 0.5.10
+## Plugin-Icon – Version 2.1.1
 
 Eigenes lokales Icon in der WordPress-Pluginliste. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
 
