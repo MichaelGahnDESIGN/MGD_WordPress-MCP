@@ -29,3 +29,9 @@ mgd_catalog_assert(is_file($runtime . '/assets/icon-128x128.png') && is_file($ru
 $uninstall = file_get_contents($runtime . '/uninstall.php');
 mgd_catalog_assert(strpos($uninstall, "Setup::uninstall( 'mgd-mcp-wordpress', 'wordpress' )") < strpos($uninstall, "'MGD_WPMCP_PURGE_ON_UNINSTALL' ) ||"), 'Abmelden vor dem PURGE-Ausstieg');
 echo "PASS Version, Baukasten mit MGD Tools, kein eigenes Menü, alte Bausteine entfernt\n";
+
+// 2.1.4 Hinweis nur auf eigener Seite, kein Redirect aus MGD Tools
+$mcp_src = file_get_contents(__DIR__ . '/../mgd-wordpress-mcp/includes/class-mgd-wordpress-mcp.php');
+mgd_catalog_assert(false !== strpos($mcp_src, "'mgd-wordpress-mcp'!==\$page"), 'Hinweis nur auf eigener Seite');
+$wiz_src = file_get_contents(__DIR__ . '/../mgd-wordpress-mcp/includes/class-mgd-wordpress-mcp-wizard.php');
+mgd_catalog_assert(false !== strpos($wiz_src, "page=mgd-tools"), 'kein Redirect aus MGD Tools');

@@ -41,6 +41,12 @@ final class MGD_WordPress_MCP_Wizard {
 		if ( wp_doing_ajax() || isset( $_GET['activate-multi'] ) ) {
 			return;
 		}
+		// Aktivierung über MGD Tools Knopf > keine Weiterleitung, Meldung soll sichtbar bleiben
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		$from = (string) wp_get_referer();
+		if ( 'mgd-tools' === $page || false !== strpos( $from, 'page=mgd-tools' ) ) {
+			return;
+		}
 		wp_safe_redirect( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=wizard' ) );
 		exit;
 	}
