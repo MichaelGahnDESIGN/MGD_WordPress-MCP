@@ -37,3 +37,8 @@ Prüfe Dateirechte, WordPress-Updateberechtigungen, freien Speicher, Wartungsmod
 ## GitHub-Update erscheint nicht
 
 Der MGD-Updater erwartet ein GitHub Release mit einer installierbaren Datei `mgd-wordpress-mcp.zip`. Ein Quellcode-Zipball allein ist nicht zwingend als Plugin-Paket geeignet.
+
+
+## Plugin an- oder ausschalten
+
+Gehe zu **MGD Tools**. Dort hat jedes MGD-Plugin einen Schalter **Aktivieren / Deaktivieren** und zeigt die **Lizenz** (Free oder Pro, gültig oder nicht).

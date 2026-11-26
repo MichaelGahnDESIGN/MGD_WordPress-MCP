@@ -17,6 +17,15 @@
 
 MGD WordPress MCP verbindet WordPress mit MCP-kompatiblen KI-Agenten wie Claude Code, OpenAI Codex und anderen MCP-Clients. Das Plugin stellt klar begrenzte WordPress-Abilities für Inhalte, Medien, SEO, Divi 5, WPForms, UpdraftPlus, Updates und die Website-Umgebung bereit.
 
+
+## MGD Tools: Ein- und Ausschalten und Lizenz
+
+Alle MGD-Plugins findest Du an einer Stelle: im Menü **MGD Tools**.
+
+1. Öffne im WordPress-Menü **MGD Tools**.
+2. Bei jedem Plugin gibt es einen Schalter **Aktivieren / Deaktivieren**. So schaltest Du es an oder aus, ohne die Plugin-Liste zu öffnen.
+3. Daneben steht die **Lizenz**: Free oder Pro, und ob sie gültig ist.
+
 ## Aktueller Stand: 0.6.2
 
 Installation, Admin-Oberfläche, Release-Build und GitHub-Self-Update-Kette sind getestet. Der nächste verbindliche Praxisschritt ist ein echter MCP-Handshake mit einem separaten WordPress-Testkonto: zuerst lesend, danach mit einem ungefährlichen Entwurf. Bis dieser Test dokumentiert ist, wird keine vollständige Client-Kompatibilität behauptet.
@@ -160,7 +169,7 @@ WordPress → Dashboard → Aktualisierungen → Erneut überprüfen
 WordPress erkennt MGD WordPress MCP 0.2.8 automatisch
 ```
 
-WordPress zeigte dabei die installierte Version 2.1.1, die verfügbare Version 2.1.1, das lokale Plugin-Icon, den Link zu den Versionsdetails sowie die Kompatibilitätsinformation für WordPress 7.1 korrekt an.
+WordPress zeigte dabei die installierte Version 2.1.3, die verfügbare Version 2.1.3, das lokale Plugin-Icon, den Link zu den Versionsdetails sowie die Kompatibilitätsinformation für WordPress 7.1 korrekt an.
 
 ### Warum frühere Versuche scheiterten
 
@@ -276,7 +285,7 @@ Tel.: +49 (0) 151 59156639
 E-Mail: Anfrage@Michael-Gahn.de
 <!-- /MGD-LEGAL -->
 
-## Plugin-Icon – Version 2.1.1
+## Plugin-Icon – Version 2.1.3
 
 Eigenes lokales Icon in der WordPress-Pluginliste. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
 

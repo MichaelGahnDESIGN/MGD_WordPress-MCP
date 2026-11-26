@@ -625,3 +625,12 @@
 .mgd-kit-catalog__tags button[aria-pressed="true"]{background:var(--mgd-kit-cat-accent,#1e2c2c);border-color:var(--mgd-kit-cat-accent,#1e2c2c);color:#fff;opacity:1}
 .mgd-kit-catalog__tags button:focus-visible{outline:3px solid #2271b1;outline-offset:2px}
 .mgd-kit-catalog__tags .mgd-kit-catalog__tags-reset{border-style:dashed}
+
+/* Lizenz auf der Karte + an/aus Knopf (Kit 1.16.0) */
+.mgd-kit-catalog__card-license {
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+.mgd-kit-catalog__actions .mgd-tools-toggle .button {
+  min-height: 36px;
+}

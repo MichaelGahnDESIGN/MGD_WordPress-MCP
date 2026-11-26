@@ -106,6 +106,39 @@ final class LicenseClient
         $this->memo = null;
     }
 
+    /** Ablauf der Lizenz (Unix-Zeit), 0 = unbekannt oder keine gültige Lizenz */
+    public function periodEnd(): int
+    {
+        if (!$this->enabled || !$this->state()['valid']) {
+            return 0;
+        }
+        $end = $this->store->load()['end'] ?? 0;
+
+        return is_int($end) && $end > 0 ? $end : 0;
+    }
+
+    /** wann zuletzt beim Server gefragt, 0 = noch nie */
+    public function checkedAt(): int
+    {
+        $c = $this->enabled ? ($this->store->load()['checked'] ?? 0) : 0;
+
+        return is_int($c) && $c > 0 ? $c : 0;
+    }
+
+    // Jetzt prüfen: Cache + Wartezeit weg, Schlüssel und Gnadenfrist bleiben
+    public function refresh(): void
+    {
+        if (!$this->enabled) {
+            return;
+        }
+        $st = $this->store->load();
+        if (is_array($st) && $st !== []) {
+            unset($st['until'], $st['retry']);
+            $this->store->save($st);
+        }
+        $this->memo = null;
+    }
+
     /** @return array{valid:bool,tier:string,reason:string,source:string,entitlements:list<string>} */
     public function state(): array
     {
@@ -178,7 +211,9 @@ final class LicenseClient
         $renewed = $json['renewed_token'] ?? null;
         $token = is_string($renewed) && preg_match(self::TOKEN_RE, $renewed) === 1 ? $renewed : $this->token($st);
         $ent = self::cleanList($lic['entitlements'] ?? []);
-        $this->store->save(['token' => $token, 'valid' => true, 'tier' => $tier, 'reason' => 'ok', 'until' => $until, 'ok_until' => $until, 'ok_tier' => $tier, 'ent' => $ent, 'ok_ent' => $ent]);
+        // Ablaufdatum fürs Anzeigen (MGD Tools), kaputt/fehlt = 0
+        $end = is_string($lic['period_end'] ?? null) ? (int) strtotime($lic['period_end']) : 0;
+        $this->store->save(['token' => $token, 'valid' => true, 'tier' => $tier, 'reason' => 'ok', 'until' => $until, 'ok_until' => $until, 'ok_tier' => $tier, 'ent' => $ent, 'ok_ent' => $ent, 'end' => max(0, $end), 'checked' => $now]);
 
         return ['valid' => true, 'tier' => $tier, 'reason' => 'ok', 'source' => 'live', 'entitlements' => $ent];
     }
@@ -188,7 +223,7 @@ final class LicenseClient
     {
         $reason = is_string($json['reason'] ?? null) && preg_match('/^[a-z_]{1,40}$/D', $json['reason']) === 1
             ? $json['reason'] : ($status === 401 ? 'token_malformed' : 'invalid');
-        $this->store->save(['token' => $this->token($st), 'valid' => false, 'tier' => 'free', 'reason' => $reason, 'until' => $now + self::NEGATIVE_TTL]);
+        $this->store->save(['token' => $this->token($st), 'valid' => false, 'tier' => 'free', 'reason' => $reason, 'until' => $now + self::NEGATIVE_TTL, 'checked' => $now]);
 
         return ['valid' => false, 'tier' => 'free', 'reason' => $reason, 'source' => 'live', 'entitlements' => []];
     }

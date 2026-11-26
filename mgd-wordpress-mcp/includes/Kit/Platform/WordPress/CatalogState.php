@@ -12,7 +12,7 @@ final class CatalogState
      * @param array<string,mixed> $plugins wie get_plugins() (Datei => Header)
      * @param list<string> $active aktive Plugin-Dateien
      * @param mixed $updates site_transient update_plugins
-     * @return list<array<string,mixed>> + installed, active, installedVersion, updateFile, state
+     * @return list<array<string,mixed>> + installed, active, installedVersion, updateFile, file, state
      */
     public static function apply(array $items, array $plugins, array $active, mixed $updates, bool $canUpdate): array
     {
@@ -21,6 +21,8 @@ final class CatalogState
         foreach ($items as $it) {
             $it += ['installed' => false, 'active' => false, 'installedVersion' => '', 'updateFile' => ''];
             $file = self::match($it, $plugins);
+            // Datei fürs An/Aus (PluginToggle)
+            $it['file'] = $file;
             if ($file !== '') {
                 $ver = is_array($plugins[$file]) && is_string($plugins[$file]['Version'] ?? null) ? $plugins[$file]['Version'] : '';
                 $offer = is_object($offers[$file] ?? null) ? ($offers[$file]->new_version ?? '') : '';

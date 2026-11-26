@@ -259,6 +259,12 @@ final class Tools
                 $redirect();
             }
         }, 1);
+        // an/aus Knopf (PluginToggle), nur der Besitzer antwortet
+        \add_action('admin_post_' . PluginToggle::ACTION, static function () use ($own, $product): void {
+            if ($own()) {
+                PluginToggle::handle($product);
+            }
+        });
         \add_action('admin_notices', static function () use ($own): void {
             if ($own()) {
                 ToolsPages::movedNotice();

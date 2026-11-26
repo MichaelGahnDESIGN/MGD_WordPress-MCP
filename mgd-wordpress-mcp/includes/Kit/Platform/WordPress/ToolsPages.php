@@ -35,14 +35,17 @@ final class ToolsPages
             if (!\current_user_can('manage_options')) {
                 return;
             }
-            $msg = '';
+            $msg = PluginToggle::message($_GET, CatalogState::wpPlugins());
             $fresh = false;
+            $lic = self::central(Tools::owner());
             if (($_POST['mgd_tools_do'] ?? '') === 'check') {
                 if (\wp_verify_nonce((string) ($_POST[Tools::NONCE] ?? ''), Tools::CHECK_ACTION) === false) {
                     $msg = ToolsTexts::RETRY;
                 } else {
                     $fresh = true;
                     \delete_site_transient('update_plugins');
+                    // Lizenz gleich mit neu fragen
+                    $lic->refresh();
                     $msg = ToolsTexts::CHECKED;
                 }
             }
@@ -53,16 +56,20 @@ final class ToolsPages
                     $installs[(string) $e['name']] = $h;
                 }
             }
-            echo ToolsView::overview(self::rows($fresh), (string) \wp_nonce_field(Tools::CHECK_ACTION, Tools::NONCE, true, false), $msg, $installs);
+            $rows = self::rows($fresh, $lic, static fn (string $a): string => (string) \wp_create_nonce($a));
+            $at = $lic->enabled() ? $lic->checkedAt() : 0;
+            echo ToolsView::overview($rows, (string) \wp_nonce_field(Tools::CHECK_ACTION, Tools::NONCE, true, false), $msg, $installs, $at > 0 ? (string) \wp_date('d.m.Y H:i', $at) : '');
         } catch (\Throwable) {
             echo '<div class="wrap"><p>' . ToolsTexts::ERROR . '</p></div>';
         }
     }
 
     /** @return list<array<string,mixed>> */
-    public static function rows(bool $fresh = false): array
+    public static function rows(bool $fresh = false, ?LicenseClient $lic = null, ?\Closure $nonce = null): array
     {
         $out = [];
+        $state = $lic?->state();
+        $end = $lic?->periodEnd() ?? 0;
         foreach (Tools::entries() as $e) {
             $st = [];
             try {
@@ -82,6 +89,10 @@ final class ToolsPages
                 'notice' => is_string($st['notice'] ?? null) ? $st['notice'] : '',
                 'settings' => is_array($s) ? Tools::url($s['page']) : '',
                 'details' => $e['slug'] !== '' ? Tools::DETAILS_URL . $e['slug'] : '',
+                // Lizenz je Plugin: Pro-Berechtigungen meldet das Plugin selbst
+                'license' => $state !== null ? LicenseBadge::of(array_keys($e['pro']), $state, $end) : null,
+                // in der Übersicht nur aktive Plugins > nur Deaktivieren
+                'toggle' => PluginToggle::form((string) $e['basename'], (string) $e['name'], true, Tools::PARENT, $nonce),
             ];
         }
 
@@ -126,7 +137,8 @@ final class ToolsPages
     public static function catalog(string $owner): void
     {
         try {
-            echo ToolsView::wrap(ToolsTexts::CATALOG, '', RecommendationsView::render(Tools::local($owner), $owner));
+            $lic = self::central($owner);
+            echo ToolsView::wrap(ToolsTexts::CATALOG, PluginToggle::message($_GET, CatalogState::wpPlugins()), RecommendationsView::render(Tools::local($owner), $owner, $lic));
         } catch (\Throwable) {
             echo '<div class="wrap"><p>' . ToolsTexts::ERROR . '</p></div>';
         }

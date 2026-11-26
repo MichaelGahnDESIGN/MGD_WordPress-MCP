@@ -14,7 +14,7 @@ final class ToolsView
      * @param list<array<string,mixed>> $rows aus ToolsPages::rows
      * @param array<string,string> $installs Plugin-Name => fertiges Formular (Install-Client)
      */
-    public static function overview(array $rows, string $nonceField, string $message = '', array $installs = []): string
+    public static function overview(array $rows, string $nonceField, string $message = '', array $installs = [], string $licChecked = ''): string
     {
         if (!\current_user_can('manage_options')) {
             return '';
@@ -30,7 +30,8 @@ final class ToolsView
         // Jetzt prüfen = Hauptknopf oben rechts im Kopf
         $check = '<form method="post" class="mgd-tools-check">' . $nonceField
             . '<button type="submit" class="button button-primary" name="mgd_tools_do" value="check">' . Text::e(ToolsTexts::CHECK_NOW) . '</button></form>';
-        $table = '<table class="mgd-tools-table"><thead><tr>' . $h . '</tr></thead><tbody>' . $body . '</tbody></table>';
+        $table = '<table class="mgd-tools-table"><thead><tr>' . $h . '</tr></thead><tbody>' . $body . '</tbody></table>'
+            . ($licChecked !== '' ? '<p class="mgd-tools-lic-checked">' . Text::e(sprintf(ToolsTexts::LIC_CHECKED, $licChecked)) . '</p>' : '');
         $out = self::section('updates', ToolsTexts::OVERVIEW_H1, $table);
         if ($installs !== []) {
             $in = '';
@@ -77,13 +78,17 @@ final class ToolsView
         // data-label: auf dem Handy wird jede Zeile eine Karte mit Beschriftung
         $c = ToolsTexts::COLS;
         $td = static fn (int $i, string $html): string => '<td data-label="' . Text::e($c[$i]) . '">' . $html . '</td>';
+        $lic = is_array($r['license'] ?? null) ? LicenseBadge::html($r['license']) : '–';
+        // Knopf kommt fertig aus PluginToggle::form (escaped)
+        $toggle = (string) ($r['toggle'] ?? '');
 
         return '<tr><th scope="row"><span class="mgd-tools-plugin">' . $img . '<span class="mgd-tools-name">' . Text::e((string) ($r['name'] ?? '')) . '</span></span></th>'
             . $td(1, Text::e((string) ($r['installed'] ?? '')))
             . $td(2, Text::e($latest !== '' ? $latest : '–'))
             . $td(3, $badge)
-            . $td(4, '<span class="mgd-tools-check-text">' . Text::e(self::check($state, (int) ($r['ok'] ?? 0), (int) ($r['fail'] ?? 0))) . '</span>')
-            . $td(5, implode(' <span aria-hidden="true">·</span> ', $links)) . '</tr>';
+            . $td(4, $lic)
+            . $td(5, '<span class="mgd-tools-check-text">' . Text::e(self::check($state, (int) ($r['ok'] ?? 0), (int) ($r['fail'] ?? 0))) . '</span>')
+            . $td(6, '<span class="mgd-tools-actions">' . implode(' <span aria-hidden="true">·</span> ', $links) . $toggle . '</span>') . '</tr>';
     }
 
     /** MGD-M als Bild (inline SVG, kein externes Bild) */
@@ -179,6 +184,9 @@ final class ToolsView
         . '.mgd-tools-badge--grey{background:#f0f0f1;color:#50575e}.mgd-tools-badge--red{background:#fbe9ea;color:#a3151f}'
         . '.mgd-tools-badge-link{text-decoration:none}.mgd-tools-note{display:block;margin-top:4px;color:#50575e;font-size:12px}'
         . '.mgd-tools-check-text{color:#3c434a}.mgd-tools-unlocks{margin:4px 0 0 18px;list-style:disc}'
+        // Lizenz + an/aus Knopf
+        . '.mgd-tools-lic{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px}.mgd-tools-lic-checked{margin:10px 0 0;color:#50575e;font-size:12px}'
+        . '.mgd-tools-actions{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}.mgd-tools-toggle{display:inline;margin:0}'
         . '@media (max-width:782px){.mgd-tools-head{flex-wrap:wrap}.mgd-tools-head__action{width:100%}'
         . '.mgd-tools-table thead{display:none}.mgd-tools-table,.mgd-tools-table tbody,.mgd-tools-table tr,.mgd-tools-table th,.mgd-tools-table td{display:block;width:auto}'
         . '.mgd-tools-table tr{padding:12px 0;border-top:1px solid #dcdcde}.mgd-tools-table th,.mgd-tools-table td{border:0;padding:3px 0}'

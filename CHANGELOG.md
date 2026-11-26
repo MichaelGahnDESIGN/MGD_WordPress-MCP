@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.3] - 2026-11-26
+
+- MGD Tools: Plugins an- und abschalten, Lizenz je Plugin.
+
 ## [2.1.1] - 2026-11-25
 
 - Gemeinsame Verwaltung unter MGD Tools, einheitliche Darstellung, Icons.

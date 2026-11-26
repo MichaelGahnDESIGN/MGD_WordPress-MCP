@@ -43,6 +43,7 @@ final class CatalogCard
             . '<p class="mgd-kit-catalog__description">' . Text::e((string) $it['description']) . '</p>'
             . ($li !== '' ? '<ul class="mgd-kit-catalog__features">' . $li . '</ul>' : '')
             . self::status($it)
+            . self::license($it, $ctx)
             . '<div class="mgd-kit-catalog__actions"><a class="mgd-kit-catalog__details" href="' . Text::e((string) $it['url']) . '" data-details="' . Text::e($did) . '" data-title="' . Text::e($name)
             . '" aria-label="' . Text::e('Details zu ' . $name) . '">Details <span aria-hidden="true">↗</span></a>' . self::action($it, $ctx) . '</div></div>'
             . '<template id="' . Text::e($did) . '"><p>' . Text::e((string) $it['description']) . '</p>' . ($li !== '' ? '<ul>' . $li . '</ul>' : '')
@@ -59,6 +60,23 @@ final class CatalogCard
             . ($it['installedVersion'] !== '' ? '<span>v' . Text::e(ltrim((string) $it['installedVersion'], 'vV')) . ' installiert</span>' : '') . '</div>';
     }
 
+    // Lizenz nur bei installierten Plugins + wenn die zentrale Lizenz mitgegeben wurde
+    private static function license(array $it, array $ctx): string
+    {
+        $state = $ctx['license'] ?? null;
+        if (!$it['installed'] || !is_array($state)) {
+            return '';
+        }
+        $file = (string) ($it['file'] ?? '');
+        // Pro-Berechtigungen meldet nur ein aktives Plugin selbst > inaktiv = keine Angabe statt falschem "Keine Pro-Version"
+        $pro = is_array($ctx['pro'] ?? null) && is_array($ctx['pro'][$file] ?? null) ? $ctx['pro'][$file] : null;
+        if ($pro === null) {
+            return '';
+        }
+
+        return '<div class="mgd-kit-catalog__card-license">' . LicenseBadge::html(LicenseBadge::of(array_values($pro), $state, (int) ($ctx['licenseEnd'] ?? 0))) . '</div>';
+    }
+
     // Aktualisieren > Verwalten > Ansehen (bezahlt / kein Recht) > Installieren > später
     private static function action(array $it, array $ctx): string
     {
@@ -72,7 +90,10 @@ final class CatalogCard
             return '<a class="mgd-kit-catalog__button" href="' . Text::e($href) . '">Aktualisieren</a>';
         }
         if ($it['installed']) {
-            return '<a class="mgd-kit-catalog__button mgd-kit-catalog__button--quiet" href="plugins.php">Verwalten</a>';
+            // an/aus direkt hier, Verwalten bleibt als Link
+            $toggle = ($it['file'] ?? '') !== '' ? PluginToggle::form((string) $it['file'], $name, (bool) $it['active'], Tools::PAGE_CATALOG, $nonce) : '';
+
+            return $toggle . '<a class="mgd-kit-catalog__button mgd-kit-catalog__button--quiet" href="plugins.php">Verwalten</a>';
         }
         $canInstall = ($ctx['canInstall'] ?? false) === true && $product !== '' && $nonce !== null;
         if ($it['tier'] === 'free' && $it['updateProduct'] !== null && $canInstall) {

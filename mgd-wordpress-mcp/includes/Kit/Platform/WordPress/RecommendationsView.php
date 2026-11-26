@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mgd\WordPressMcp\Kit\Platform\WordPress;
 
 use Mgd\WordPressMcp\Kit\Catalog\Recommendations;
+use Mgd\WordPressMcp\Kit\License\LicenseClient;
 use Mgd\WordPressMcp\Kit\Support\Text;
 
 // Weitere Plugins im Design der alten MGD Plugin-Kollektion (Maintenance > assets/plugin-catalog)
@@ -20,7 +21,7 @@ final class RecommendationsView
     ];
 
     /** $product = Produktname vom Plugin, nur damit gibts Installieren-Knöpfe (Setup::catalogActions muss laufen) */
-    public static function render(?Recommendations $r, string $product = ''): string
+    public static function render(?Recommendations $r, string $product = '', ?LicenseClient $lic = null): string
     {
         try {
             if ($r === null || !\current_user_can('manage_options')) {
@@ -39,16 +40,31 @@ final class RecommendationsView
                 'notice' => is_string($get) ? $get : '',
                 'checked' => $checked > 0 ? (function_exists('wp_date') ? (string) \wp_date('d.m.Y · H:i', $checked) : gmdate('d.m.Y · H:i', $checked)) : '',
                 'media' => static fn (string $url): string => CatalogMedia::url(CatalogMedia::nameFromUrl($url)),
+                'license' => $lic?->state(),
+                'licenseEnd' => $lic?->periodEnd() ?? 0,
+                'pro' => self::localPro(),
             ]);
         } catch (\Throwable) {
             return '';
         }
     }
 
+    // Pro-Berechtigungen, die aktive Plugins selbst melden (Basename => Liste)
+    /** @return array<string,list<string>> */
+    private static function localPro(): array
+    {
+        $out = [];
+        foreach (Tools::entries() as $e) {
+            $out[(string) $e['basename']] = array_keys((array) $e['pro']);
+        }
+
+        return $out;
+    }
+
     /**
      * reines HTML, testbar ohne WP
      * @param array{items?:mixed,source?:mixed,checkedAt?:mixed} $result von Recommendations::load() (+ CatalogState)
-     * @param array{product?:string,canInstall?:bool,nonce?:?\Closure,notice?:string,checked?:string,media?:?\Closure} $ctx
+     * @param array{product?:string,canInstall?:bool,nonce?:?\Closure,notice?:string,checked?:string,media?:?\Closure,license?:?array,licenseEnd?:int,pro?:array<string,list<string>>} $ctx
      *   media: Katalog-URL > lokale URL (ohne = gar keine Bilder, nie fremde Adressen)
      */
     public static function html(array $result, array $ctx = []): string
@@ -114,6 +130,7 @@ final class RecommendationsView
             'active' => ($it['active'] ?? false) === true,
             'installedVersion' => $installedVersion,
             'updateFile' => $state === 'update' ? $file : '',
+            'file' => is_string($it['file'] ?? null) && preg_match(PluginToggle::FILE_RE, $it['file']) === 1 ? $it['file'] : '',
             'state' => $state === 'update' && $file === '' ? 'installed' : $state,
         ] + $f;
     }
