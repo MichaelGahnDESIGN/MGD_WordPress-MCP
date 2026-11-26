@@ -38,7 +38,8 @@ final class MGD_WordPress_MCP_Wizard {
 			return;
 		}
 		delete_transient( 'mgd_wpmcp_wizard_redirect' );
-		if ( wp_doing_ajax() || isset( $_GET['activate-multi'] ) ) {
+		// aktiviert über MGD Tools Knopf > dort bleiben, sonst fehlt die Meldung "ist jetzt aktiv"
+		if ( wp_doing_ajax() || isset( $_GET['activate-multi'] ) || isset( $_GET['mgd_tools_toggled'] ) ) {
 			return;
 		}
 		wp_safe_redirect( admin_url( 'admin.php?page=mgd-wordpress-mcp&tab=wizard' ) );

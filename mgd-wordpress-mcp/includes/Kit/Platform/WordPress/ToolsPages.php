@@ -56,7 +56,8 @@ final class ToolsPages
                     $installs[(string) $e['name']] = $h;
                 }
             }
-            $rows = self::rows($fresh, $lic, static fn (string $a): string => (string) \wp_create_nonce($a));
+            $nonce = static fn (string $a): string => (string) \wp_create_nonce($a);
+            $rows = [...self::rows($fresh, $lic, $nonce), ...self::inactiveRows(Tools::owner(), $nonce)];
             $at = $lic->enabled() ? $lic->checkedAt() : 0;
             echo ToolsView::overview($rows, (string) \wp_nonce_field(Tools::CHECK_ACTION, Tools::NONCE, true, false), $msg, $installs, $at > 0 ? (string) \wp_date('d.m.Y H:i', $at) : '');
         } catch (\Throwable) {
@@ -95,6 +96,58 @@ final class ToolsPages
                 'toggle' => PluginToggle::form((string) $e['basename'], (string) $e['name'], true, Tools::PARENT, $nonce),
             ];
         }
+
+        return $out;
+    }
+
+    /**
+     * installierte, aber inaktive MGD-Plugins (melden sich nicht selbst) > aus Katalog + get_plugins (Befund lfk)
+     * @return list<array<string,mixed>>
+     */
+    public static function inactiveRows(string $owner, ?\Closure $nonce): array
+    {
+        $rec = Tools::local($owner);
+        if ($rec === null) {
+            return [];
+        }
+        $active = array_map(static fn (array $e): string => (string) $e['basename'], Tools::entries());
+        $installed = CatalogState::wpPlugins();
+
+        return self::inactiveFrom(CatalogState::fromWp($rec->load()['items']), $active, $installed, $nonce);
+    }
+
+    /**
+     * rein, testbar
+     * @param list<array<string,mixed>> $items CatalogState::apply
+     * @param list<string> $active Basenames aus MGD Tools
+     * @param array<string,mixed> $installed get_plugins()
+     * @return list<array<string,mixed>>
+     */
+    public static function inactiveFrom(array $items, array $active, array $installed, ?\Closure $nonce): array
+    {
+        $out = [];
+        foreach ($items as $it) {
+            $file = is_string($it['file'] ?? null) ? $it['file'] : '';
+            if ($file === '' || ($it['active'] ?? false) === true || in_array($file, $active, true) || !PluginToggle::mgdHeader($installed[$file] ?? null)) {
+                continue;
+            }
+            $name = is_string($it['name'] ?? null) ? $it['name'] : '';
+            $slug = is_string($it['slug'] ?? null) ? $it['slug'] : '';
+            $out[] = [
+                'name' => $name,
+                'icon' => '',
+                'installed' => (string) ($it['installedVersion'] ?? ''),
+                'latest' => is_string($it['version'] ?? null) ? ltrim($it['version'], 'vV') : '',
+                'newer' => false,
+                'state' => 'off',
+                'inactive' => true,
+                'settings' => '',
+                'details' => $slug !== '' ? Tools::DETAILS_URL . $slug : '',
+                'license' => null,
+                'toggle' => PluginToggle::form($file, $name, false, Tools::PARENT, $nonce),
+            ];
+        }
+        usort($out, static fn (array $a, array $b): int => strcasecmp((string) $a['name'], (string) $b['name']));
 
         return $out;
     }

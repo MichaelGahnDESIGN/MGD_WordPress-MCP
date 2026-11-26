@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.4] - 2026-11-26
+
+- MGD Tools: inaktive MGD-Plugins in der Übersicht, alle Karten in Weitere Plugins (Baukasten 1.16.1).
+- Aktivieren über MGD Tools führt nicht mehr in den Einrichtungsassistenten, die Meldung „ist jetzt aktiv“ bleibt sichtbar.
+- Der Hinweis zum MCP Adapter lässt sich mit dem X dauerhaft ausblenden (je Benutzer).
+
 ## [2.1.3] - 2026-11-26
 
 - MGD Tools: Plugins an- und abschalten, Lizenz je Plugin.

@@ -123,7 +123,7 @@ final class Setup
     }
 
     /**
-     * Liste "Weitere Plugins". $selfSlug = Katalog-Kennung des eigenen Plugins (wird ausgeblendet)
+     * Liste "Weitere Plugins". $selfSlug = Katalog-Kennung des eigenen Plugins (nur noch Reihenfolge, bleibt sichtbar)
      * $selfRepo = eigenes GitHub-Repo (z. B. MGD-Share-WordPress), blendet sich auch in alten Listen ohne Kennung aus
      * @param list<array<string,mixed>> $fallback mitgelieferte Liste
      */
@@ -142,7 +142,8 @@ final class Setup
                 },
             );
 
-            return new Recommendations(new CurlTransport('MGDKit/1.0 (' . $platform . ')'), $store, $platform, $selfSlug, $fallback, null, $selfRepo);
+            // WP: Weitere Plugins ist die gemeinsame Seite in MGD Tools > eigene Karte nie ausblenden
+            return new Recommendations(new CurlTransport('MGDKit/1.0 (' . $platform . ')'), $store, $platform, $selfSlug, $fallback, null, $selfRepo, false);
         } catch (\Throwable) {
             return null;
         }

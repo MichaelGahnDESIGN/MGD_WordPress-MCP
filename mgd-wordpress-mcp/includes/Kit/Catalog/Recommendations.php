@@ -18,7 +18,8 @@ final class Recommendations
     public const CATALOG_PREFIX = 'https://theme.michael-gahn.de/downloads?plattform=';
     public const TTL = 900;
     // Speicher-Format: alter Speicher (ohne Bilder/Kategorien) gilt nach Update nicht mehr als frisch > sofort neu holen
-    public const FORMAT = 2;
+    // 3 = eigene Karte bleibt drin, wenn hideSelf aus (Kit 1.16.1)
+    public const FORMAT = 3;
     public const PAUSE = 300;
     public const STALE_MAX = 604800;
     public const MAX_ITEMS = 80;
@@ -67,6 +68,8 @@ final class Recommendations
         private readonly array $fallback = [],
         ?\Closure $clock = null,
         string $selfRepo = '',
+        // false = eigene Karte bleibt (gemeinsame Seite MGD Tools, Befund lfk: KI-Karte fehlte)
+        private readonly bool $hideSelf = true,
     ) {
         if (!isset(self::PLATFORMS[$platform])) {
             throw new \InvalidArgumentException('Shopsystem ungültig.');
@@ -213,7 +216,7 @@ final class Recommendations
         $slug = $row['slug'] ?? null;
         $name = is_string($row['name'] ?? null) ? Text::plain($row['name'], 120) : '';
         // eigenes Plugin raus
-        if (!is_string($slug) || strlen($slug) > 100 || preg_match(self::SLUG_RE, $slug) !== 1 || $slug === $this->selfSlug || $name === '' || $this->isSelfRepo($row)) {
+        if (!is_string($slug) || strlen($slug) > 100 || preg_match(self::SLUG_RE, $slug) !== 1 || $name === '' || ($this->hideSelf && ($slug === $this->selfSlug || $this->isSelfRepo($row)))) {
             return null;
         }
 

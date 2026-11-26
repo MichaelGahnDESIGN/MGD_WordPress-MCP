@@ -33,6 +33,8 @@ if ( ! defined( 'MGD_WPMCP_PURGE_ON_UNINSTALL' ) || true !== MGD_WPMCP_PURGE_ON_
 delete_option( 'mgd_wordpress_mcp_settings' );
 delete_option( 'mgd_wordpress_mcp_wizard' );
 delete_transient( 'mgd_wpmcp_wizard_redirect' );
+// Adapter-Hinweis ausgeblendet (pro Benutzer)
+delete_metadata( 'user', 0, 'mgd_wpmcp_hide_adapter_notice', '', true );
 
 if ( is_multisite() ) {
     delete_site_transient( 'mgd_wpmcp_release_' . md5( 'MichaelGahnDESIGN/MGD_WordPress-MCP' ) );

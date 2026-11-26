@@ -54,14 +54,16 @@ final class ToolsView
             . ($icon !== '' ? '<img src="' . Text::e($icon) . '" alt="" width="32" height="32" loading="lazy" onerror="this.remove()">' : '') . '</span>';
         $latest = (string) ($r['latest'] ?? '');
         $state = (string) ($r['state'] ?? 'off');
+        $inactive = ($r['inactive'] ?? false) === true;
         [$label, $tone] = match (true) {
+            $inactive => [ToolsTexts::INACTIVE, 'grey'],
             $state === 'fail' => [ToolsTexts::ERROR_BADGE, 'red'],
             $latest === '' => [ToolsTexts::UNKNOWN, 'grey'],
             ($r['newer'] ?? false) === true => [ToolsTexts::NEWER, 'orange'],
             default => [ToolsTexts::CURRENT, 'green'],
         };
         $badge = '<span class="mgd-tools-badge mgd-tools-badge--' . $tone . '">' . Text::e($label) . '</span>';
-        if (($r['newer'] ?? false) === true) {
+        if (!$inactive && ($r['newer'] ?? false) === true) {
             $badge = '<a href="plugins.php" class="mgd-tools-badge-link">' . $badge . '</a>';
         }
         $notice = (string) ($r['notice'] ?? '');
@@ -87,7 +89,8 @@ final class ToolsView
             . $td(2, Text::e($latest !== '' ? $latest : '–'))
             . $td(3, $badge)
             . $td(4, $lic)
-            . $td(5, '<span class="mgd-tools-check-text">' . Text::e(self::check($state, (int) ($r['ok'] ?? 0), (int) ($r['fail'] ?? 0))) . '</span>')
+            // inaktiv = Plugin läuft nicht, prüft also auch nix
+            . $td(5, $inactive ? '–' : '<span class="mgd-tools-check-text">' . Text::e(self::check($state, (int) ($r['ok'] ?? 0), (int) ($r['fail'] ?? 0))) . '</span>')
             . $td(6, '<span class="mgd-tools-actions">' . implode(' <span aria-hidden="true">·</span> ', $links) . $toggle . '</span>') . '</tr>';
     }
 

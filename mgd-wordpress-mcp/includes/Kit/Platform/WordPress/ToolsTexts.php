@@ -47,6 +47,8 @@ final class ToolsTexts
     public const LIC_GRACE = 'Gültig (letzter geprüfter Stand)';
     public const LIC_NO_PRO = 'Keine Pro-Version';
     public const LIC_CHECKED = 'Lizenz geprüft am %s. Das Ergebnis wird bis zu 24 Stunden gespeichert.';
+    // gleicher Text wie auf der Karte in Weitere Plugins
+    public const INACTIVE = 'Installiert · inaktiv';
     public const ACTIVATE = 'Aktivieren';
     public const DEACTIVATE = 'Deaktivieren';
     public const ACTIVATED = '%s ist jetzt aktiv.';
