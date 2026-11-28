@@ -54,6 +54,18 @@ final class ToolsTexts
     public const ACTIVATED = '%s ist jetzt aktiv.';
     public const DEACTIVATED = '%s ist jetzt deaktiviert.';
     public const ACTIVATE_FAIL = '%s konnte nicht aktiviert werden. Mehr dazu findest du unter „Plugins“.';
+    // Primärfarbe (Kit 1.17, Texte C1-C11: docs/plans/MGD-TOOLS-FARBE-ENTWURF.md)
+    public const SETTINGS_PAGE = 'Einstellungen';
+    public const SETTINGS_INTRO = 'Hier stellst du ein, wie MGD Tools und alle MGD-Plugins in deinem WordPress-Admin aussehen.';
+    public const ACCENT = 'Primärfarbe';
+    public const ACCENT_HELP = 'Gilt für das Menü MGD Tools und für Knöpfe, Abzeichen und Links aller MGD-Plugins. Die Schriftfarbe darauf wählt MGD Tools automatisch, damit alles gut lesbar bleibt.';
+    public const PREVIEW = 'Vorschau';
+    public const SAVE = 'Speichern';
+    public const ACCENT_DEFAULT = 'Auf MGD-Rot zurücksetzen';
+    public const ACCENT_SAVED = 'Die Primärfarbe ist gespeichert.';
+    public const ACCENT_RESET = 'Die Primärfarbe ist wieder MGD-Rot.';
+    public const ACCENT_LIGHT = 'Diese Farbe ist sehr hell. Links werden deshalb etwas dunkler dargestellt, damit sie gut lesbar bleiben.';
+    public const ACCENT_BAD = 'Bitte wähle eine Farbe im Format #rrggbb.';
     public const ERROR = 'Die Seite konnte gerade nicht geladen werden.';
     public const RETRY = 'Das hat nicht geklappt. Bitte lade die Seite neu und versuche es noch einmal.';
 }

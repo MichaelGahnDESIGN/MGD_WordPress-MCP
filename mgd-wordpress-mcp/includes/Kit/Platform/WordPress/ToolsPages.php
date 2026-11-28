@@ -24,6 +24,7 @@ final class ToolsPages
     {
         // immer da: ohne Pro-Plugin freundlicher Satz statt "nicht berechtigt" (Befund share)
         \add_submenu_page(Tools::PARENT, ToolsTexts::LICENSE, ToolsTexts::LICENSE, 'manage_options', Tools::PAGE_LICENSE, static fn () => self::license($owner));
+        \add_submenu_page(Tools::PARENT, ToolsTexts::SETTINGS_PAGE, ToolsTexts::SETTINGS_PAGE, 'manage_options', Tools::PAGE_SETTINGS, [ToolsSettings::class, 'page']);
         if (Tools::local($owner) !== null) {
             \add_submenu_page(Tools::PARENT, ToolsTexts::CATALOG, ToolsTexts::CATALOG, 'manage_options', Tools::PAGE_CATALOG, static fn () => self::catalog($owner));
         }

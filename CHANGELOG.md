@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.0] - 2026-11-27
+
+- MGD Tools immer farbig hervorgehoben, neue Einstellung Primärfarbe für alle MGD-Plugins (Baukasten 1.17.0).
+
 ## [2.1.4] - 2026-11-26
 
 - MGD Tools: inaktive MGD-Plugins in der Übersicht, alle Karten in Weitere Plugins (Baukasten 1.16.1).

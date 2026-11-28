@@ -15,6 +15,9 @@ final class Tools
     public const PARENT = 'mgd-tools';
     public const PAGE_LICENSE = 'mgd-tools-license';
     public const PAGE_CATALOG = 'mgd-tools-plugins';
+    public const PAGE_SETTINGS = 'mgd-tools-settings';
+    // Menü-Farbe nur 1x pro Seite, egal wie viele Kit-Kopien
+    public const ACCENT_FLAG = 'mgd_tools_accent_done';
     public const SCHEMA = 1;
     public const GLOBAL_KEY = 'mgd_tools';
     public const NONCE = '_mgd_tools_nonce';
@@ -137,7 +140,7 @@ final class Tools
     public static function reset(): void
     {
         self::$local = [];
-        unset($GLOBALS[self::GLOBAL_KEY]);
+        unset($GLOBALS[self::GLOBAL_KEY], $GLOBALS[self::ACCENT_FLAG]);
     }
 
     /**
@@ -175,7 +178,7 @@ final class Tools
     }
 
     /**
-     * Reihenfolge im Untermenü: Übersicht, Plugins nach Titel, Lizenz, Weitere Plugins
+     * Reihenfolge im Untermenü: Übersicht, Plugins nach Titel, Lizenz, Einstellungen, Weitere Plugins
      * @param list<array<int,mixed>> $items WP $submenu[PARENT]
      * @return list<array<int,mixed>>
      */
@@ -184,12 +187,22 @@ final class Tools
         $rank = static fn (array $i): int => match ((string) ($i[2] ?? '')) {
             self::PARENT => 0,
             self::PAGE_LICENSE => 2,
-            self::PAGE_CATALOG => 3,
+            self::PAGE_SETTINGS => 3,
+            self::PAGE_CATALOG => 4,
             default => 1,
         };
         usort($items, static fn (array $a, array $b): int => [$rank($a), strcasecmp((string) ($a[0] ?? ''), (string) ($b[0] ?? ''))] <=> [$rank($b), 0]);
 
         return array_values($items);
+    }
+
+    public static function accentCss(): void
+    {
+        if (!empty($GLOBALS[self::ACCENT_FLAG]) || !function_exists('current_user_can') || !\current_user_can('manage_options')) {
+            return;
+        }
+        $GLOBALS[self::ACCENT_FLAG] = true;
+        echo '<style id="mgd-tools-accent">' . \Mgd\WordPressMcp\Kit\Ui\Accent::css(ToolsSettings::accent()) . '</style>';
     }
 
     public static function shortName(string $name): string
@@ -259,6 +272,10 @@ final class Tools
                 $redirect();
             }
         }, 1);
+        // MGD Tools immer farbig hervorheben (Wunsch Michael), jede Kit-Kopie darf, aber nur 1x pro Seite
+        \add_action('admin_head', static function (): void {
+            self::accentCss();
+        }, 20);
         // an/aus Knopf (PluginToggle), nur der Besitzer antwortet
         \add_action('admin_post_' . PluginToggle::ACTION, static function () use ($own, $product): void {
             if ($own()) {

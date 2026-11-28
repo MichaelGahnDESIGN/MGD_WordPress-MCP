@@ -198,6 +198,9 @@ final class Updater
             // beim Klick frisch holen, nicht dem Cache trauen
             $u = $this->info(true);
             if ($u === null || $package !== $u->downloadUrl) {
+                // altes Angebot von WP (Update-Datei hat inzwischen gewechselt) > verwerfen, beim nächsten Laden neu anbieten (Sammelliste 5)
+                \delete_site_transient('update_plugins');
+
                 return self::error('Update abgebrochen: Die Prüfdaten von theme.michael-gahn.de fehlen oder passen nicht zum Download.');
             }
             if ($reply !== false) {
